@@ -1,6 +1,5 @@
 import './App.css';
 import React, { useState, useEffect } from 'react';
-import Header from './Header';
 
 function App() {
   const [name, setName] = useState("");
@@ -26,9 +25,12 @@ function App() {
         setRegistered(true);
       }
   };
+  const haveAccount = () => {
+    setRegistered(true);
+  }
 
-  const handleDelete = () => {
-      setName("");
+  const handleNoAccount = () => {
+    setRegistered(false);
 
   };
 
@@ -47,14 +49,25 @@ function App() {
                     <input type="text" placeholder="joe@me.com" value={email} onChange={handleEmailChange}/><br/>
                     Password
                     <input type="text" placeholder="123456" value={password} onChange={handlePasswordChange}/><br/>
-                    <input type="submit" value="Register" onClick={handleRegister}/>
+                    <input type="submit" value="Register" onClick={handleRegister}/><br/>
+                    <input type="submit" value="Already have an account" onClick={haveAccount}/>
                 </label>
               </fieldset>
           </form>
         : (
-          <div>
-            {/* <Frame/> */}
-          </div>
+          <form>
+              <fieldset>
+                <legend>Login</legend>
+                <label>
+                    User Name/Email
+                    <input type="text" placeholder="Joe / joe@me.com" value={email} onChange={handleEmailChange}/><br/>
+                    Password
+                    <input type="text" placeholder="123456" value={password} onChange={handlePasswordChange}/><br/>
+                    <input type="submit" value="Login" onClick={handleRegister}/>
+                    <input type="submit" value="I don't have an account yet" onClick={handleNoAccount}/>
+                </label>
+              </fieldset>
+          </form>
         )}
     </div>
   );
