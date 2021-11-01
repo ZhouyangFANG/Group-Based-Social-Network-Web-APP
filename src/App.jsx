@@ -2,16 +2,16 @@ import './App.css';
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import UserProfile from './UserProfile';
-import SignUp from './SignUp';
-import SignIn from './SignIn';
+import Registration from './Registration';
+import Login from './Login';
 
 function App() {
   return (
     <Router>
       <div>
         <Switch>
-          <Route path="/signin" component={SignIn}/>
-          <Route path="/registration" component={SignUp}/>
+          <Route path="/login" component={Login}/>
+          <Route path="/registration" component={Registration}/>
           <Route exact path="/user" component={UserProfile}/>
         </Switch>
       </div>
