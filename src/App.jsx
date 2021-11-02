@@ -5,6 +5,7 @@ import UserProfile from './UserProfile';
 import Registration from './Registration';
 import MainView from './ReactComponents/MainView'
 import Login from './Login';
+import CreateGroup from './createGroup/CreateGroup'
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
           <Route path="/registration" component={Registration}/>
           <Route path="/groups" component={MainView} />
           <Route exact path="/user" component={UserProfile}/>
+          <Route exact path="/createGroup" component={CreateGroup}/>
         </Switch>
       </div>
     </Router>
