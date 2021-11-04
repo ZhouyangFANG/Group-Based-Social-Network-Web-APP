@@ -19,7 +19,7 @@ const admins = [
 
 export default function Review() {
   return (
-    <React.Fragment>
+    <>
       <Typography variant="h6" gutterBottom>
         Group Summary
       </Typography>
@@ -39,13 +39,12 @@ export default function Review() {
           <List disablePadding>
             {admins.map((admin) => (
               <ListItem key={admin.name} sx={{ py: 1, px: 0 }}>
-                <ListItemText primary={admin.name}/>
+                <ListItemText primary={admin.name} />
               </ListItem>
             ))}
           </List>
         </Grid>
       </Grid>
-     
-    </React.Fragment>
+    </>
   );
 }

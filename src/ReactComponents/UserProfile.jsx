@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -9,36 +9,14 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Paper from '@mui/material/Paper';
 import MenuItem from '@mui/material/MenuItem';
 import MenuList from '@mui/material/MenuList';
+import TextField from '@mui/material/TextField';
+import Stack from '@mui/material/Stack';
 import Grid from '@mui/material/Grid';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
-import { DataGrid } from '@mui/x-data-grid';
 
-function MainView() {
-  const columns = [
-    { field: 'groupName', headerName: 'Group Name', width: 200 },
-    { field: 'topics', headerName: 'Topics', width: 400 },
-    {
-      field: 'join',
-      headerName: 'Request to join',
-      width: 150,
-      renderCell: () => (
-        <Button variant="contained" color="primary">Join</Button>
-      ),
-    },
-  ];
-
-  const rows = [
-    { id: 1, groupName: 'Group 1', topics: 'Topic 1, Topic 2' },
-    { id: 2, groupName: 'Group 2', topics: 'Topic 1, Topic 2' },
-    { id: 3, groupName: 'Group 3', topics: 'Topic 1, Topic 2' },
-    { id: 4, groupName: 'Group 4', topics: 'Topic 1, Topic 2' },
-    { id: 5, groupName: 'Group 5', topics: 'Topic 1, Topic 2' },
-    { id: 6, groupName: 'Group 6', topics: 'Topic 1, Topic 2' },
-    { id: 7, groupName: 'Group 7', topics: 'Topic 1, Topic 2' },
-  ];
-
+function UserProfile() {
   return (
     <div>
       <Box sx={{ flexGrow: 1 }}>
@@ -54,7 +32,7 @@ function MainView() {
               <MenuIcon />
             </IconButton>
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-              Public Groups
+              User Profile
             </Typography>
             <Button color="inherit">Back</Button>
           </Toolbar>
@@ -73,15 +51,25 @@ function MainView() {
           </Paper>
         </Grid>
         <Grid item xs={8} md={7}>
-          <div style={{ height: 800, width: '100%' }}>
-            <DataGrid
-              rows={rows}
-              columns={columns}
-              pageSize={8}
-              rowsPerPageOptions={[5]}
-              disableSelectionOnClick
-            />
-          </div>
+          <Stack spacing={2}>
+            Personal Information
+            <TextField
+              variant="outlined"
+              margin="normal"
+              id="email"
+              label="Email"
+              autoFocus
+            >
+              Email
+            </TextField>
+            <TextField variant="outlined" margin="normal" id="username" label="User Name" autoFocus />
+            <TextField variant="outlined" margin="normal" id="phone" label="Phone Number" autoFocus />
+            <TextField variant="outlined" margin="normal" id="link" label="Links" autoFocus />
+            <TextField variant="outlined" margin="normal" id="gender" label="Gender" autoFocus />
+            <TextField variant="outlined" margin="normal" id="birth" label="Birthday" autoFocus />
+            <Button variant="contained">Save</Button>
+
+          </Stack>
         </Grid>
         <Grid item xs={2} md={1}>
           <Card sx={{ minWidth: 275 }}>
@@ -103,4 +91,4 @@ function MainView() {
   );
 }
 
-export default MainView;
+export default UserProfile;
