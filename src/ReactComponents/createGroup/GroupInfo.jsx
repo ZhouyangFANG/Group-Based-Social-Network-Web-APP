@@ -10,7 +10,7 @@ import FormLabel from '@mui/material/FormLabel';
 
 export default function GroupInfo() {
   return (
-    <React.Fragment>
+    <>
       <Typography variant="h6" gutterBottom>
         Group Information
       </Typography>
@@ -57,6 +57,6 @@ export default function GroupInfo() {
           </FormControl>
         </Grid>
       </Grid>
-    </React.Fragment>
+    </>
   );
 }

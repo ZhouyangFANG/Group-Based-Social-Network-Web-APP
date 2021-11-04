@@ -22,9 +22,10 @@ function Copyright() {
       {'Copyright © '}
       <Link color="inherit" href="/">
         YYDS
-      </Link>{' '}
+      </Link>
+      {' '}
       {new Date().getFullYear()}
-      {'.'}
+      .
     </Typography>
   );
 }
@@ -87,22 +88,24 @@ export default function CreateGroup() {
               </Step>
             ))}
           </Stepper>
-          <React.Fragment>
+          <>
             {activeStep === steps.length ? (
-              <React.Fragment>
+              <>
                 <Typography variant="h5" gutterBottom>
                   Your group is created.
                 </Typography>
                 <Typography variant="subtitle1">
-                  Your group name is XXX. Please follow {' '}
+                  Your group name is XXX. Please follow
+                  {' '}
                   <Link color="inherit" href="/group:1">
                     grouplink
                   </Link>
-                  {' '}to review details.
+                  {' '}
+                  to review details.
                 </Typography>
-              </React.Fragment>
+              </>
             ) : (
-              <React.Fragment>
+              <>
                 {getStepContent(activeStep)}
                 <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
                   {activeStep !== 0 && (
@@ -119,9 +122,9 @@ export default function CreateGroup() {
                     {activeStep === steps.length - 1 ? 'Create Group' : 'Next'}
                   </Button>
                 </Box>
-              </React.Fragment>
+              </>
             )}
-          </React.Fragment>
+          </>
         </Paper>
         <Copyright />
       </Container>
