@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from '@material-ui/core/Link';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -17,7 +18,14 @@ import { DataGrid } from '@mui/x-data-grid';
 
 function MainView() {
   const columns = [
-    { field: 'groupName', headerName: 'Group Name', width: 200 },
+    {
+      field: 'groupName',
+      headerName: 'Group Name',
+      width: 200,
+      renderCell: (params) => (
+        <Link href="/cis557" variant="body2">{params.value}</Link>
+      ),
+    },
     { field: 'topics', headerName: 'Topics', width: 400 },
     {
       field: 'join',
