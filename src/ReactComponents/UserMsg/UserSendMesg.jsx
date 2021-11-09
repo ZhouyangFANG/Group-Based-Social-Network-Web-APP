@@ -16,7 +16,7 @@ import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 
-function UserProfile() {
+function UserSendMesg() {
   return (
     <div>
       <Box sx={{ flexGrow: 1 }}>
@@ -38,7 +38,7 @@ function UserProfile() {
           </Toolbar>
         </AppBar>
       </Box>
-      <Grid container spacing={3}>
+      <Grid container spacing={2}>
         <Grid item xs={2} md={3}>
           <Paper>
             <MenuList>
@@ -50,25 +50,28 @@ function UserProfile() {
             </MenuList>
           </Paper>
         </Grid>
-        <Grid item xs={7} md={6}>
-          <Stack spacing={2}>
-            Personal Information
+        <Grid item xs={6} md={5}>
+          <Stack spacing={4}>
+            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+              Send Message
+            </Typography>
             <TextField
-              variant="outlined"
-              margin="normal"
-              id="email"
-              label="Email"
-              autoFocus
-            >
-              Email
-            </TextField>
-            <TextField variant="outlined" margin="normal" id="username" label="User Name" autoFocus />
-            <TextField variant="outlined" margin="normal" id="phone" label="Phone Number" autoFocus />
-            <TextField variant="outlined" margin="normal" id="link" label="Links" autoFocus />
-            <TextField variant="outlined" margin="normal" id="gender" label="Gender" autoFocus />
-            <TextField variant="outlined" margin="normal" id="birth" label="Birthday" autoFocus />
-            <Button variant="contained">Save</Button>
-
+              id="to"
+              label="Send To"
+              multiline
+            />
+            <TextField
+              id="subject"
+              label="Subject"
+              multiline
+            />
+            <TextField
+              id="info"
+              label="Text"
+              multiline
+              rows={7}
+            />
+            <Button variant="contained">Send</Button>
           </Stack>
         </Grid>
         <Grid item xs={2} md={2}>
@@ -91,4 +94,4 @@ function UserProfile() {
   );
 }
 
-export default UserProfile;
+export default UserSendMesg;
