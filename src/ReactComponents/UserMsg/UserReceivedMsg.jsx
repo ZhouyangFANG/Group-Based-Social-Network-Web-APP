@@ -9,14 +9,14 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Paper from '@mui/material/Paper';
 import MenuItem from '@mui/material/MenuItem';
 import MenuList from '@mui/material/MenuList';
-import TextField from '@mui/material/TextField';
 import Stack from '@mui/material/Stack';
 import Grid from '@mui/material/Grid';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
+import Msg from './Message';
 
-function UserProfile() {
+function UserReceivedMesg() {
   return (
     <div>
       <Box sx={{ flexGrow: 1 }}>
@@ -38,7 +38,7 @@ function UserProfile() {
           </Toolbar>
         </AppBar>
       </Box>
-      <Grid container spacing={3}>
+      <Grid container spacing={2}>
         <Grid item xs={2} md={3}>
           <Paper>
             <MenuList>
@@ -50,25 +50,15 @@ function UserProfile() {
             </MenuList>
           </Paper>
         </Grid>
-        <Grid item xs={7} md={6}>
-          <Stack spacing={2}>
-            Personal Information
-            <TextField
-              variant="outlined"
-              margin="normal"
-              id="email"
-              label="Email"
-              autoFocus
-            >
-              Email
-            </TextField>
-            <TextField variant="outlined" margin="normal" id="username" label="User Name" autoFocus />
-            <TextField variant="outlined" margin="normal" id="phone" label="Phone Number" autoFocus />
-            <TextField variant="outlined" margin="normal" id="link" label="Links" autoFocus />
-            <TextField variant="outlined" margin="normal" id="gender" label="Gender" autoFocus />
-            <TextField variant="outlined" margin="normal" id="birth" label="Birthday" autoFocus />
-            <Button variant="contained">Save</Button>
-
+        <Grid item xs={6} md={5}>
+          <Stack spacing={4}>
+            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+              Received Messages
+            </Typography>
+            <Msg />
+            <Msg />
+            <Msg />
+            <Msg />
           </Stack>
         </Grid>
         <Grid item xs={2} md={2}>
@@ -91,4 +81,4 @@ function UserProfile() {
   );
 }
 
-export default UserProfile;
+export default UserReceivedMesg;
