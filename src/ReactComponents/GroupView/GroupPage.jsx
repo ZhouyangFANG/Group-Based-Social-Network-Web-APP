@@ -1,3 +1,4 @@
+import { Link as RouterLink } from 'react-router-dom';
 import CssBaseline from '@mui/material/CssBaseline';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import * as React from 'react';
@@ -25,7 +26,7 @@ export default function GroupPage() {
           <Grid item xs={2} md={3}>
             <Paper style={{ position: 'fixed' }}>
               <MenuList>
-                <MenuItem>Personal Information</MenuItem>
+                <MenuItem component={RouterLink} to="/user">Personal Information</MenuItem>
                 <MenuItem>Settings</MenuItem>
                 <MenuItem>My Groups</MenuItem>
                 <MenuItem>Friends</MenuItem>

@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link as RouterLink } from 'react-router-dom';
 import Link from '@material-ui/core/Link';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -23,7 +24,7 @@ function MainView() {
       headerName: 'Group Name',
       width: 200,
       renderCell: (params) => (
-        <Link href="/cis557" variant="body2">{params.value}</Link>
+        <Link component={RouterLink} to="/cis557" variant="body2">{params.value}</Link>
       ),
     },
     { field: 'topics', headerName: 'Topics', width: 400 },
