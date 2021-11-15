@@ -62,6 +62,7 @@ export default function GroupPage() {
                   Create New Post
                 </Button>
                 <Button
+                  data-testid="leave"
                   type="submit"
                   variant="contained"
                   sx={{ mt: 3, mb: 2 }}
