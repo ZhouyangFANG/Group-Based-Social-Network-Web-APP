@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Link as RouterLink } from 'react-router-dom';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
@@ -59,6 +60,8 @@ export default function SignIn() {
               autoComplete="current-password"
             />
             <Button
+              component={RouterLink}
+              to="/groups"
               type="submit"
               fullWidth
               variant="contained"
