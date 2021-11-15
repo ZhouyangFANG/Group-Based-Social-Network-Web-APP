@@ -60,6 +60,7 @@ export default function SignIn() {
               autoComplete="current-password"
             />
             <Button
+              data-testid="submit"
               component={RouterLink}
               to="/groups"
               type="submit"
