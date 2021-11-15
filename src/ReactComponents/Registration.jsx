@@ -73,6 +73,7 @@ export default function SignUp() {
               </Grid>
             </Grid>
             <Button
+              data-testid="submit"
               type="submit"
               fullWidth
               variant="contained"
