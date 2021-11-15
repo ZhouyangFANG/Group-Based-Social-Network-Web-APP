@@ -4,12 +4,15 @@ import {
 } from '@testing-library/react';
 // import MockAdapter from 'axios-mock-adapter';
 // import axios from 'axios';
-import GroupPage from './GroupPage';
+import GroupPage from '../../ReactComponents/GroupView/GroupPage';
+import { BrowserRouter } from "react-router-dom";
 
 
 beforeEach(async () => {
   await waitFor(() => {
-    render(<GroupPage />);
+    render(<BrowserRouter>
+      <GroupPage />
+    </BrowserRouter>);
   });
 });
 
@@ -33,7 +36,7 @@ describe('show start page correctly', () => {
   //   fireEvent.change(screen.getByRole('textbox'), {
   //     target: { value: '^' },
   //   });
-    fireEvent.submit(screen.getByRole('button'));
+  fireEvent.submit(screen.getByTestId('leave'));
   //   // expect(handleLogin).toHaveBeenCalled();
   //   expect(screen.getByText('Invalid User Name!!')).toBeInTheDocument();
   //   // const display = screen.getByText('Display Leaders');

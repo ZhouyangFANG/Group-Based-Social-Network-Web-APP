@@ -4,12 +4,15 @@ import {
 } from '@testing-library/react';
 // import MockAdapter from 'axios-mock-adapter';
 // import axios from 'axios';
-import Header from './Header';
+import Header from '../../ReactComponents/GroupView/Header';
+import { BrowserRouter } from "react-router-dom";
 
 
 beforeEach(async () => {
   await waitFor(() => {
-    render(<Header />);
+    render(<BrowserRouter>
+      <Header />
+    </BrowserRouter>);
   });
 });
 

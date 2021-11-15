@@ -4,12 +4,16 @@ import {
 } from '@testing-library/react';
 // import MockAdapter from 'axios-mock-adapter';
 // import axios from 'axios';
-import Registration from './Registration';
+import Registration from '../ReactComponents/Registration.jsx';
+import { BrowserRouter } from "react-router-dom";
 
 
 beforeEach(async () => {
   await waitFor(() => {
-    render(<Registration />);
+    render(
+    <BrowserRouter>
+      <Registration />
+    </BrowserRouter>);
   });
 });
 
