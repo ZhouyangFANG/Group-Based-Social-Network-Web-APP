@@ -17,6 +17,7 @@ function App() {
         <Switch>
           <Route path="/login" component={Login} />
           <Route path="/registration" component={Registration} />
+          <Route path="/groups/:type" component={MainView} />
           <Route path="/groups" component={MainView} />
           <Route exact path="/user" component={UserProfile} />
           <Route exact path="/createGroup" component={CreateGroup} />
