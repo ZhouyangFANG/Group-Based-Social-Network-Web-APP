@@ -1,5 +1,5 @@
 CREATE TABLE user (
-  id VARCHAR(36) DEFAULT (uuid()),
+  id VARCHAR(36),
   username varchar(255) not null unique,
   password varchar(64) not null,
   email varchar(255),
