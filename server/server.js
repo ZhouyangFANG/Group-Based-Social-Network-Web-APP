@@ -16,8 +16,9 @@ app.use(cors({
 }));
 
 app.post('/users', routes.postUser)
-
 app.post('/login', routes.loginUser)
+
+app.use(require('./groupRouter'));
 
 app.get('/', (req, res) => {
   res.send('Hello World!')
