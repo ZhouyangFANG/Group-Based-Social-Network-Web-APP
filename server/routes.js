@@ -57,7 +57,38 @@ async function loginUser(req, res){
     });
 }
 
+//---------user page API---------------
+async function getUserInfo(req, res){
+  const query = 'SELECT * FROM userInfo WHERE id=?';
+  const params = [req.params.userId];
+  connection.promise()
+    .execute(query, params)
+    .then((rows, fields) => res.status(200).send(rows[0]))
+    .catch((err) => res.status(404).send(err)); 
+}
+
+async function updateUserInfo(req, res){
+  const query = 'UPDATE userInfo SET email=?, phone=?, link=?, gender=? WHERE id=?';
+  const params = [req.body.email, req.body.phone, req.body.link, req.body.gender, req.params.userId];
+  connection.promise()
+    .execute(query, params)
+    .then((rows, fields) => res.status(200).send(rows))
+    .catch((err) => res.status(403).send(err)); 
+}
+
+async function deleteUserInfo(req, res){
+  const query = 'DELETE FROM userInfo WHERE id=?';
+  const params = [req.params.userId];
+  connection.promise()
+    .execute(query, params)
+    .then((rows, fields) => res.status(200).send(rows))
+    .catch((err) => res.status(403).send(err)); 
+}
+
 module.exports = {
     postUser,
-    loginUser
+    loginUser,
+    getUserInfo,
+    updateUserInfo,
+    deleteUserInfo
   };

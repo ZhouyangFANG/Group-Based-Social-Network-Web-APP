@@ -18,6 +18,11 @@ app.use(cors({
 app.post('/users', routes.postUser)
 app.post('/login', routes.loginUser)
 
+//---------userInfo API------------
+app.get('/users/:id', routes.getUserInfo);
+app.put('/users/:id', routes.updateUserInfo);
+app.delete('/users/:id', routes.deleteUserInfo);
+
 app.use(require('./groupRouter'));
 
 app.get('/', (req, res) => {
