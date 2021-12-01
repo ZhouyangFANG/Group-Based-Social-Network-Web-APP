@@ -8,3 +8,40 @@ CREATE TABLE user (
   gender varchar(255),
   primary key (id)
 );
+
+create table groupInfo (
+    id varchar(36),
+    name varchar(255) not null unique,
+    type boolean,
+    primary key(id)
+);
+
+create table member (
+    userId varchar(36) not null,
+    groupId varchar(36) not null,
+    primary key (userId, groupId),
+    FOREIGN KEY (userId) REFERENCES user(id),
+    FOREIGN KEY (groupId) REFERENCES groupInfo(id)
+);
+
+create table admin (
+    userId varchar(36) not null,
+    groupId varchar(36) not null,
+    primary key (userId, groupId),
+    FOREIGN KEY (userId) REFERENCES user(id),
+    FOREIGN KEY (groupId) REFERENCES groupInfo(id)
+);
+
+create table tag (
+    id varchar(36),
+    name varchar(255) not null unique,
+    primary key (id)
+);
+
+create table tagRelation(
+    groupId varchar(36),
+    tagId varchar(36),
+    primary key (groupId, tagId),
+    FOREIGN KEY (tagId) REFERENCES tag(id),
+    FOREIGN KEY (groupId) REFERENCES groupInfo(id)
+);
