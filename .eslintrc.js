@@ -18,5 +18,6 @@ module.exports = {
     'react',
   ],
   rules: {
+    'react/jsx-no-bind': 'off'
   },
 };

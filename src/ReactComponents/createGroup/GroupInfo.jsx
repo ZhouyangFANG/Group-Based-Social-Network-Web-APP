@@ -51,8 +51,8 @@ export default function GroupInfo() {
               defaultValue="public"
               name="group-type-radio"
             >
-              <FormControlLabel value="public" control={<Radio />} label="Public" />
-              <FormControlLabel value="private" control={<Radio />} label="Private" />
+              <FormControlLabel name="typeLabel" value="public" control={<Radio />} label="Public" />
+              <FormControlLabel name="typeLabel" value="private" control={<Radio />} label="Private" />
             </RadioGroup>
           </FormControl>
         </Grid>

@@ -10,6 +10,8 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
+const lib = require('../fetch');
+
 const theme = createTheme();
 
 export default function SignIn() {
@@ -22,6 +24,25 @@ export default function SignIn() {
       password: data.get('password'),
     });
   };
+
+  async function confirmLogin() {
+    const pwd = document.getElementById('password');
+    const email = document.getElementById('email');
+    const res = await lib.login(email.value, pwd.value);
+    if (res === 200) {
+      const url = window.location.href;
+      const urlList = url.split('/');
+      urlList.pop();
+      let newUrl = '';
+      for (let i = 0; i < urlList.length; i += 1) {
+        newUrl = `${newUrl}${urlList[i]}/`;
+      }
+      newUrl = `${newUrl}groups`;
+      window.location.href = newUrl;
+    } else {
+      pwd.value = '';
+    }
+  }
 
   return (
     <ThemeProvider theme={theme}>
@@ -66,6 +87,7 @@ export default function SignIn() {
               type="submit"
               fullWidth
               variant="contained"
+              onClick={confirmLogin}
               sx={{ mt: 3, mb: 2 }}
             >
               Login
