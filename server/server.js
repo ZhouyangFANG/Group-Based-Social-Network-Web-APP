@@ -19,6 +19,7 @@ app.use(cors({
   origin: '*'
 }));
 
+
 app.post('/users', routes.createUser)
 app.post('/login', routes.loginUser)
 app.put('/users', routes.checkCookie, routes.updateUser)
