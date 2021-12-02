@@ -1,5 +1,5 @@
 import { React, useState } from 'react';
-import { Link as RouterLink, useParams } from 'react-router-dom';
+import { Link as RouterLink, useParams, useHistory} from 'react-router-dom';
 import Link from '@material-ui/core/Link';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -22,6 +22,8 @@ import OutlinedInput from '@mui/material/OutlinedInput';
 import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
+import { getGroupList, addAdmin, removeAdmin, requestToJoinGroup, inviteUser, leaveGroup, filterGroupsByTags } from '../api';
+import { TextField } from '@mui/material';
 
 const style = {
   position: 'absolute',
@@ -70,71 +72,47 @@ function getStyles(name, personName, theme) {
 
 function MainView() {
   const theme = useTheme();
-  const [personName, setPersonName] = useState([]);
-
-  const [open, setOpen] = useState(false);
-  const handleOpen = () => {
-    setOpen(true);
-    setPersonName([]);
-  };
-  const handleClose = () => setOpen(false);
-
-  const [openJoin, setOpenJoin] = useState(false);
-  const handleOpenJoin = () => {
-    setOpenJoin(true);
-  };
-  const handleCloseJoin = () => setOpenJoin(false);
-
-  const handleChange = (event) => {
-    const {
-      target: { value },
-    } = event;
-    setPersonName(
-      // On autofill we get a the stringified value.
-      typeof value === 'string' ? value.split(',') : value,
-    );
-  };
-
+  const [groupList, setGroupList] = useState([]);
+  const userName = 'FakeName';
+  const history = useHistory();
   const columns = [
     {
-      field: 'groupName',
+      field: 'name',
       headerName: 'Group Name',
-      width: 200,
+      width: 150,
       renderCell: (params) => (
         <Link component={RouterLink} to="/cis557" variant="body2">{params.value}</Link>
       ),
     },
-    { field: 'topics', headerName: 'Topics', width: 400 },
+    { field: 'tags', headerName: 'Tags', width: 200 },
     {
       field: 'join',
       headerName: 'Request to join',
       width: 150,
-      renderCell: () => (
-        <Button variant="contained" color="primary" onClick={() => handleOpenJoin()}>Join</Button>
+      renderCell: (params) => (
+        <Button variant="contained" color="primary" onClick={()=> {handleJoinGroup(params)}}>Join</Button>
       ),
     },
   ];
 
-  const rows = [
-    { id: 1, groupName: 'Group 1', topics: 'Topic 1, Topic 2' },
-    { id: 2, groupName: 'Group 2', topics: 'Topic 1, Topic 2' },
-    { id: 3, groupName: 'Group 3', topics: 'Topic 1, Topic 2' },
-    { id: 4, groupName: 'Group 4', topics: 'Topic 1, Topic 2' },
-    { id: 5, groupName: 'Group 5', topics: 'Topic 1, Topic 2' },
-    { id: 6, groupName: 'Group 6', topics: 'Topic 1, Topic 2' },
-    { id: 7, groupName: 'Group 7', topics: 'Topic 1, Topic 2' },
-  ];
+  const handleJoinGroup = async (group) => {
+    console.log(group);
+    await requestToJoinGroup(group.id, userName);
+    const path = `/${group.row.name}`;
+    history.push(path);
+  }
 
-  const { type } = useParams();
-  let groupType;
-  if (type === 'my') {
-    groupType = 'My Groups';
-    columns[2].headerName = 'Invite Others';
-    columns[2].renderCell = () => (
-      <Button variant="contained" color="primary" onClick={() => handleOpen()}>Invite</Button>
-    );
-  } else {
-    groupType = 'Public Groups';
+  const handleGetGroupList = async (event) => {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+    const tags = data.get("tags");
+    console.log(tags);
+    if (!tags) {
+      await getGroupList(setGroupList);
+      console.log('get whole list');
+    } else {
+      filterGroupsByTags(tags, setGroupList);
+    }
   }
 
   return (
@@ -152,14 +130,15 @@ function MainView() {
               <MenuIcon />
             </IconButton>
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-              {groupType}
+              Public Group List
             </Typography>
-            <Button color="inherit">Back</Button>
+            <Button color="inherit">Logout</Button>
           </Toolbar>
         </AppBar>
       </Box>
-      <Grid container spacing={2}>
-        <Grid item xs={2} md={3}>
+
+      <Grid container spacing={1}>
+        <Grid item xs={2} md={2}>
           <Paper>
             <MenuList>
               <MenuItem>Personal Information</MenuItem>
@@ -170,10 +149,10 @@ function MainView() {
             </MenuList>
           </Paper>
         </Grid>
-        <Grid item xs={8} md={7}>
+        <Grid item xs={8} md={6}>
           <div style={{ height: 800, width: '100%' }}>
             <DataGrid
-              rows={rows}
+              rows={groupList}
               columns={columns}
               pageSize={8}
               rowsPerPageOptions={[5]}
@@ -182,70 +161,12 @@ function MainView() {
           </div>
         </Grid>
         <Grid item xs={2} md={1}>
-          <Card sx={{ minWidth: 275 }}>
-            <CardContent>
-              <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                Username: xxx
-              </Typography>
-              <Typography variant="body2">
-                ID: xxx
-              </Typography>
-            </CardContent>
-            <CardActions>
-              <Button size="small">Learn More</Button>
-            </CardActions>
-          </Card>
+          <Box component="form" onSubmit={handleGetGroupList} noValidate sx={{ mt: 1 }}>
+            <TextField name="tags" placeholder="tags" />
+            <Button variant='contained' type="submit">Get Group List</Button>
+          </Box>
         </Grid>
       </Grid>
-      <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box sx={style}>
-          <Typography id="modal-modal-title" variant="h6" component="h2">
-            Invite Friend to Group CIS557
-          </Typography>
-          <FormControl sx={{ m: 1, width: 300 }}>
-            <InputLabel id="demo-multiple-name-label">Name</InputLabel>
-            <Select
-              labelId="demo-multiple-name-label"
-              id="demo-multiple-name"
-              multiple
-              value={personName}
-              onChange={handleChange}
-              input={<OutlinedInput label="Name" />}
-              MenuProps={MenuProps}
-            >
-              {names.map((name) => (
-                <MenuItem
-                  key={name}
-                  value={name}
-                  style={getStyles(name, personName, theme)}
-                >
-                  {name}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-          <Button variant="contained" color="primary" onClick={() => handleClose()}>Submit</Button>
-        </Box>
-      </Modal>
-      <Modal
-        open={openJoin}
-        onClose={handleCloseJoin}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box sx={style}>
-          <Typography id="modal-modal-title" variant="h6" component="h2">
-            Are you sure to join Group CIS557?
-          </Typography>
-          <Button color="secondary" onClick={() => handleCloseJoin()}>No</Button>
-          <Button variant="contained" color="success" onClick={() => handleCloseJoin()}>Yes</Button>
-        </Box>
-      </Modal>
     </div>
   );
 }
