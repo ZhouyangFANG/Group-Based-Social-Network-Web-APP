@@ -16,6 +16,8 @@ import GroupInfo from './GroupInfo';
 import Admin from './Admin';
 import Review from './Review';
 
+const lib = require('../../fetch');
+
 function Copyright() {
   return (
     <Typography variant="body2" color="text.secondary" align="center">
@@ -49,14 +51,38 @@ const theme = createTheme();
 
 export default function CreateGroup() {
   const [activeStep, setActiveStep] = React.useState(0);
+  const [name, setName] = React.useState('');
+  const [topic, setTopic] = React.useState('');
+  const [type, setType] = React.useState('');
+  const [member, setMember] = React.useState('');
 
-  const handleNext = () => {
+  /* const handleNext = () => {
     setActiveStep(activeStep + 1);
-  };
+  }; */
 
   const handleBack = () => {
     setActiveStep(activeStep - 1);
   };
+
+  async function createGroup() {
+    if (activeStep === 0) {
+      const groupName = document.getElementById('groupName');
+      setName(groupName.value);
+      const groupTopic = document.getElementById('groupTopics');
+      setTopic(groupTopic.value);
+      const ans = document.getElementsByName('typeLabel');
+      for (let j = 0; j < ans.length; j += 1) {
+        if (ans[j].checked) {
+          setType(ans[j].value);
+        }
+      }
+    } else if (activeStep === 1) {
+      setMember('');
+    } else if (activeStep === 2) {
+      await lib.createGroup(name, topic, type, member);
+    }
+    setActiveStep(activeStep + 1);
+  }
 
   return (
     <ThemeProvider theme={theme}>
@@ -116,7 +142,7 @@ export default function CreateGroup() {
 
                   <Button
                     variant="contained"
-                    onClick={handleNext}
+                    onClick={createGroup}
                     sx={{ mt: 3, ml: 1 }}
                   >
                     {activeStep === steps.length - 1 ? 'Create Group' : 'Next'}

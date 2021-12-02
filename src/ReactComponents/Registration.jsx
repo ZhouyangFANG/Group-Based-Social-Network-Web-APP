@@ -9,6 +9,8 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
+const lib = require('../fetch');
+
 const theme = createTheme();
 
 export default function SignUp() {
@@ -21,6 +23,26 @@ export default function SignUp() {
       password: data.get('password'),
     });
   };
+
+  async function confirmRegister() {
+    const pwd = document.getElementById('password');
+    const email = document.getElementById('email');
+    const user = document.getElementById('userName');
+    const res = await lib.register(user.value, email.value, pwd.value);
+    if (res === 201) {
+      const url = window.location.href;
+      const urlList = url.split('/');
+      urlList.pop();
+      let newUrl = '';
+      for (let i = 0; i < urlList.length; i += 1) {
+        newUrl = `${newUrl}${urlList[i]}/`;
+      }
+      newUrl = `${newUrl}groups`;
+      window.location.href = newUrl;
+    } else {
+      pwd.value = '';
+    }
+  }
 
   return (
     <ThemeProvider theme={theme}>
@@ -77,6 +99,7 @@ export default function SignUp() {
               type="submit"
               fullWidth
               variant="contained"
+              onClick={confirmRegister}
               sx={{ mt: 3, mb: 2 }}
             >
               Register
