@@ -1,10 +1,14 @@
 const express = require('express')
 const app = express()
 const routes = require('./routes')
+const cookieParser = require('cookie-parser')
+const helmet = require("helmet");
 
 const cors = require('cors');
 
 app.use(express.json());
+app.use(helmet());
+app.use(cookieParser());
 app.use(
   express.urlencoded({
     extended: true,
@@ -15,15 +19,15 @@ app.use(cors({
   origin: '*'
 }));
 
-app.post('/users', routes.postUser)
+
+app.post('/users', routes.createUser)
 app.post('/login', routes.loginUser)
-
-//---------userInfo API------------
-app.get('/users/:id', routes.getUserInfo);
-app.put('/users/:id', routes.updateUserInfo);
-app.delete('/users/:id', routes.deleteUserInfo);
-
-app.use(require('./groupRouter'));
+app.put('/users', routes.checkCookie, routes.updateUser)
+app.put('/users/password', routes.checkCookie, routes.changePassword)
+app.delete('/users', routes.checkCookie, routes.deleteUser)
+app.get('/userInfo', routes.checkCookie, routes.userInfo)
+app.post('/group', routes.checkCookie, routes.createGroup)
+app.post('/tag', routes.checkCookie, routes.createTag)
 
 app.get('/', (req, res) => {
   res.send('Hello World!')
