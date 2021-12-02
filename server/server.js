@@ -25,6 +25,8 @@ app.put('/users', routes.checkCookie, routes.updateUser)
 app.put('/users/password', routes.checkCookie, routes.changePassword)
 app.delete('/users', routes.checkCookie, routes.deleteUser)
 app.get('/userInfo', routes.checkCookie, routes.userInfo)
+app.post('/group', routes.checkCookie, routes.createGroup)
+app.post('/tag', routes.checkCookie, routes.createTag)
 
 app.get('/', (req, res) => {
   res.send('Hello World!')

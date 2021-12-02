@@ -1,5 +1,6 @@
 const mysql = require('mysql');
 const sha256 = require('js-sha256');
+const async = require('async');
 require('dotenv').config();
 uuid = require('uuid');
 
@@ -19,46 +20,50 @@ connection.connect();
 
 async function checkCookie(req, res, next){
     const cookie = req.cookies.token;
-    const decipher = crypto.createDecipheriv(algorithm, secretKey, iv);
-
-    const decrpyted = Buffer.concat([decipher.update(Buffer.from(cookie, 'hex')), decipher.final()]).toString();
-    let userInfo;
-    try{
-      userInfo = JSON.parse(decrpyted);
-    } catch (e) {
+    if (!cookie){
       res.status(400);
-      res.json({ message: 'tampered cookie' })
-      return;
-    }
-
-    const username = userInfo.username;
-    const password = userInfo.password;
-
-    if (!username || !password){
-      res.status(400);
-      res.json({ message: 'tampered cookie' })
-      return;
+      res.json("no cookie, please login");
     } else {
-      connection.query(`SELECT * from user where 
-      username ='${username}';`, function (error, results, fields) {
-        if (error) {
-          res.status(400)
-          res.json({ message: 'tampered cookie', error: error })
-        } else if (results.length !== 1) {
-          res.status(400)
-          res.json({message: 'tampered cookie, No such user'})
-        } else {
-            if (results[0].username === username && results[0].password === sha256(password)){
-              req.userInfo = results[0];
-              next()
-            } else {
-              res.status(400)
-              res.json({message: 'tampered cookie, password incorrect'})  
-            }
-        }
-      });
-    }
+      const decipher = crypto.createDecipheriv(algorithm, secretKey, iv);
 
+      const decrpyted = Buffer.concat([decipher.update(Buffer.from(cookie, 'hex')), decipher.final()]).toString();
+      let userInfo;
+      try{
+        userInfo = JSON.parse(decrpyted);
+      } catch (e) {
+        res.status(400);
+        res.json({ message: 'tampered cookie' })
+        return;
+      }
+
+      const username = userInfo.username;
+      const password = userInfo.password;
+
+      if (!username || !password){
+        res.status(400);
+        res.json({ message: 'tampered cookie' })
+        return;
+      } else {
+        connection.query(`SELECT * from user where 
+        username ='${username}';`, function (error, results, fields) {
+          if (error) {
+            res.status(400)
+            res.json({ message: 'tampered cookie', error: error })
+          } else if (results.length !== 1) {
+            res.status(400)
+            res.json({message: 'tampered cookie, No such user'})
+          } else {
+              if (results[0].username === username && results[0].password === sha256(password)){
+                req.userInfo = results[0];
+                next()
+              } else {
+                res.status(400)
+                res.json({message: 'tampered cookie, password incorrect'})  
+              }
+          }
+        });
+      }
+    }
 
 }
 
@@ -204,6 +209,88 @@ async function userInfo(req, res){
   res.json(userInfo)
 }
 
+async function createGroup(req, res){
+  const name = req.body.name;
+  const type = req.body.type;
+  const groupId = uuid.v4();
+  const typeBool = (type === 'public') ? true : false;
+  let flag = true;
+
+  connection.query(`INSERT INTO groupInfo(id, name, type)
+    values ('${groupId}', '${name}', ${typeBool});`, function (error, results, fields) {
+      if (error) {
+        if(error.code === 'ER_DUP_ENTRY'){
+          res.status(409)
+          res.json({ message: error.sqlMessage })
+        } else {
+          res.status(400)
+          res.json({ error: error })
+        }
+      } else {
+        const admin = req.body.admin;
+
+        async.forEachOf(admin, function (adminElement, i, inner_callback){
+          connection.query(`INSERT INTO admin(userId, groupId)
+          values ('${adminElement}', '${groupId}');`, function(error, results, fields){
+              if(error){
+                  inner_callback(error);
+              } else {
+                  inner_callback(null);
+              };
+          });
+        }, function(error){
+            if(error){
+              res.status(400)
+              res.json({ error: error })
+            }else{
+              const tag = req.body.tag;
+              async.forEachOf(tag, function (tagElement, i, inner_callback2){
+                connection.query(`INSERT INTO tagRelation(groupId, tagId)
+                values ('${groupId}', '${tagElement}');`, function(error, results, fields){
+                    if(error){
+                        inner_callback2(error);
+                    } else {
+                        inner_callback2(null);
+                    };
+                });
+              }, function(error){
+                  if(error){
+                    res.status(400)
+                    res.json({ error: error })
+                  }else{
+                    res.status(200)
+                    res.json("success")
+                  }
+              });
+            }
+        });
+    }});
+}
+
+async function createTag(req, res){
+  const name = req.body.name;
+  if(name){
+    const tagId = uuid.v4();
+
+    connection.query(`INSERT INTO tag(id, name)
+      values ('${tagId}', '${name}');`, function (error, results, fields) {
+        if (error) {
+          if(error.code === 'ER_DUP_ENTRY'){
+            res.status(409)
+            res.json({ message: error.sqlMessage })
+          } else {
+            res.status(400)
+            res.json({ error: error })
+          }
+        } else {
+          res.status(200)
+          res.json({id: tagId, name:name})
+        }
+      });
+  }
+
+}
+
 module.exports = {
     createUser,
     loginUser,
@@ -211,5 +298,7 @@ module.exports = {
     userInfo,
     changePassword,
     deleteUser,
-    updateUser
+    updateUser,
+    createGroup,
+    createTag
   };
