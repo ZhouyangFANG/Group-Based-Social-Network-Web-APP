@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { React, useState } from 'react';
 // import { styled } from '@mui/material/styles';
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
@@ -13,7 +13,30 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import ShareIcon from '@mui/icons-material/Share';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 
-export default function Post() {
+export default function Posts(props) {
+  // const groupId = props.groupId;
+  // const [Page, setPage] = useState({
+  //   id: '',
+  //   name: '',
+  //   admins: [''],
+  //   members: [''],
+  //   tags: '',
+  //   visibility: true,
+  //   posts: [
+  //   {
+  //     id: '',
+  //     title: '',
+  //     author: '',
+  //     content: '',
+  //   },
+  //   ],
+  // });
+
+  // const showPage = async () => {
+
+  // }
+
+
   return (
 
     <Card sx={{ maxWidth: 700 }}>
@@ -22,12 +45,12 @@ export default function Post() {
           <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
             R
           </Avatar>
-                )}
+        )}
         action={(
           <IconButton aria-label="settings">
             <MoreVertIcon />
           </IconButton>
-                )}
+        )}
         title="CIS557 is really good"
         subheader="Nov 7, 2021"
       />
@@ -39,9 +62,7 @@ export default function Post() {
       />
       <CardContent>
         <Typography variant="body2" color="text.secondary">
-          This impressive paella is a perfect party dish and a fun meal to cook
-          together with your guests. Add 1 cup of frozen peas along with the mussels,
-          if you like.
+          This impressive pafun meal to cook together with your guests. Add 1 cup of frozen peas along with the mussels,if you like.
         </Typography>
       </CardContent>
       <CardActions disableSpacing>

@@ -17,11 +17,13 @@ function App() {
         <Switch>
           <Route path="/login" component={Login} />
           <Route path="/registration" component={Registration} />
-          <Route path="/groups/:type" component={MainView} />
+          <Route path="/groups/:groupId" component={GroupPage} />
           <Route path="/groups" component={MainView} />
+          {/* <Route path=":groupName" />
+            <Route /> */}
           <Route exact path="/user" component={UserProfile} />
           <Route exact path="/createGroup" component={CreateGroup} />
-          <Route exact path="/cis557" component={GroupPage} />
+          {/* <Route exact path="/cis557" component={GroupPage} /> */}
           <Route exact path="/sendMesg" component={UserSendMesg} />
           <Route exact path="/receiveMesg" component={UserReceivedMesg} />
         </Switch>

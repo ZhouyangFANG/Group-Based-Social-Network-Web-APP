@@ -7,21 +7,12 @@ import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 
-export default function Header() {
+export default function Header(props) {
   return (
     <AppBar position="sticky">
       <Toolbar>
-        <IconButton
-          size="large"
-          edge="start"
-          color="inherit"
-          aria-label="menu"
-          sx={{ mr: 2 }}
-        >
-          <MenuIcon />
-        </IconButton>
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-          CIS 557
+          {props.title}
         </Typography>
       </Toolbar>
     </AppBar>
