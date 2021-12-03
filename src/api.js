@@ -72,9 +72,9 @@ const testGroupPage = {
 
 
 export async function getGroupList(setGroupList) {
-  // const res = await axios.get(`${url}/groups`);
-  // setGroupList(res.data);
-  setGroupList(groupList);
+  const res = await axios.get(`${url}/groups`);
+  setGroupList(res.data);
+  // setGroupList(groupList);
 }
 
 export async function getGroupPage(groupId, setPage) {
