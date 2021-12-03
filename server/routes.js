@@ -5,6 +5,7 @@ require('dotenv').config();
 uuid = require('uuid');
 
 const crypto = require('crypto');
+const e = require('express');
 const algorithm = 'aes-256-ctr';
 const secretKey = 'xBLCvFTxhjkqjYTC2ynYuSVg3o6YMB1j';
 const iv = 'blahblahblahblah';
@@ -138,6 +139,12 @@ async function loginUser(req, res){
     });
 }
 
+async function logout(req, res){
+  res.status(200)
+  res.clearCookie('token')
+  res.json('successful logout')
+}
+
 async function updateUser(req, res){
   const email = req.body.email || 'NULL';
   const phone = req.body.phone || 'NULL';
@@ -204,9 +211,22 @@ async function deleteUser(req, res){
 }
 
 async function userInfo(req, res){
-  const userInfo = req.userInfo;
-  res.status(200)
-  res.json(userInfo)
+  const username = req.params.username;
+  connection.query(`select * from user where username = '${username}'`, 
+  function (error, results, fields) {
+    if(error){
+      res.status(400)
+      res.json({ error: error })
+    } else {
+      if(results.length === 0){
+        res.status(404)
+        res.json("no such user")
+      } else {
+        res.status(200)
+        res.json(results[0])
+      }
+    }
+  });
 }
 
 async function createGroup(req, res){
@@ -267,6 +287,30 @@ async function createGroup(req, res){
     }});
 }
 
+async function getPublicGroups(req, res){
+  connection.query(`SELECT * from groupInfo where type = true;`, function (error, results, fields) {
+    if (error) {
+      res.status(400)
+      res.json({ error: error })
+    } else{
+      res.status(200)
+      res.json(results)
+    }
+  });
+}
+
+async function getTags(req, res){
+  connection.query(`SELECT * from tag`, function (error, results, fields) {
+    if (error) {
+      res.status(400)
+      res.json({ error: error })
+    } else{
+      res.status(200)
+      res.json(results)
+    }
+  });
+}
+
 async function createTag(req, res){
   const name = req.body.name;
   if(name){
@@ -300,5 +344,8 @@ module.exports = {
     deleteUser,
     updateUser,
     createGroup,
-    createTag
+    createTag,
+    logout,
+    getPublicGroups,
+    getTags
   };

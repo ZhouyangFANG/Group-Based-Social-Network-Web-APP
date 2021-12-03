@@ -22,10 +22,17 @@ app.use(cors({
 
 app.post('/users', routes.createUser)
 app.post('/login', routes.loginUser)
+app.get('/logout', routes.checkCookie, routes.logout)
+
 app.put('/users', routes.checkCookie, routes.updateUser)
 app.put('/users/password', routes.checkCookie, routes.changePassword)
 app.delete('/users', routes.checkCookie, routes.deleteUser)
-app.get('/userInfo', routes.checkCookie, routes.userInfo)
+
+app.get('/users/:username', routes.checkCookie, routes.userInfo)
+
+app.get('/group', routes.checkCookie, routes.getPublicGroups)
+app.get('/tag', routes.checkCookie, routes.getTags)
+
 app.post('/group', routes.checkCookie, routes.createGroup)
 app.post('/tag', routes.checkCookie, routes.createTag)
 
