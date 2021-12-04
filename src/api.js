@@ -6,6 +6,7 @@ const url = !process.env.NODE_ENV || process.env.NODE_ENV === 'development'
   ? 'http://localhost:8080/api'
   : '/api';
 
+const delay = ms => new Promise(res => setTimeout(res, ms));
 
 const groupList = [
   {
@@ -80,6 +81,7 @@ export async function getGroupList(setGroupList) {
 export async function getGroupPage(groupName) {
   // const res = await axios.get(`${url}/groups/${groupName}`);
   // setPage(res.data);
+  await delay(1000);
   return testGroupPage;
 }
 

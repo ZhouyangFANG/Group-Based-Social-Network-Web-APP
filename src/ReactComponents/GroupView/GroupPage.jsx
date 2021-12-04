@@ -28,8 +28,21 @@ import LeftPanel from '../LeftPanel';
 export default function GroupPage() {
 
   const { groupName } = useParams();
-
   const [certainGroup, setCertainGroup] = useState(null);
+  // const [certainGroup, setCertainGroup] = useState({
+  //   id: '',
+  //   name: '',
+  //   admins: [''],
+  //   members: [''],
+  //   tags: '',
+  //   visibility: true,
+  //   posts: [{
+  //     id: '',
+  //     title: '',
+  //     author: '',
+  //     content: ''
+  //   }],
+  // });
 
   useEffect(async () => {
     let isMounted = true;
