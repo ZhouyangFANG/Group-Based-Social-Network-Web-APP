@@ -20,6 +20,8 @@ import { getGroupList,
 import Header from '../Header';
 import Posts from './Posts';
 
+// const lib = require('../../fetch');
+
 const theme = createTheme();
 
 export default function GroupPage() {
@@ -53,6 +55,12 @@ export default function GroupPage() {
     await leaveGroup(groupId, userName);
   }
 
+  function addPost() {
+    let url = window.location.href;
+    url += "/post";
+    window.location.href = url;
+  }
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
@@ -66,6 +74,7 @@ export default function GroupPage() {
                 <MenuItem>Settings</MenuItem>
                 <MenuItem>My Groups</MenuItem>
                 <MenuItem>Friends</MenuItem>
+                <MenuItem onClick={addPost}>Add A Post</MenuItem>
                 <MenuItem>Logout</MenuItem>
               </MenuList>
             </Paper>

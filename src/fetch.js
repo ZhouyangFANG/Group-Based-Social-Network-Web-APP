@@ -65,6 +65,29 @@ async function createGroup(nameV, topic, type, personName) {
   return record;
 }
 
+async function addPost(groupName, titleV, authorV, contentV) {
+  let statusCode;
+  await fetch(`${uri}api/groups/${groupName}/posts`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      title: titleV,
+      // admin: group.admin,
+      author: authorV,
+      content: contentV,
+    }),
+  }).then((res) => {
+    statusCode = res.status;
+  }).catch((err) => {
+    // Print the error if there is one.
+    window.console.log(err);
+  });
+  statusCode = 200;// 404
+  return statusCode;
+}
+
 export {
-  register, login, createGroup,
+  register, login, createGroup, addPost
 };
