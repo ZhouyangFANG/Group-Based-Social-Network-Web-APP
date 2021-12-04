@@ -72,15 +72,15 @@ const testGroupPage = {
 
 
 export async function getGroupList(setGroupList) {
-  const res = await axios.get(`${url}/groups`);
-  setGroupList(res.data);
-  // setGroupList(groupList);
+  // const res = await axios.get(`${url}/groups`);
+  // setGroupList(res.data);
+  setGroupList(groupList);
 }
 
-export async function getGroupPage(groupName, setPage) {
-  const res = await axios.get(`${url}/groups/${groupName}`);
+export async function getGroupPage(groupName) {
+  // const res = await axios.get(`${url}/groups/${groupName}`);
   // setPage(res.data);
-  // setPage(testGroupPage);
+  return testGroupPage;
 }
 
 export async function addAdmin(groupName, userId) {

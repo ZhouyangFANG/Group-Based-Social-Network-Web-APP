@@ -1,4 +1,4 @@
-import { React, useState } from 'react';
+import { React, useState, useEffect } from 'react';
 // import { styled } from '@mui/material/styles';
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
@@ -14,65 +14,53 @@ import ShareIcon from '@mui/icons-material/Share';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 
 export default function Posts(props) {
-  // const groupId = props.groupId;
-  // const [Page, setPage] = useState({
-  //   id: '',
-  //   name: '',
-  //   admins: [''],
-  //   members: [''],
-  //   tags: '',
-  //   visibility: true,
-  //   posts: [
-  //   {
-  //     id: '',
-  //     title: '',
-  //     author: '',
-  //     content: '',
-  //   },
-  //   ],
-  // });
+  const { certainGroup } = props;
 
-  // const showPage = async () => {
-
-  // }
-
+  useEffect(() => { console.log(certainGroup.posts); }, [certainGroup]);
 
   return (
-
-    <Card sx={{ maxWidth: 700 }}>
-      <CardHeader
-        avatar={(
-          <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
-            R
-          </Avatar>
-        )}
-        action={(
-          <IconButton aria-label="settings">
-            <MoreVertIcon />
-          </IconButton>
-        )}
-        title="CIS557 is really good"
-        subheader="Nov 7, 2021"
-      />
-      <CardMedia
-        component="img"
-        height="194"
-        image="/images/CIS557.png"
-        alt="pic"
-      />
-      <CardContent>
-        <Typography variant="body2" color="text.secondary">
-          This impressive pafun meal to cook together with your guests. Add 1 cup of frozen peas along with the mussels,if you like.
-        </Typography>
-      </CardContent>
-      <CardActions disableSpacing>
-        <IconButton aria-label="add to favorites">
-          <FavoriteIcon />
-        </IconButton>
-        <IconButton aria-label="share">
-          <ShareIcon />
-        </IconButton>
-      </CardActions>
-    </Card>
+    <>
+      {
+        certainGroup && (
+          certainGroup.posts.map((post) => {
+            <Card sx={{ maxWidth: 700 }}>
+              <CardHeader
+                avatar={(
+                  <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
+                    R
+                  </Avatar>
+                )}
+                action={(
+                  <IconButton aria-label="settings">
+                    <MoreVertIcon />
+                  </IconButton>
+                )}
+                title={post.title}
+              // subheader="Nov 7, 2021"
+              />
+              <CardMedia
+                component="img"
+                height="194"
+                image="/images/CIS557.png"
+                alt="pic"
+              />
+              <CardContent>
+                <Typography variant="body2" color="text.secondary">
+                  {post.content}
+                </Typography>
+              </CardContent>
+              <CardActions disableSpacing>
+                <IconButton aria-label="add to favorites">
+                  <FavoriteIcon />
+                </IconButton>
+                <IconButton aria-label="share">
+                  <ShareIcon />
+                </IconButton>
+              </CardActions>
+            </Card>
+          })
+        )
+      }
+    </>
   );
 }
