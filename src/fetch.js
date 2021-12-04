@@ -1,4 +1,4 @@
-const uri = !process.env.NODE_ENV || process.env.NODE_ENV === 'development' ? 'http://localhost:5000/' : '/';
+const uri = !process.env.NODE_ENV || process.env.NODE_ENV === 'development' ? 'http://localhost:5000/api/' : '/api/';
 
 async function register(user, emailV, pwd) {
   let statusCode;
