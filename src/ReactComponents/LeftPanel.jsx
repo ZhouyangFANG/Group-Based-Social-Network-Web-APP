@@ -13,30 +13,17 @@ import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import { TextField } from '@mui/material';
-import { getGroupList, 
-  addAdmin, 
-  removeAdmin, 
-  requestToJoinGroup, inviteUser, leaveGroup, filterGroupsByTags, getGroupPage } from '../../api';
-import Header from '../Header';
-import Posts from './Posts';
-import ControlPanel from './ControlPanel';
-import LeftPanel from '../LeftPanel';
 
-
-export default function GroupPage() {
-
-  const {groupName} = useParams();
-
-  return (
-      <>
-        <Header title={groupName} />
-        <Grid container spacing={2}>
-          <LeftPanel />
-          <Grid item xs={8} md={5}>
-            <Posts groupName={groupName}/>
-          </Grid>
-          <ControlPanel groupName={groupName} />
-        </Grid>
-      </>
-  );
+export default function LeftPanel() {
+  return (<Grid item xs={2} md={3}>
+    <Paper style={{ position: 'fixed' }}>
+      <MenuList>
+        <MenuItem component={RouterLink} to="/user">Personal Information</MenuItem>
+        <MenuItem>Settings</MenuItem>
+        <MenuItem>My Groups</MenuItem>
+        <MenuItem>Friends</MenuItem>
+        <MenuItem>Logout</MenuItem>
+      </MenuList>
+    </Paper>
+  </Grid>);
 }
