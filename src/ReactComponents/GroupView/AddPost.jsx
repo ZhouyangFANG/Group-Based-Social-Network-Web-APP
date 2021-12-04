@@ -9,12 +9,13 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import Alert from '@mui/material/Alert';
 
 const lib = require('../../fetch');
 
 const theme = createTheme();
 
-export default function SignIn() {
+export default function AddPost() {
   const handleSubmit = (event) => {
     event.preventDefault();
   };
@@ -27,7 +28,7 @@ export default function SignIn() {
     const urlList = url.split('/');
     urlList.pop();
     const groupID = urlList.pop();
-    const res = await lib.login(groupID, title.value, "", content.value);
+    const res = await lib.addPost(groupID, title.value, "", content.value);
     if (res === 200) {
       let newUrl = '';
       for (let i = 0; i < urlList.length; i += 1) {
@@ -36,7 +37,11 @@ export default function SignIn() {
       newUrl = `${newUrl}${groupID}`;
       window.location.href = newUrl;
     } else {
-      ;
+      alert('Error!');
+      window.location.href = window.location.href;
+      /* const str = '<Alert severity="error">This is an error alert — check it out!</Alert>\n';
+      const box = document.getElementById('textBox');
+      box.innerHTML = str + box.innerHTML; */
     }
   }
 
@@ -55,7 +60,7 @@ export default function SignIn() {
           <Typography component="h1" variant="h5">
             Add A Post
           </Typography>
-          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+          <Box component="form" id="textBox" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
             <TextField
               margin="normal"
               required

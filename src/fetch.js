@@ -84,7 +84,7 @@ async function addPost(groupName, titleV, authorV, contentV) {
     // Print the error if there is one.
     window.console.log(err);
   });
-  statusCode = 200;// 404
+  statusCode = 404;//200;// 404
   return statusCode;
 }
 
