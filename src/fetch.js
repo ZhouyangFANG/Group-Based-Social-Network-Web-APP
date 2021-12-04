@@ -1,4 +1,4 @@
-const uri = !process.env.NODE_ENV || process.env.NODE_ENV === 'development' ? 'http://localhost:5000/' : '/';
+const uri = !process.env.NODE_ENV || process.env.NODE_ENV === 'development' ? 'http://localhost:8080/' : '/';
 
 async function register(user, emailV, pwd) {
   let statusCode;
@@ -37,7 +37,6 @@ async function login(name, pwd) {
   }).catch((err) => {
     window.console.log(err);
   });
-  statusCode = 200;
   return statusCode;
 }
 
