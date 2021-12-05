@@ -18,7 +18,7 @@ function App() {
         <Switch>
           <Route path="/login" component={Login} />
           <Route path="/registration" component={Registration} />
-          <Route exact path="/groups/:groupId" component={GroupPage} />
+          <Route exact path="/groups/:groupName" component={GroupPage} />
           <Route path="/groups/:groupId/post" component={AddPost} />
           <Route path="/groups" component={MainView} />
           {/* <Route path=":groupName" />
