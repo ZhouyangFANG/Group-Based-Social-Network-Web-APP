@@ -1,4 +1,4 @@
-import { React, useState } from 'react';
+import { React, useState, useEffect } from 'react';
 // import { styled } from '@mui/material/styles';
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
@@ -12,6 +12,8 @@ import { red } from '@mui/material/colors';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import ShareIcon from '@mui/icons-material/Share';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+
+const lib = require('../../fetch');
 
 export default function Posts(props) {
   // const groupId = props.groupId;
@@ -35,6 +37,13 @@ export default function Posts(props) {
   // const showPage = async () => {
 
   // }
+  async function showPosts() {
+    ;
+  }
+
+  useEffect(() => {
+    showPosts();
+  }, []);
 
 
   return (
