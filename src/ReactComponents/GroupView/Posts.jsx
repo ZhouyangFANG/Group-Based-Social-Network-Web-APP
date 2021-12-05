@@ -10,13 +10,24 @@ import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import { red } from '@mui/material/colors';
 import FavoriteIcon from '@mui/icons-material/Favorite';
-import ShareIcon from '@mui/icons-material/Share';
+import DeleteIcon from '@mui/icons-material/Delete';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import AssistantPhotoIcon from '@mui/icons-material/AssistantPhoto';
 
 const lib = require('../../fetch');
 
 export default function Posts(props) {
   const { certainGroup } = props;
+
+  async function deletePost(postId) {
+    const res = await lib.deletePost(postId);
+    window.location.reload();
+  }
+
+  async function flagPost(postId) {
+    const res = await lib.flagPost(postId);
+    window.location.reload();
+  }
 
   // useEffect(() => { console.log('nothing'); }, [certainGroup]);
   const List = () => (
@@ -51,8 +62,11 @@ export default function Posts(props) {
           <IconButton aria-label="add to favorites">
             <FavoriteIcon />
           </IconButton>
-          <IconButton aria-label="share">
-            <ShareIcon />
+          <IconButton aria-label="flag" id="flag" onClick={flagPost(post.id)}>
+            <AssistantPhotoIcon />
+          </IconButton>
+          <IconButton aria-label="delete" id="delete" onClick={deletePost(post.id)}>
+            <DeleteIcon />
           </IconButton>
         </CardActions>
       </Card>
