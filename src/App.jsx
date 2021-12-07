@@ -18,12 +18,12 @@ function App() {
         <Switch>
           <Route path="/login" component={Login} />
           <Route path="/registration" component={Registration} />
-          <Route exact path="/groups/:groupId" component={GroupPage} />
+          <Route exact path="/groups/:groupName" component={GroupPage} />
           <Route path="/groups/:groupId/post" component={AddPost} />
           <Route path="/groups" component={MainView} />
           {/* <Route path=":groupName" />
             <Route /> */}
-          <Route exact path="/user" component={UserProfile} />
+          <Route exact path="/user/:username" component={UserProfile} />
           <Route exact path="/createGroup" component={CreateGroup} />
           {/* <Route exact path="/cis557" component={GroupPage} /> */}
           <Route exact path="/sendMesg" component={UserSendMesg} />

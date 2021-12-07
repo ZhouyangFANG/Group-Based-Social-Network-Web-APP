@@ -16,7 +16,33 @@ import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 
+const lib = require('../fetch');
+
 function UserProfile() {
+  async function getProfile() {
+    const usernameV = document.getElementById('username');
+    const gender = document.getElementById('gender');
+    const link = document.getElementById('link');
+    const phone = document.getElementById('phone');
+    const email = document.getElementById('email');
+
+    const url = window.location.href;
+    const urlList = url.split('/');
+    const username = urlList.pop();
+    const res = await lib.getProfile(username);
+    if (res !== undefined) {
+      usernameV.value = res.username;
+      gender.value = res.gender;
+      link.value = res.link;
+      phone.value = res.phone;
+      birth.value = res.birth;
+    }
+  }
+
+  React.useEffect(async () => {
+    getProfile();
+  }, []);
+
   return (
     <div>
       <Box sx={{ flexGrow: 1 }}>
@@ -53,19 +79,11 @@ function UserProfile() {
         <Grid item xs={7} md={6}>
           <Stack spacing={2}>
             Personal Information
-            <TextField
-              variant="outlined"
-              margin="normal"
-              id="email"
-              label="Email"
-              autoFocus
-            >
-              Email
-            </TextField>
+            <TextField variant="outlined" margin="normal" id="email" label="Email" autoFocus />
             <TextField variant="outlined" margin="normal" id="username" label="User Name" autoFocus />
             <TextField variant="outlined" margin="normal" id="phone" label="Phone Number" autoFocus />
             <TextField variant="outlined" margin="normal" id="link" label="Links" autoFocus />
-            <TextField variant="outlined" margin="normal" id="gender" label="Gender" autoFocus />
+            <TextField margin="normal" id="gender" label="Gender" autoFocus />
             <TextField variant="outlined" margin="normal" id="birth" label="Birthday" autoFocus />
             <Button variant="contained">Save</Button>
 
