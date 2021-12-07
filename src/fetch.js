@@ -64,6 +64,94 @@ async function createGroup(nameV, topic, type, personName) {
   return record;
 }
 
+async function addPost(groupName, titleV, authorV, contentV) {
+  let statusCode;
+  await fetch(`${uri}api/groups/${groupName}/posts`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      title: titleV,
+      // admin: group.admin,
+      author: authorV,
+      content: contentV,
+    }),
+  }).then((res) => {
+    statusCode = res.status;
+  }).catch((err) => {
+    // Print the error if there is one.
+    window.console.log(err);
+  });
+  statusCode = 404;//200;// 404
+  return statusCode;
+}
+
+async function deletePost(postId) {
+  let statusCode;
+  await fetch(`${uri}api/groups/${groupName}/posts`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      title: titleV,
+      // admin: group.admin,
+      author: authorV,
+      content: contentV,
+    }),
+  }).then((res) => {
+    statusCode = res.status;
+  }).catch((err) => {
+    // Print the error if there is one.
+    window.console.log(err);
+  });
+  statusCode = 200;// 404
+  return statusCode;
+}
+
+async function flagPost(postId) {
+  let statusCode;
+  await fetch(`${uri}api/groups/${groupName}/posts`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      title: titleV,
+      // admin: group.admin,
+      author: authorV,
+      content: contentV,
+    }),
+  }).then((res) => {
+    statusCode = res.status;
+  }).catch((err) => {
+    // Print the error if there is one.
+    window.console.log(err);
+  });
+  statusCode = 200;// 404
+  return statusCode;
+}
+
+async function getProfile(username) {
+  let res;
+  await fetch(`${uri}api/users/${username}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  }).then((response) => response.json())
+    .then((data) => {
+      //
+      res = data;
+      window.console.log(data);
+    }).catch((error) => {
+      window.console.log(error);
+    });
+  res = {email: 'aaa@', phone: '12345', gender: 'famale'};
+  return res;
+}
+
 export {
-  register, login, createGroup,
+  register, login, createGroup, addPost, deletePost, flagPost, getProfile,
 };

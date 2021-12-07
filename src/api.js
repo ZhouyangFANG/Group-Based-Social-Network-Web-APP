@@ -3,9 +3,10 @@ import axios from 'axios';
 // const url = 'http://localhost:4990';
 // const url = 'https://hw3-mongo-backend.herokuapp.com';
 const url = !process.env.NODE_ENV || process.env.NODE_ENV === 'development'
-  ? 'http://localhost:5000'
-  : '';
+  ? 'http://localhost:8080/api'
+  : '/api';
 
+const delay = ms => new Promise(res => setTimeout(res, ms));
 
 const groupList = [
   {
@@ -72,40 +73,41 @@ const testGroupPage = {
 
 
 export async function getGroupList(setGroupList) {
-  const res = await axios.get(`${url}/groups`);
-  setGroupList(res.data);
-  // setGroupList(groupList);
+  // const res = await axios.get(`${url}/groups`);
+  // setGroupList(res.data);
+  setGroupList(groupList);
 }
 
-export async function getGroupPage(groupId, setPage) {
-  const res = await axios.get(`${url}/groups/${groupId}`);
+export async function getGroupPage(groupName) {
+  // const res = await axios.get(`${url}/groups/${groupName}`);
   // setPage(res.data);
-  // setPage(testGroupPage);
+  await delay(1000);
+  return testGroupPage;
 }
 
-export async function addAdmin(groupId, userId) {
-  const res = await axios.post(`${url}/groups/${groupId}/admins/${userId}`);
+export async function addAdmin(groupName, userId) {
+  const res = await axios.post(`${url}/groups/${groupName}/admins/${userId}`);
   return res.data;
 }
 
-export async function removeAdmin(groupId, userId) {
-  const res = await axios.delete(`${url}/groups/${groupId}/admins/${userId}`);
+export async function removeAdmin(groupName, userId) {
+  const res = await axios.delete(`${url}/groups/${groupName}/admins/${userId}`);
   return res.data;
 }
 
-export async function requestToJoinGroup(groupId, userName) {
-  const res = await axios.post(`${url}/groups/${groupId}/join`, userName);
+export async function requestToJoinGroup(groupName, userName) {
+  const res = await axios.post(`${url}/groups/${groupName}/join`, userName);
   return res.data;
 }
 
 // 8 Invite a user into a group (public and private) (0)
-export async function inviteUser(groupId, userName) {
-  const res = await axios.post(`${url}/groups/${groupId}/invite`, userName);
+export async function inviteUser(groupName, userName) {
+  const res = await axios.post(`${url}/groups/${groupName}/invite`, userName);
   return res.data;
 }
 
-export async function leaveGroup(groupId, userName) {
-  const res = await axios.delete(`${url}/groups/${groupId}/leave`, userName);
+export async function leaveGroup(groupName, userName) {
+  const res = await axios.delete(`${url}/groups/${groupName}/leave`, userName);
   return res.data;
 }
 
