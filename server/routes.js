@@ -288,7 +288,11 @@ async function createGroup(req, res){
 }
 
 async function getPublicGroups(req, res){
-  connection.query(`SELECT * from groupInfo where type = true;`, function (error, results, fields) {
+  connection.query(`SELECT groupInfo.id, groupInfo.name, groupInfo.type, max(p.datetime) as latest, count(p.id) as num_posts, t.cnt as num_members from groupInfo
+  left join post p on groupInfo.id = p.groupId,
+  (select groupInfo.id, count(member.userId) as cnt from groupInfo join member on groupInfo.id = member.groupId) t
+where groupInfo.type = true
+group by groupInfo.id;`, function (error, results, fields) {
     if (error) {
       res.status(400)
       res.json({ error: error })
@@ -335,6 +339,142 @@ async function createTag(req, res){
 
 }
 
+async function createPost(req, res){
+  const userId = req.userInfo.id;
+  const groupId = req.params.groupId;
+  const title = req.body.title;
+  const postContent = req.body.postContent;
+  const attachment = req.body.attachment ? `'${req.body.attachment}''` : 'NULL';
+  const attachmentType = req.body.attachmentType;
+
+  const postId = uuid.v4();
+
+  connection.query(`INSERT INTO post(id, title, author, groupId, postContent, attachment, attachmentType, datetime)
+      values ('${postId}', '${title}', '${userId}', '${groupId}', '${postContent}',
+       ${attachment}, '${attachmentType}', '${new Date().toISOString().slice(0, 19).replace('T', ' ')}');`, function (error, results, fields) {
+        if (error) {
+          res.status(400)
+          res.json({ error: error })
+        } else {
+          res.status(200)
+          res.json('success')
+        }
+      });
+}
+
+async function flagPost(req, res){
+  const postId = req.params.postId;
+  const userId = req.userInfo.id;
+
+
+  connection.query(`UPDATE post SET flagger = '${userId}'
+  where id = '${postId}';`, function (error, results, fields) {
+        if (error) {
+          res.status(400)
+          res.json({ error: error })
+        } else {
+          res.status(200)
+          res.json('success')
+        }
+      });
+}
+
+async function deletePost(req, res){
+  const postId = req.params.postId;
+  connection.query(`UPDATE post SET deleted = true where id = '${postId}'`, function (error, results, fields) {
+    if (error) {
+      res.status(400)
+      res.json({ error: error })
+    } else {
+      res.status(200)
+      res.json('success')
+    }
+  });
+}
+
+async function hidePost(req, res){
+  const postId = req.params.postId;
+  const userId = req.userInfo.id;
+  connection.query(`INSERT INTO hide(postId, userId)
+      values ('${postId}', '${userId}');`, function (error, results, fields) {
+        if (error) {
+          if(error.code === 'ER_DUP_ENTRY'){
+            res.status(409)
+            res.json({ message: error.sqlMessage })
+          } else {
+            res.status(400)
+            res.json({ error: error })
+          }
+        } else {
+          res.status(200)
+          res.json({postId: postId, userId:userId})
+        }
+      });
+}
+
+async function getHidePost(req, res){
+  const userId = req.userInfo.id;
+  connection.query(`SELECT postId from hide where userId = '${userId}';`, function (error, results, fields) {
+        if (error) {
+          res.status(400)
+          res.json({ error: error })
+        } else {
+          res.status(200)
+          res.json(results)
+        }
+      });
+}
+
+
+async function deleteComment(req, res){
+  const commentId = req.params.commentId;
+  const userId = req.userInfo.id;
+  connection.query(`UPDATE comment SET deleted = true where id = '${commentId}' and author = '${userId}';`, 
+  function (error, results, fields) {
+        if (error) {
+          res.status(400)
+          res.json({ error: error })
+        } else {
+          res.status(200)
+          res.json(results)
+        }
+      });
+}
+
+async function groupRecommendation(req, res){
+  const userId = req.userInfo.id;
+  connection.query(`select * from groupInfo g where g.id not in
+  (select g.id from groupInfo g join member m on g.id = m.groupId where m.userId = '${userId}')
+  and g.type = true LIMIT 10;`, 
+  function (error, results, fields) {
+        if (error) {
+          res.status(400)
+          res.json({ error: error })
+        } else {
+          res.status(200)
+          res.json(results)
+        }
+      });
+}
+
+async function groupAnalytic(req, res){
+  const groupId = req.params.groupId;
+  connection.query(`select t1.id, num_member, num_post, num_deleted, num_flagged, t3.num_hidden from (select g.id, count(m.userId) as num_member from groupInfo g
+  join member m on g.id = m.groupId where g.id = '${groupId}') t1,
+            (select g.id, count(p.id) as num_post, COALESCE(sum(p.deleted = true),0) as num_deleted, COALESCE(sum(p.flagger IS NOT NULL),0) as num_flagged
+            from groupInfo g join post p on g.id = p.groupId where g.id = '${groupId}') t2,
+(select g.id, count(*) as num_hidden from groupInfo g join post p on g.id = p.groupId join hide h on p.id = h.postId where g.id = '${groupId}') t3;`, 
+  function (error, results, fields) {
+        if (error) {
+          res.status(400)
+          res.json({ error: error })
+        } else {
+          res.status(200)
+          res.json(results)
+        }
+      });
+}
+
 module.exports = {
     createUser,
     loginUser,
@@ -347,5 +487,13 @@ module.exports = {
     createTag,
     logout,
     getPublicGroups,
-    getTags
+    getTags,
+    createPost,
+    flagPost,
+    deletePost,
+    hidePost,
+    getHidePost,
+    deleteComment,
+    groupRecommendation,
+    groupAnalytic
   };
