@@ -1,11 +1,9 @@
 const mysql = require('mysql');
 const sha256 = require('js-sha256');
-const async = require('async');
 require('dotenv').config();
-uuid = require('uuid');
-
+const uuid = require('uuid');
 const crypto = require('crypto');
-const e = require('express');
+
 const algorithm = 'aes-256-ctr';
 const secretKey = 'xBLCvFTxhjkqjYTC2ynYuSVg3o6YMB1j';
 const iv = 'blahblahblahblah';
@@ -15,481 +13,463 @@ const connection = mysql.createConnection({
   user: process.env.rds_user,
   password: process.env.rds_password,
   port: process.env.rds_port,
-  database: process.env.rds_db
+  database: process.env.rds_db,
 });
 connection.connect();
 
-async function checkCookie(req, res, next){
-    const cookie = req.cookies.token;
-    if (!cookie){
+async function checkCookie(req, res, next) {
+  const cookie = req.cookies.token;
+  if (!cookie) {
+    res.status(400);
+    res.json({ message: 'no cookie, please login' });
+  } else {
+    const decipher = crypto.createDecipheriv(algorithm, secretKey, iv);
+
+    const decrpyted = Buffer.concat([decipher.update(Buffer.from(cookie, 'hex')), decipher.final()]).toString();
+    let userInfo;
+    try {
+      userInfo = JSON.parse(decrpyted);
+    } catch (e) {
       res.status(400);
-      res.json("no cookie, please login");
-    } else {
-      const decipher = crypto.createDecipheriv(algorithm, secretKey, iv);
-
-      const decrpyted = Buffer.concat([decipher.update(Buffer.from(cookie, 'hex')), decipher.final()]).toString();
-      let userInfo;
-      try{
-        userInfo = JSON.parse(decrpyted);
-      } catch (e) {
-        res.status(400);
-        res.json({ message: 'tampered cookie' })
-        return;
-      }
-
-      const username = userInfo.username;
-      const password = userInfo.password;
-
-      if (!username || !password){
-        res.status(400);
-        res.json({ message: 'tampered cookie' })
-        return;
-      } else {
-        connection.query(`SELECT * from user where 
-        username ='${username}';`, function (error, results, fields) {
-          if (error) {
-            res.status(400)
-            res.json({ message: 'tampered cookie', error: error })
-          } else if (results.length !== 1) {
-            res.status(400)
-            res.json({message: 'tampered cookie, No such user'})
-          } else {
-              if (results[0].username === username && results[0].password === sha256(password)){
-                req.userInfo = results[0];
-                next()
-              } else {
-                res.status(400)
-                res.json({message: 'tampered cookie, password incorrect'})  
-              }
-          }
-        });
-      }
+      res.json({ message: 'tampered cookie' });
+      return;
     }
 
-}
+    const { username, password } = userInfo;
 
-async function createUser(req, res){
-    const username = req.body.username;
-    const password = req.body.password;
-    const passwordHash = sha256(password);
-    const uuidv4 = uuid.v4();
-    connection.query(`INSERT INTO  user(id, username, password, registerDate)
-    values ('${uuidv4}', '${username}', '${passwordHash}', '${new Date().toISOString().slice(0, 10)}');`, function (error, results, fields) {
-      if (error) {
-        if(error.code === 'ER_DUP_ENTRY'){
-          res.status(409)
-          res.json({ message: error.sqlMessage })
+    if (!username || !password) {
+      res.status(400);
+      res.json({ message: 'tampered cookie' });
+    } else {
+      connection.query(`SELECT * from user where 
+        username ='${username}';`, (error, results) => {
+        if (error) {
+          res.status(400);
+          res.json({ message: 'tampered cookie', error });
+        } else if (results.length !== 1) {
+          res.status(400);
+          res.json({ message: 'tampered cookie, No such user' });
+        } else if (results[0].username === username && results[0].password === sha256(password)) {
+          [req.userInfo] = results;
+          next();
         } else {
-          res.status(400)
-          res.json({ error: error })
+          res.status(400);
+          res.json({ message: 'tampered cookie, password incorrect' });
         }
-      } else if (results) {
-        res.status(201)
-        const cipher = crypto.createCipheriv(algorithm, secretKey, iv);
-        const tokenJson = {
-          'username': username,
-          'password': password
-        };
-        const tokenString = JSON.stringify(tokenJson);
-        const encrypted = Buffer.concat([cipher.update(tokenString), cipher.final()]).toString('hex');
-        res.cookie(`token`,encrypted,{
-          maxAge: 24 * 60 * 60 * 1000,
-          secure: false,
-          httpOnly: true,
-          sameSite: 'lax'
-        });
-        res.json({ id: uuidv4, username: username, password: passwordHash})
-      }
-    });
+      });
+    }
+  }
 }
 
-async function loginUser(req, res){
-    const username = req.body.username;
-    const password = req.body.password;
-    connection.query(`SELECT * from user where 
-    username ='${username}';`, function (error, results, fields) {
-      if (error) {
-        res.status(400)
-        res.json({ error: error })
-      } else if (results.length !== 1) {
-        res.status(400)
-        res.json('No such user')
+async function createUser(req, res) {
+  const { username, password } = req.body;
+  const passwordHash = sha256(password);
+  const uuidv4 = uuid.v4();
+  connection.query(`INSERT INTO  user(id, username, password, registerDate)
+    values ('${uuidv4}', '${username}', '${passwordHash}', '${new Date().toISOString().slice(0, 10)}');`, (error, results) => {
+    if (error) {
+      if (error.code === 'ER_DUP_ENTRY') {
+        res.status(409);
+        res.json({ message: error.sqlMessage });
       } else {
-          if (results[0].username === username && results[0].password === sha256(password)){
-            const cipher = crypto.createCipheriv(algorithm, secretKey, iv);
-            const tokenJson = {
-              'username': username,
-              'password': password
-            };
-            const tokenString = JSON.stringify(tokenJson);
-            const encrypted = Buffer.concat([cipher.update(tokenString), cipher.final()]).toString('hex');
-            res.cookie(`token`,encrypted,{
-              maxAge: 24 * 60 * 60 * 1000,
-              secure: false,
-              httpOnly: true,
-              sameSite: 'lax'
-            });
-            res.status(200)
-            res.json('auth succsess')
-          } else {
-            res.status(400)
-            res.json('Password incorrect')  
-          }
+        res.status(400);
+        res.json({ error });
       }
-    });
+    } else if (results) {
+      res.status(201);
+      const cipher = crypto.createCipheriv(algorithm, secretKey, iv);
+      const tokenJson = {
+        username,
+        password,
+      };
+      const tokenString = JSON.stringify(tokenJson);
+      const encrypted = Buffer.concat([cipher.update(tokenString), cipher.final()]).toString('hex');
+      res.cookie('token', encrypted, {
+        maxAge: 24 * 60 * 60 * 1000,
+        secure: false,
+        httpOnly: true,
+        sameSite: 'lax',
+      });
+      res.json({ id: uuidv4, username, password: passwordHash });
+    }
+  });
 }
 
-async function logout(req, res){
-  res.status(200)
-  res.clearCookie('token')
-  res.json('successful logout')
+async function loginUser(req, res) {
+  const { username, password } = req.body;
+  connection.query(`SELECT * from user where 
+    username ='${username}';`, (error, results) => {
+    if (error) {
+      res.status(400);
+      res.json({ error });
+    } else if (results.length !== 1) {
+      res.status(400);
+      res.json('No such user');
+    } else if (results[0].username === username && results[0].password === sha256(password)) {
+      const cipher = crypto.createCipheriv(algorithm, secretKey, iv);
+      const tokenJson = {
+        username,
+        password,
+      };
+      const tokenString = JSON.stringify(tokenJson);
+      const encrypted = Buffer.concat([cipher.update(tokenString), cipher.final()]).toString('hex');
+      res.cookie('token', encrypted, {
+        maxAge: 24 * 60 * 60 * 1000,
+        secure: false,
+        httpOnly: true,
+        sameSite: 'lax',
+      });
+      res.status(200);
+      res.json({ message: 'auth succsess', id: results[0].id });
+    } else {
+      res.status(400);
+      res.json({ message: 'Password incorrect' });
+    }
+  });
 }
 
-async function updateUser(req, res){
+async function logout(req, res) {
+  res.status(200);
+  res.clearCookie('token');
+  res.json('successful logout');
+}
+
+async function updateUser(req, res) {
   const email = req.body.email || 'NULL';
   const phone = req.body.phone || 'NULL';
   const link = req.body.link || 'NULL';
   const gender = req.body.link || 'NULL';
-  const userInfo = req.userInfo;
+  const { userInfo } = req;
 
   connection.query(`UPDATE user SET email = '${email}', phone = '${phone}', link = '${link}', gender='${gender}' 
-  where id = '${userInfo.id}'`, function (error, results, fields) {
+  where id = '${userInfo.id}'`, (error, results) => {
     if (error) {
-      res.status(400)
-      res.json({ error: error })
+      res.status(400);
+      res.json({ error });
     } else {
-      res.status(200)
-      res.json({message:"update success"})
+      res.status(200);
+      res.json(results);
     }
-  });  
+  });
 }
 
-async function changePassword(req, res){
-  const userInfo = req.userInfo;
-  const newPassword = req.body.newPassword;
+async function changePassword(req, res) {
+  const { userInfo } = req;
+  const { newPassword } = req.body;
 
   const passwordHash = sha256(newPassword);
 
   connection.query(`UPDATE user SET password = '${passwordHash}' 
-  where id = '${userInfo.id}'`, function (error, results, fields) {
+  where id = '${userInfo.id}'`, (error, results) => {
     if (error) {
-      res.status(400)
-      res.json({ error: error })
+      res.status(400);
+      res.json({ error });
     } else {
-      res.status(200)
+      res.status(200);
       const cipher = crypto.createCipheriv(algorithm, secretKey, iv);
       const tokenJson = {
-        'username': userInfo.username,
-        'password': newPassword
+        username: userInfo.username,
+        password: newPassword,
       };
       const tokenString = JSON.stringify(tokenJson);
       const encrypted = Buffer.concat([cipher.update(tokenString), cipher.final()]).toString('hex');
-      res.cookie(`token`,encrypted,{
+      res.cookie('token', encrypted, {
         maxAge: 24 * 60 * 60 * 1000,
         secure: false,
         httpOnly: true,
-        sameSite: 'lax'
+        sameSite: 'lax',
       });
-      res.json({message:"password change success"})
+      res.json(results);
     }
   });
 }
 
-async function deleteUser(req, res){
-  const userInfo = req.userInfo;
-  connection.query(`DELETE FROM user where id = '${userInfo.id}'`, 
-  function (error, results, fields) {
-    if (error) {
-      res.status(400)
-      res.json({ error: error })
-    } else {
-      res.status(200)
-      res.clearCookie('token')
-      res.json({message:"account deleted"})
-    }
-  });
-}
-
-async function userInfo(req, res){
-  const username = req.params.username;
-  connection.query(`select * from user where username = '${username}'`, 
-  function (error, results, fields) {
-    if(error){
-      res.status(400)
-      res.json({ error: error })
-    } else {
-      if(results.length === 0){
-        res.status(404)
-        res.json("no such user")
+async function deleteUser(req, res) {
+  const { userInfo } = req;
+  connection.query(`DELETE FROM user where id = '${userInfo.id}'`,
+    (error, results) => {
+      if (error) {
+        res.status(400);
+        res.json({ error });
       } else {
-        res.status(200)
-        res.json(results[0])
+        res.status(200);
+        res.clearCookie('token');
+        res.json(results);
       }
-    }
-  });
+    });
 }
 
-async function createGroup(req, res){
+async function getUserInfo(req, res) {
+  const { username } = req.params;
+  connection.query(`select * from user where username = '${username}'`,
+    (error, results) => {
+      if (error) {
+        res.status(400);
+        res.json({ error });
+      } else if (results.length === 0) {
+        res.status(404);
+        res.json({ message: 'no such user' });
+      } else {
+        res.status(200);
+        res.json(results[0]);
+      }
+    });
+}
+
+async function createGroup(req, res) {
   const userId = req.userInfo.id;
 
-  const name = req.body.name;
-  const type = req.body.type;
+  const { name, type } = req.body;
   const groupId = uuid.v4();
-  const typeBool = (type === 'public') ? true : false;
-  let flag = true;
+  const typeBool = type === 'public';
 
   connection.query(`INSERT INTO groupInfo(id, name, type)
-    values ('${groupId}', '${name}', ${typeBool});`, function (error, results, fields) {
-      if (error) {
-        if(error.code === 'ER_DUP_ENTRY'){
-          res.status(409)
-          res.json({ message: error.sqlMessage })
-        } else {
-          res.status(400)
-          res.json({ error: error })
-        }
+    values ('${groupId}', '${name}', ${typeBool});`, (error) => {
+    if (error) {
+      if (error.code === 'ER_DUP_ENTRY') {
+        res.status(409);
+        res.json({ message: error.sqlMessage });
       } else {
-          connection.query(`INSERT INTO admin(userId, groupId)
-          values ('${userId}', '${groupId}');`, function(error, results, fields){
-              if(error){
-                res.status(400)
-                res.json({ error: error })
-              } else {
-                connection.query(`INSERT INTO member(userId, groupId)
-                values ('${userId}', '${groupId}');`, function(error, results, fields){
-                    if(error){
-                      res.status(400)
-                      res.json({ error: error })
-                    } else {
-                      const tag = req.body.tag;
-                      let q = 'INSERT INTO tagRelation(groupId, tagId) values ';
-                      for( let i = 0; i<tag.length -1; i ++){
-                        q = q.concat(`('${groupId}', '${tag[i]}'), `)
-                      }
-                      q = q.concat(`('${groupId}', '${tag[tag.length -1]}');`)
-                      connection.query(q, function(error, results, fields){
-                          if(error){
-                            res.status(400)
-                            res.json({ error: error })
-                          } else {
-                            res.status(200)
-                            res.json({id: groupId, name: name, type: type})
-                          };
-                      });
-                  }});
-              };
-        });
-    }});
+        res.status(400);
+        res.json({ error });
+      }
+    } else {
+      connection.query(`INSERT INTO admin(userId, groupId)
+          values ('${userId}', '${groupId}');`, (error2) => {
+        if (error2) {
+          res.status(400);
+          res.json({ error2 });
+        } else {
+          connection.query(`INSERT INTO member(userId, groupId)
+                values ('${userId}', '${groupId}');`, (error3) => {
+            if (error3) {
+              res.status(400);
+              res.json({ error3 });
+            } else {
+              const { tag } = req.body;
+              let q = 'INSERT INTO tagRelation(groupId, tagId) values ';
+              for (let i = 0; i < tag.length - 1; i += 1) {
+                q = q.concat(`('${groupId}', '${tag[i]}'), `);
+              }
+              q = q.concat(`('${groupId}', '${tag[tag.length - 1]}');`);
+              connection.query(q, (error4) => {
+                if (error4) {
+                  res.status(400);
+                  res.json({ error4 });
+                } else {
+                  res.status(200);
+                  res.json({ id: groupId, name, type });
+                }
+              });
+            }
+          });
+        }
+      });
+    }
+  });
 }
 
-async function getPublicGroups(req, res){
+async function getPublicGroups(req, res) {
   connection.query(`SELECT groupInfo.id, groupInfo.name, groupInfo.type,
   max(p.datetime) as latest, count(p.id) as num_posts, count(m.userId) as num_members
 from groupInfo left join post p on groupInfo.id = p.groupId
 left join member m on groupInfo.id = m.groupId
 where groupInfo.type = true
-group by groupInfo.id;`, function (error, results, fields) {
+group by groupInfo.id;`, (error, results) => {
     if (error) {
-      res.status(400)
-      res.json({ error: error })
-    } else{
-      res.status(200)
-      res.json(results)
+      res.status(400);
+      res.json({ error });
+    } else {
+      res.status(200);
+      res.json(results);
     }
   });
 }
 
-async function getTags(req, res){
-  connection.query(`SELECT * from tag`, function (error, results, fields) {
+async function getTags(req, res) {
+  connection.query('SELECT * from tag', (error, results) => {
     if (error) {
-      res.status(400)
-      res.json({ error: error })
-    } else{
-      res.status(200)
-      res.json(results)
+      res.status(400);
+      res.json({ error });
+    } else {
+      res.status(200);
+      res.json(results);
     }
   });
 }
 
-async function createTag(req, res){
-  const name = req.body.name;
-  if(name){
+async function createTag(req, res) {
+  const { name } = req.body;
+  if (name) {
     const tagId = uuid.v4();
 
     connection.query(`INSERT INTO tag(id, name)
-      values ('${tagId}', '${name}');`, function (error, results, fields) {
-        if (error) {
-          if(error.code === 'ER_DUP_ENTRY'){
-            res.status(409)
-            res.json({ message: error.sqlMessage })
-          } else {
-            res.status(400)
-            res.json({ error: error })
-          }
+      values ('${tagId}', '${name}');`, (error) => {
+      if (error) {
+        if (error.code === 'ER_DUP_ENTRY') {
+          res.status(409);
+          res.json({ message: error.sqlMessage });
         } else {
-          res.status(200)
-          res.json({id: tagId, name:name})
+          res.status(400);
+          res.json({ error });
         }
-      });
+      } else {
+        res.status(200);
+        res.json({ id: tagId, name });
+      }
+    });
   }
-
 }
 
-async function createPost(req, res){
+async function createPost(req, res) {
   const userId = req.userInfo.id;
-  const groupId = req.params.groupId;
-  const title = req.body.title;
-  const postContent = req.body.postContent;
+  const { groupId } = req.params;
+  const { title, postContent, attachmentType } = req.body;
   const attachment = req.body.attachment ? `'${req.body.attachment}''` : 'NULL';
-  const attachmentType = req.body.attachmentType;
 
   const postId = uuid.v4();
 
   connection.query(`INSERT INTO post(id, title, author, groupId, postContent, attachment, attachmentType, datetime)
       values ('${postId}', '${title}', '${userId}', '${groupId}', '${postContent}',
-       ${attachment}, '${attachmentType}', '${new Date().toISOString().slice(0, 19).replace('T', ' ')}');`, function (error, results, fields) {
-        if (error) {
-          res.status(400)
-          res.json({ error: error })
-        } else {
-          res.status(200)
-          res.json({id: postId})
-        }
-      });
-}
-
-async function flagPost(req, res){
-  const postId = req.params.postId;
-  const userId = req.userInfo.id;
-
-
-  connection.query(`UPDATE post SET flagger = '${userId}'
-  where id = '${postId}';`, function (error, results, fields) {
-        if (error) {
-          res.status(400)
-          res.json({ error: error })
-        } else {
-          res.status(200)
-          res.json(results)
-        }
-      });
-}
-
-async function deletePost(req, res){
-  const postId = req.params.postId;
-  connection.query(`UPDATE post SET deleted = true where id = '${postId}'`, function (error, results, fields) {
+       ${attachment}, '${attachmentType}', '${new Date().toISOString().slice(0, 19).replace('T', ' ')}');`, (error) => {
     if (error) {
-      res.status(400)
-      res.json({ error: error })
+      res.status(400);
+      res.json({ error });
     } else {
-      res.status(200)
-      res.json(results)
+      res.status(200);
+      res.json({ id: postId });
     }
   });
 }
 
-async function hidePost(req, res){
-  const postId = req.params.postId;
+async function flagPost(req, res) {
+  const { postId } = req.params;
+  const userId = req.userInfo.id;
+
+  connection.query(`UPDATE post SET flagger = '${userId}'
+  where id = '${postId}';`, (error, results) => {
+    if (error) {
+      res.status(400);
+      res.json({ error });
+    } else {
+      res.status(200);
+      res.json(results);
+    }
+  });
+}
+
+async function deletePost(req, res) {
+  const { postId } = req.params;
+  connection.query(`UPDATE post SET deleted = true where id = '${postId}'`, (error, results) => {
+    if (error) {
+      res.status(400);
+      res.json({ error });
+    } else {
+      res.status(200);
+      res.json(results);
+    }
+  });
+}
+
+async function hidePost(req, res) {
+  const { postId } = req.params;
   const userId = req.userInfo.id;
   connection.query(`INSERT INTO hide(postId, userId)
-      values ('${postId}', '${userId}');`, function (error, results, fields) {
-        if (error) {
-          if(error.code === 'ER_DUP_ENTRY'){
-            res.status(409)
-            res.json({ message: error.sqlMessage })
-          } else {
-            res.status(400)
-            res.json({ error: error })
-          }
-        } else {
-          res.status(200)
-          res.json({postId: postId, userId:userId})
-        }
-      });
+      values ('${postId}', '${userId}');`, (error) => {
+    if (error) {
+      if (error.code === 'ER_DUP_ENTRY') {
+        res.status(409);
+        res.json({ message: error.sqlMessage });
+      } else {
+        res.status(400);
+        res.json({ error });
+      }
+    } else {
+      res.status(200);
+      res.json({ postId, userId });
+    }
+  });
 }
 
-async function getHidePost(req, res){
+async function getHidePost(req, res) {
   const userId = req.userInfo.id;
-  connection.query(`SELECT postId from hide where userId = '${userId}';`, function (error, results, fields) {
-        if (error) {
-          res.status(400)
-          res.json({ error: error })
-        } else {
-          res.status(200)
-          res.json(results)
-        }
-      });
+  connection.query(`SELECT postId from hide where userId = '${userId}';`, (error, results) => {
+    if (error) {
+      res.status(400);
+      res.json({ error });
+    } else {
+      res.status(200);
+      res.json(results);
+    }
+  });
 }
 
-
-async function deleteComment(req, res){
-  const commentId = req.params.commentId;
+async function deleteComment(req, res) {
+  const { commentId } = req.params;
   const userId = req.userInfo.id;
-  connection.query(`UPDATE comment SET deleted = true where id = '${commentId}' and author = '${userId}';`, 
-  function (error, results, fields) {
-        if (error) {
-          res.status(400)
-          res.json({ error: error })
-        } else {
-          res.status(200)
-          res.json(results)
-        }
-      });
+  connection.query(`UPDATE comment SET deleted = true where id = '${commentId}' and author = '${userId}';`,
+    (error, results) => {
+      if (error) {
+        res.status(400);
+        res.json({ error });
+      } else {
+        res.status(200);
+        res.json(results);
+      }
+    });
 }
 
-async function groupRecommendation(req, res){
+async function groupRecommendation(req, res) {
   const userId = req.userInfo.id;
   connection.query(`select * from groupInfo g where g.id not in
   (select g.id from groupInfo g join member m on g.id = m.groupId where m.userId = '${userId}')
-  and g.type = true LIMIT 10;`, 
-  function (error, results, fields) {
-        if (error) {
-          res.status(400)
-          res.json({ error: error })
-        } else {
-          res.status(200)
-          res.json(results)
-        }
-      });
+  and g.type = true LIMIT 10;`, (error, results) => {
+    if (error) {
+      res.status(400);
+      res.json({ error });
+    } else {
+      res.status(200);
+      res.json(results);
+    }
+  });
 }
 
-async function groupAnalytic(req, res){
-  const groupId = req.params.groupId;
+async function groupAnalytic(req, res) {
+  const { groupId } = req.params;
   connection.query(`select t1.id, num_member, num_post, num_deleted, num_flagged, t3.num_hidden from (select g.id, count(m.userId) as num_member from groupInfo g
   join member m on g.id = m.groupId where g.id = '${groupId}') t1,
             (select g.id, count(p.id) as num_post, COALESCE(sum(p.deleted = true),0) as num_deleted, COALESCE(sum(p.flagger IS NOT NULL),0) as num_flagged
             from groupInfo g join post p on g.id = p.groupId where g.id = '${groupId}') t2,
-(select g.id, count(*) as num_hidden from groupInfo g join post p on g.id = p.groupId join hide h on p.id = h.postId where g.id = '${groupId}') t3;`, 
-  function (error, results, fields) {
-        if (error) {
-          res.status(400)
-          res.json({ error: error })
-        } else {
-          res.status(200)
-          res.json(results[0])
-        }
-      });
+(select g.id, count(*) as num_hidden from groupInfo g join post p on g.id = p.groupId join hide h on p.id = h.postId where g.id = '${groupId}') t3;`, (error, results) => {
+    if (error) {
+      res.status(400);
+      res.json({ error });
+    } else {
+      res.status(200);
+      res.json(results[0]);
+    }
+  });
 }
 
 module.exports = {
-    createUser,
-    loginUser,
-    checkCookie,
-    userInfo,
-    changePassword,
-    deleteUser,
-    updateUser,
-    createGroup,
-    createTag,
-    logout,
-    getPublicGroups,
-    getTags,
-    createPost,
-    flagPost,
-    deletePost,
-    hidePost,
-    getHidePost,
-    deleteComment,
-    groupRecommendation,
-    groupAnalytic
-  };
+  createUser,
+  loginUser,
+  checkCookie,
+  getUserInfo,
+  changePassword,
+  deleteUser,
+  updateUser,
+  createGroup,
+  createTag,
+  logout,
+  getPublicGroups,
+  getTags,
+  createPost,
+  flagPost,
+  deletePost,
+  hidePost,
+  getHidePost,
+  deleteComment,
+  groupRecommendation,
+  groupAnalytic,
+};
