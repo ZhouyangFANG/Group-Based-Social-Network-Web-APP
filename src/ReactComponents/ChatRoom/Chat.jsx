@@ -39,9 +39,12 @@ const Chat = () => {
 
     const handleUpload = (event) => {
         console.log(event.target.files[0]);
+        const objectURL = URL.createObjectURL(event.target.files[0]);
+        console.log(objectURL);
+        
         // const sound = () => <audio src={event.target.files[0]} autoPlay />;
-        const audioElement = new Audio(event.target.files[0]);
-        audioElement.play();
+        // const audioElement = new Audio(event.target.files[0]);
+        // audioElement.play();
     }
 
     return (

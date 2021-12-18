@@ -40,6 +40,8 @@ async function login(name, pwd) {
   })).catch((err) => {
     window.console.log(err);
   });
+  window.localStorage.setItem("username", username);
+  window.localStorage.setItem("userId", id);
   return statusCode;
 }
 
@@ -69,7 +71,7 @@ async function createGroup(nameV, topic, type, personName) {
 
 async function addPost(groupName, titleV, authorV, contentV) {
   let statusCode;
-  await fetch(`${uri}api/groups/${groupName}/posts`, {
+  await fetch(`${uri}groups/${groupName}/posts`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -92,7 +94,7 @@ async function addPost(groupName, titleV, authorV, contentV) {
 
 async function deletePost(postId) {
   let statusCode;
-  await fetch(`${uri}api/groups/${postId}/posts`, {
+  await fetch(`${uri}groups/${postId}/posts`, {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',
@@ -109,7 +111,7 @@ async function deletePost(postId) {
 
 async function flagPost(postId) {
   let statusCode;
-  await fetch(`${uri}api/groups/${postId}`, {
+  await fetch(`${uri}groups/${postId}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -126,11 +128,12 @@ async function flagPost(postId) {
 
 async function getProfile(username) {
   let res;
-  await fetch(`${uri}api/users/${username}`, {
-    method: 'PUT',
+  await fetch(`${uri}users/${username}`, {
+    method: 'GET',
     headers: {
       'Content-Type': 'application/json',
     },
+    credentials: 'include',
   }).then((response) => response.json())
     .then((data) => {
       //
@@ -139,13 +142,76 @@ async function getProfile(username) {
     }).catch((error) => {
       window.console.log(error);
     });
-  res = {email: 'aaa@', phone: '12345', gender: 'famale'};
+  return res;
+}
+
+
+async function updateProfile(emailV, genderV, phoneV, linkV) {
+  let res;
+  await fetch(`${uri}users`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      email: emailV,
+      gender: genderV,
+      phone: phoneV,
+      link: linkV,
+    }),
+    credentials: 'include',
+  }).then((response) => response.json())
+    .then((data) => {
+      res = response.status;
+      window.console.log(data);
+    }).catch((error) => {
+      window.console.log(error);
+    });
+  return res;
+}
+
+async function updatePwd(pwd) {
+  let res;
+  await fetch(`${uri}users/password`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      newPassword: pwd,
+    }),
+    credentials: 'include',
+  }).then((response) => response.json())
+    .then((data) => {
+      res = response.status;
+      window.console.log(data);
+    }).catch((error) => {
+      window.console.log(error);
+    });
+  return res;
+}
+
+async function getAllTag(tags) {
+  let res;
+  await fetch(`${uri}tag/`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include',
+  }).then((response) => response.json())
+    .then((data) => {
+      res = data;
+      window.console.log(data);
+    }).catch((error) => {
+      window.console.log(error);
+    });
   return res;
 }
 
 async function editComment(username) {
   let res;
-  await fetch(`${uri}/api/groups/${groupName}/posts/${postId}/comments/${commentId}`, {
+  await fetch(`${uri}groups/${groupName}/posts/${postId}/comments/${commentId}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -194,5 +260,5 @@ async function deleteComment(username) {
 }
 
 export {
-  register, login, createGroup, addPost, deletePost, flagPost, getProfile, editComment, deleteComment,
+  register, login, createGroup, addPost, deletePost, flagPost, getProfile, editComment, deleteComment, updateProfile, updatePwd, getAllTag,
 };

@@ -7,6 +7,9 @@ import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import Select from '@mui/material/Select';
 
 export default function GroupInfo() {
   return (
@@ -29,15 +32,6 @@ export default function GroupInfo() {
           <TextField
             id="groupTopics"
             label="Group Topics"
-            multiline
-            maxRows={4}
-            fullWidth
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <TextField
-            id="groupDescription"
-            label="Group Description"
             multiline
             maxRows={4}
             fullWidth

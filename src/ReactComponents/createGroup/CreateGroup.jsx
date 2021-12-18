@@ -56,10 +56,6 @@ export default function CreateGroup() {
   const [type, setType] = React.useState('');
   const [member, setMember] = React.useState('');
 
-  /* const handleNext = () => {
-    setActiveStep(activeStep + 1);
-  }; */
-
   const handleBack = () => {
     setActiveStep(activeStep - 1);
   };

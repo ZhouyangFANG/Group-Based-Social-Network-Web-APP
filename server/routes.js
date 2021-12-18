@@ -139,7 +139,7 @@ async function updateUser(req, res) {
   const email = req.body.email || 'NULL';
   const phone = req.body.phone || 'NULL';
   const link = req.body.link || 'NULL';
-  const gender = req.body.link || 'NULL';
+  const gender = req.body.gender || 'NULL';
   const { userInfo } = req;
 
   connection.query(`UPDATE user SET email = '${email}', phone = '${phone}', link = '${link}', gender='${gender}'
