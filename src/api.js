@@ -86,46 +86,46 @@ const testGroupPage = {
 
 
 export async function getGroupList(setGroupList) {
-  const res = await axios.get(`${url}/groups`);
+  const res = await axios.get(`${url}/groups`, { withCredentials: true });
   setGroupList(res.data);
   // setGroupList(groupList);
 }
 
 export async function getGroupPage(groupName) {
-  const res = await axios.get(`${url}/groups/${groupName}`);
+  const res = await axios.get(`${url}/groups/${groupName}`, { withCredentials: true });
   // await delay(1000);
   // return testGroupPage;
   return res.data;
 }
 
 export async function addAdmin(groupName, userId) {
-  const res = await axios.post(`${url}/groups/${groupName}/admins/${userId}`);
+  const res = await axios.post(`${url}/groups/${groupName}/admins/${userId}`, { withCredentials: true });
   return res.data;
 }
 
 export async function removeAdmin(groupName, userId) {
-  const res = await axios.delete(`${url}/groups/${groupName}/admins/${userId}`);
+  const res = await axios.delete(`${url}/groups/${groupName}/admins/${userId}`, { withCredentials: true });
   return res.data;
 }
 
 export async function requestToJoinGroup(groupName, userName) {
-  const res = await axios.post(`${url}/groups/${groupName}/join`, userName);
+  const res = await axios.post(`${url}/groups/${groupName}/join`, {userName}, { withCredentials: true });
   return res.data;
 }
 
 // 8 Invite a user into a group (public and private) (0)
 export async function inviteUser(groupName, userName) {
-  const res = await axios.post(`${url}/groups/${groupName}/invite`, userName);
+  const res = await axios.post(`${url}/groups/${groupName}/invite`, {userName}, { withCredentials: true });
   return res.data;
 }
 
 export async function leaveGroup(groupName, userName) {
-  const res = await axios.delete(`${url}/groups/${groupName}/leave`, userName);
+  const res = await axios.delete(`${url}/groups/${groupName}/leave`, {userName}, { withCredentials: true });
   return res.data;
 }
 
 export async function filterGroupsByTags(tag, setGroupList) {
-  const res = await axios.get(`${url}/groups/tags/${tag}`);
+  const res = await axios.get(`${url}/groups/tags/${tag}`, { withCredentials: true });
   setGroupList(res.data);
   // setGroupList(groupList);
 }
