@@ -101,7 +101,7 @@ async function deletePost(postId) {
     // Print the error if there is one.
     window.console.log(err);
   });
-  statusCode = 200;// 404
+  statusCode = 404;
   return statusCode;
 }
 
@@ -118,7 +118,7 @@ async function flagPost(postId) {
     // Print the error if there is one.
     window.console.log(err);
   });
-  statusCode = 200;// 404
+  statusCode = 404;
   return statusCode;
 }
 

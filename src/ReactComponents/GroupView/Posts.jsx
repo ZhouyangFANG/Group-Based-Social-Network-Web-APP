@@ -24,12 +24,16 @@ export default function Posts(props) {
 
   async function deletePost(postId) {
     const res = await lib.deletePost(postId);
-    //window.location.reload();
+    if (res === 200) {
+      window.location.reload();
+    }
   }
 
   async function flagPost(postId) {
     const res = await lib.flagPost(postId);
-    //window.location.reload();
+    if (res === 200) {
+      window.location.reload();
+    }
   }
 
   function hidePost(postId){
@@ -62,7 +66,6 @@ export default function Posts(props) {
                 <MoreVertIcon />
               </IconButton>
             )}
-            //title={post.title}
           />
           <CardMedia
             component="img"

@@ -11,23 +11,31 @@ const delay = ms => new Promise(res => setTimeout(res, ms));
 const groupList = [
   {
     id: '35134',
-    name: 'cis557',
+    name: 'cis557-1',
     tags: 'cis',
+    members: [1],
+    posts: [1,2,3],
   },
   {
     id: '134',
-    name: 'cis547',
+    name: 'cis547-2',
     tags: 'cis',
+    members: [6,1,3],
+    posts: [1,2],
   },
   {
     id: '35132',
-    name: 'cis537',
+    name: 'cis537-3',
     tags: 'cis',
+    members: [1,5,6,6,6],
+    posts: [1],
   },
   {
     id: '3514',
-    name: 'dat757',
+    name: 'dat757-4',
     tags: 'dat',
+    members: [1,4],
+    posts: [1,2,3,4],
   },
 ]
 
