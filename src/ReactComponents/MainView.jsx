@@ -116,6 +116,19 @@ function MainView() {
     }
   }
 
+  function toUserPage(){
+    const url = window.location.href;
+    const urlList = url.split('/');
+    urlList.pop();
+    let newUrl = '';
+    for (let i = 0; i < urlList.length; i += 1) {
+      newUrl = `${newUrl}${urlList[i]}/`;
+    }
+    const userName = window.localStorage.getItem("username");
+    newUrl = `${newUrl}user/${userName}`;
+    window.location.href = newUrl;
+  }
+
   const sortByPostsNum = () => {
     let arr = [...groupList];
     arr.sort(objectSortPostNum());
@@ -184,7 +197,7 @@ function MainView() {
         <Grid item xs={2} md={2}>
           <Paper>
             <MenuList>
-              <MenuItem>Personal Information</MenuItem>
+              <MenuItem onClick={toUserPage}>Personal Information</MenuItem>
               <MenuItem>Settings</MenuItem>
               <MenuItem>My Groups</MenuItem>
               <MenuItem>Friends</MenuItem>

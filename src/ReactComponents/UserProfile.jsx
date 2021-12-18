@@ -25,6 +25,7 @@ function UserProfile() {
     const link = document.getElementById('link');
     const phone = document.getElementById('phone');
     const email = document.getElementById('email');
+    const registerD = document.getElementById('register');
 
     const url = window.location.href;
     const urlList = url.split('/');
@@ -35,8 +36,23 @@ function UserProfile() {
       gender.value = res.gender;
       link.value = res.link;
       phone.value = res.phone;
-      birth.value = res.birth;
+      registerD.innerHTML += res.registerDate;
     }
+  }
+
+  async function updateProfile() {
+    const gender = document.getElementById('gender');
+    const link = document.getElementById('link');
+    const phone = document.getElementById('phone');
+    const email = document.getElementById('email');
+
+    const res = await lib.updateProfile(email.value, gender.value, phone.value, link.value);
+  }
+
+  async function updatePwd() {
+    const pwd = document.getElementById('pwd');
+
+    const res = await lib.updatePwd(pwd.value);
   }
 
   React.useEffect(async () => {
@@ -79,14 +95,15 @@ function UserProfile() {
         <Grid item xs={7} md={6}>
           <Stack spacing={2}>
             Personal Information
-            <TextField variant="outlined" margin="normal" id="email" label="Email" autoFocus />
-            <TextField variant="outlined" margin="normal" id="username" label="User Name" autoFocus />
+            <TextField  id="email" label="Email" autoFocus />
+            <TextField  id="username" label="User Name" />
             <TextField variant="outlined" margin="normal" id="phone" label="Phone Number" autoFocus />
             <TextField variant="outlined" margin="normal" id="link" label="Links" autoFocus />
             <TextField margin="normal" id="gender" label="Gender" autoFocus />
-            <TextField variant="outlined" margin="normal" id="birth" label="Birthday" autoFocus />
-            <Button variant="contained">Save</Button>
-
+            <div id="register">Registration date: </div>
+            <Button variant="contained" onClick={updateProfile}>Save</Button>
+            <TextField margin="normal" id="pwd" label="password" autoFocus />
+            <Button variant="contained" onClick={updatePwd}>Save</Button>
           </Stack>
         </Grid>
         <Grid item xs={2} md={2}>

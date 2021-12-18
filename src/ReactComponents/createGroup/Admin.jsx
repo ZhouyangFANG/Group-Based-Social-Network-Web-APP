@@ -10,6 +10,8 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 
+const lib = require('../../fetch');
+
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
 const MenuProps = {
@@ -47,6 +49,15 @@ export default function Admin() {
   const theme = useTheme();
   const [personName, setPersonName] = React.useState([]);
 
+  async function getTag() {
+    const res = await lib.getAllTag();
+    setPersonName(res);
+  }
+
+  React.useEffect(async () => {
+    getTag();
+  }, []);
+
   const handleChange = (event) => {
     const {
       target: { value },
@@ -76,11 +87,11 @@ export default function Admin() {
                 input={<OutlinedInput label="Name" />}
                 MenuProps={MenuProps}
               >
-                {names.map((name) => (
+                {personName.map((name) => (
                   <MenuItem
-                    key={name}
-                    value={name}
-                    style={getStyles(name, personName, theme)}
+                    key={name.id}
+                    value={name.name}
+                    style={getStyles(name.name, personName, theme)}
                   >
                     {name}
                   </MenuItem>
