@@ -36,7 +36,7 @@ app.get('/api/tag', routes.checkCookie, routes.getTags);
 app.post('/api/groups', routes.checkCookie, routes.createGroup);
 app.post('/api/tag', routes.checkCookie, routes.createTag);
 
-app.post('/api/groups/:groupId/posts', routes.checkCookie, routes.createPost);
+app.post('/api/groups/:groupname/posts', routes.checkCookie, routes.createPost);
 app.delete('/api/posts/:postId', routes.checkCookie, routes.deletePost);
 app.post('/api/posts/:postId/flag', routes.checkCookie, routes.flagPost);
 app.post('/api/posts/:postId/hide', routes.checkCookie, routes.hidePost);
@@ -57,7 +57,7 @@ app.delete('/api/groups/:groupname/admins/:username', routes.checkCookie, routes
 app.post('/api/groups/:groupname/requests', routes.checkCookie, routes.postRequest);
 app.post('/api/groups/:groupname/invites/:username', routes.checkCookie, routes.postInvitation);
 
-app.get('/api/groups/:groupname', routes.checkCookie, routes.getPosts);
+app.get('/api/groups/:groupname', routes.checkCookie, routes.getGroup);
 
 app.post('/api/posts/:postId/comments', routes.checkCookie, routes.postComment);
 

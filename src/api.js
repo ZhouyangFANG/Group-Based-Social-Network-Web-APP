@@ -87,24 +87,27 @@ const testGroupPage = {
 
 export async function getGroupList(setGroupList) {
   const res = await axios.get(`${url}/groups`, { withCredentials: true });
+  console.log(res.data);
   setGroupList(res.data);
   // setGroupList(groupList);
 }
 
 export async function getGroupPage(groupName) {
   const res = await axios.get(`${url}/groups/${groupName}`, { withCredentials: true });
+  console.log(res.data);
   // await delay(1000);
   // return testGroupPage;
   return res.data;
 }
 
-export async function addAdmin(groupName, userId) {
-  const res = await axios.post(`${url}/groups/${groupName}/admins/${userId}`, { withCredentials: true });
+export async function addAdmin(groupName, userName) {
+  const res = await axios.post(`${url}/groups/${groupName}/admins/${userName}`,{}, { withCredentials: true });
+  console.log(res.data);
   return res.data;
 }
 
-export async function removeAdmin(groupName, userId) {
-  const res = await axios.delete(`${url}/groups/${groupName}/admins/${userId}`, { withCredentials: true });
+export async function removeAdmin(groupName, userName) {
+  const res = await axios.delete(`${url}/groups/${groupName}/admins/${userName}`, { withCredentials: true });
   return res.data;
 }
 
@@ -119,9 +122,8 @@ export async function inviteUser(groupName, userName) {
   return res.data;
 }
 
-export async function leaveGroup(groupName, userName) {
-  const res = await axios.delete(`${url}/groups/${groupName}/leave`, {userName}, { withCredentials: true });
-  return res.data;
+export async function leaveGroup(groupName) {
+  await axios.delete(`${url}/groups/${groupName}/members`, { withCredentials: true });
 }
 
 export async function filterGroupsByTags(tag, setGroupList) {

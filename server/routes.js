@@ -324,22 +324,23 @@ async function createTag(req, res) {
 
 async function createPost(req, res) {
   const userId = req.userInfo.id;
-  const { groupId } = req.params;
   const { title, postContent, attachmentType } = req.body;
   const attachment = req.body.attachment ? `'${req.body.attachment}''` : 'NULL';
 
   const postId = uuid.v4();
 
-  connection.query(`INSERT INTO post(id, title, author, groupId, postContent, attachment, attachmentType, datetime)
-      values ('${postId}', '${title}', '${userId}', '${groupId}', '${postContent}',
-       ${attachment}, '${attachmentType}', '${new Date().toISOString().slice(0, 19).replace('T', ' ')}');`, (error) => {
-    if (error) {
-      res.status(400);
-      res.json({ error });
-    } else {
-      res.status(200);
-      res.json({ id: postId });
-    }
+  _getGroup(req, res, (group) => {
+    connection.query(`INSERT INTO post(id, title, author, groupId, postContent, attachment, attachmentType, datetime)
+        values ('${postId}', '${title}', '${userId}', '${group.id}', '${postContent}',
+        ${attachment}, '${attachmentType}', '${new Date().toISOString().slice(0, 19).replace('T', ' ')}');`, (error) => {
+      if (error) {
+        res.status(400);
+        res.json({ error });
+      } else {
+        res.status(200);
+        res.json({ id: postId });
+      }
+    });
   });
 }
 
@@ -463,6 +464,20 @@ function _getGroup(req, res, callback) { // eslint-disable-line no-underscore-da
     }
   });
 }
+
+function _checkAdmin(req, res, callback) {
+  _getGroup(req, res, (group) => {
+    connection.query(`SELECT * FROM admin WHERE userId = '${req.userInfo.id}' AND groupId = '${group.id}';`, (error, results) => {
+      if (error) {
+        res.status(400).json({ error });
+      } else if (results.length === 0) {
+        res.status(403).json('admin permission needed');
+      } else {
+        callback(group);
+      }
+    });
+  })
+};
 
 function getGroups(req, res) {
   connection.query(`SELECT groupInfo.* FROM groupInfo INNER JOIN member ON groupInfo.id = member.groupId WHERE member.userId = '${req.userInfo.id}';`, (error0, results0) => {
@@ -592,19 +607,23 @@ function postInvitation(req, res) {
 
 function leaveGroup(req, res) {
   _getGroup(req, res, (group) => {
-    connection.query(`DELETE FROM member WHERE userId = '${req.userInfo.id}' and groupId = '${group.id}';`, (error1, results1) => {
-      if (error1) {
-        res.status(400).json({ error: error1 });
-      } else if (results1.affectedRows === 0) {
-        res.status(404).json('not a member of the group');
+    connection.query(`DELETE FROM admin WHERE userId = '${req.userInfo.id}' and groupId = '${group.id}';`, (error0) => {
+      if (error0) {
+        res.status(400).json({ error: error0 });
       } else {
-        res.status(200).json('success');
+        connection.query(`DELETE FROM member WHERE userId = '${req.userInfo.id}' and groupId = '${group.id}';`, (error1, results1) => {
+          if (error1) {
+            res.status(400).json({ error: error1 });
+          } else {
+            res.status(200).json('success');
+          }
+        });
       }
-    });
+    })
   });
 }
 
-function getPosts(req, res) {
+function getGroup(req, res) {
   _getGroup(req, res, (group) => {
     connection.query(`SELECT user.* FROM user INNER JOIN member ON member.userId = user.id WHERE member.groupId = '${group.id}';`, (error0, results0) => {
       if (error0) {
@@ -628,6 +647,7 @@ function getPosts(req, res) {
                         callback(error3);
                       } else {
                         post.comments = results3;
+                        callback();
                       }
                     });
                   },
@@ -751,7 +771,7 @@ module.exports = {
   deleteAdmin,
   postRequest,
   postInvitation,
-  getPosts,
+  getGroup,
   postComment,
   getMessages,
   postMessage,
