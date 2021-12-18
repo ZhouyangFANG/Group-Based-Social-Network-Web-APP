@@ -465,6 +465,20 @@ function _getGroup(req, res, callback) { // eslint-disable-line no-underscore-da
   });
 }
 
+function _checkAdmin(req, res, callback) {
+  _getGroup(req, res, (group) => {
+    connection.query(`SELECT * FROM admin WHERE userId = '${req.userInfo.id}' AND groupId = '${group.id}';`, (error, results) => {
+      if (error) {
+        res.status(400).json({ error });
+      } else if (results.length === 0) {
+        res.status(403).json('admin permission needed');
+      } else {
+        callback(group);
+      }
+    });
+  })
+};
+
 function getGroups(req, res) {
   connection.query(`SELECT groupInfo.* FROM groupInfo INNER JOIN member ON groupInfo.id = member.groupId WHERE member.userId = '${req.userInfo.id}';`, (error0, results0) => {
     connection.query(`SELECT * FROM groupInfo
@@ -593,15 +607,19 @@ function postInvitation(req, res) {
 
 function leaveGroup(req, res) {
   _getGroup(req, res, (group) => {
-    connection.query(`DELETE FROM member WHERE userId = '${req.userInfo.id}' and groupId = '${group.id}';`, (error1, results1) => {
-      if (error1) {
-        res.status(400).json({ error: error1 });
-      } else if (results1.affectedRows === 0) {
-        res.status(404).json('not a member of the group');
+    connection.query(`DELETE FROM admin WHERE userId = '${req.userInfo.id}' and groupId = '${group.id}';`, (error0) => {
+      if (error0) {
+        res.status(400).json({ error: error0 });
       } else {
-        res.status(200).json('success');
+        connection.query(`DELETE FROM member WHERE userId = '${req.userInfo.id}' and groupId = '${group.id}';`, (error1, results1) => {
+          if (error1) {
+            res.status(400).json({ error: error1 });
+          } else {
+            res.status(200).json('success');
+          }
+        });
       }
-    });
+    })
   });
 }
 
