@@ -37,6 +37,13 @@ const useStyles = makeStyles({
 const Chat = () => {
     const classes = useStyles();
 
+    const handleUpload = (event) => {
+        console.log(event.target.files[0]);
+        // const sound = () => <audio src={event.target.files[0]} autoPlay />;
+        const audioElement = new Audio(event.target.files[0]);
+        audioElement.play();
+    }
+
     return (
         <div>
             <Grid container>
@@ -48,9 +55,6 @@ const Chat = () => {
                 <Grid item xs={3} className={classes.borderRight500}>
                     <List>
                         <ListItem button key="RemySharp">
-                            <ListItemIcon>
-                                <Avatar alt="Remy Sharp" src="https://material-ui.com/static/images/avatar/1.jpg" />
-                            </ListItemIcon>
                             <ListItemText primary="John Wick"></ListItemText>
                         </ListItem>
                     </List>
@@ -61,34 +65,25 @@ const Chat = () => {
                     <Divider />
                     <List>
                         <ListItem button key="RemySharp">
-                            <ListItemIcon>
-                                <Avatar alt="Remy Sharp" src="https://material-ui.com/static/images/avatar/1.jpg" />
-                            </ListItemIcon>
                             <ListItemText primary="Remy Sharp">Remy Sharp</ListItemText>
                             <ListItemText secondary="online" align="right"></ListItemText>
                         </ListItem>
                         <ListItem button key="Alice">
-                            <ListItemIcon>
-                                <Avatar alt="Alice" src="https://material-ui.com/static/images/avatar/3.jpg" />
-                            </ListItemIcon>
                             <ListItemText primary="Alice">Alice</ListItemText>
                         </ListItem>
                         <ListItem button key="CindyBaker">
-                            <ListItemIcon>
-                                <Avatar alt="Cindy Baker" src="https://material-ui.com/static/images/avatar/2.jpg" />
-                            </ListItemIcon>
                             <ListItemText primary="Cindy Baker">Cindy Baker</ListItemText>
                         </ListItem>
                     </List>
                 </Grid>
                 <Grid item xs={9}>
                     <List className={classes.messageArea}>
-                        <ListItem key="3" textAlign='right'>
+                        <ListItem key="3">
                             <ListItemText primary="Cool. i am good, let's catch up!"></ListItemText>
                             <ListItemText primary="Cool. i am good, let's catch up!"></ListItemText>
                             <ListItemText primary="Cool. i am good, let's catch up!"></ListItemText>
                         </ListItem>
-                        <ListItem key="4" textAlign='right'>
+                        <ListItem key="4">
                             <ListItemText primary="Cool. i am good, let's catch up!"></ListItemText>
                             <ListItemText primary="Cool. i am good, let's catch up!"></ListItemText>
                             <ListItemText primary="Cool. i am good, let's catch up!"></ListItemText>
@@ -102,6 +97,17 @@ const Chat = () => {
                         <Grid item xs={1} align="right">
                             <Fab color="primary" aria-label="add"><SendIcon /></Fab>
                         </Grid>
+                        <Button
+                            variant="contained"
+                            component="label"
+                        >
+                            Send File
+                            <input
+                                type="file"
+                                onChange={handleUpload}
+                                hidden
+                            />
+                        </Button>
                     </Grid>
                 </Grid>
             </Grid>
