@@ -48,11 +48,9 @@ app.get('/api/groupRecommendation', routes.checkCookie, routes.groupRecommendati
 
 app.get('/api/groupAnalytic/:groupId', routes.checkCookie, routes.groupAnalytic);
 
-app.get('/api/groups/:groupname/members', routes.checkCookie, routes.getMembers);
 app.post('/api/groups/:groupname/members/:username', routes.checkCookie, routes.addMember);
 app.delete('/api/groups/:groupname/members', routes.checkCookie, routes.leaveGroup);
 
-app.get('/api/groups/:groupname/admins', routes.checkCookie, routes.getAdmins);
 app.post('/api/groups/:groupname/admins/:username', routes.checkCookie, routes.addAdmin);
 app.delete('/api/groups/:groupname/admins/:username', routes.checkCookie, routes.deleteAdmin);
 

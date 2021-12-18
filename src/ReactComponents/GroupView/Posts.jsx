@@ -75,7 +75,7 @@ export default function Posts(props) {
           />
           <CardContent id="container">
             <Typography variant="body2" color="text.secondary">
-              {post.content}
+              {post.postContent}
             </Typography>
           </CardContent>
           <CardActions disableSpacing>
