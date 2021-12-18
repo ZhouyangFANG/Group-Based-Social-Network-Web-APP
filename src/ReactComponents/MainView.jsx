@@ -116,6 +116,57 @@ function MainView() {
     }
   }
 
+  const sortByPostsNum = () => {
+    let arr = [...groupList];
+    arr.sort(objectSortPostNum());
+    setGroupList(arr);
+
+  }
+
+  function objectSortPostNum() {
+   return function (objectN, objectM) {
+    const valueN = objectN.posts.length;
+    const valueM = objectM.posts.length;
+    if (valueN < valueM) return 1;
+    else if (valueN > valueM) return -1;
+    else return 0;
+   }
+  }
+
+  const sortByMemberNum = () => {
+    let arr = [...groupList];
+    arr.sort(objectSortMemNum());
+    setGroupList(arr);
+
+  }
+
+  function objectSortMemNum() {
+   return function (objectN, objectM) {
+    const valueN = objectN.members.length;
+    const valueM = objectM.members.length;
+    if (valueN < valueM) return 1;
+    else if (valueN > valueM) return -1;
+    else return 0;
+   }
+  }
+
+  const sortByNewestMsg = () => {
+    let arr = [...groupList];
+    arr.sort(objectSortNewMsg());
+    setGroupList(arr);
+
+  }
+
+  function objectSortNewMsg() {
+   return function (objectN, objectM) {
+    const valueN = objectN.newestMsg;
+    const valueM = objectM.newestMsg;
+    if (valueN < valueM) return 1;
+    else if (valueN > valueM) return -1;
+    else return 0;
+   }
+  }
+
   return (
     <div id="wrapper">
       <Box sx={{ flexGrow: 1 }}>
@@ -157,6 +208,9 @@ function MainView() {
             <TextField name="tags" placeholder="tags" />
             <Button variant='contained' type="submit">Get Group List</Button>
           </Box>
+          <Button variant='contained' type="submit" onClick={sortByPostsNum}>Sort groups by number of posts</Button>
+          <Button variant='contained' type="submit" onClick={sortByMemberNum}>Sort groups by number of members</Button>
+          <Button variant='contained' type="submit" onClick={sortByNewestMsg}>Sort groups by newest messages</Button>
         </Grid>
       </Grid>
     </div>
