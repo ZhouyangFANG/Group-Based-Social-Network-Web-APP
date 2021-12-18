@@ -36,7 +36,7 @@ app.get('/api/tag', routes.checkCookie, routes.getTags);
 app.post('/api/groups', routes.checkCookie, routes.createGroup);
 app.post('/api/tag', routes.checkCookie, routes.createTag);
 
-app.post('/api/groups/:groupId/posts', routes.checkCookie, routes.createPost);
+app.post('/api/groups/:groupname/posts', routes.checkCookie, routes.createPost);
 app.delete('/api/posts/:postId', routes.checkCookie, routes.deletePost);
 app.post('/api/posts/:postId/flag', routes.checkCookie, routes.flagPost);
 app.post('/api/posts/:postId/hide', routes.checkCookie, routes.hidePost);

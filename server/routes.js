@@ -324,22 +324,23 @@ async function createTag(req, res) {
 
 async function createPost(req, res) {
   const userId = req.userInfo.id;
-  const { groupId } = req.params;
   const { title, postContent, attachmentType } = req.body;
   const attachment = req.body.attachment ? `'${req.body.attachment}''` : 'NULL';
 
   const postId = uuid.v4();
 
-  connection.query(`INSERT INTO post(id, title, author, groupId, postContent, attachment, attachmentType, datetime)
-      values ('${postId}', '${title}', '${userId}', '${groupId}', '${postContent}',
-       ${attachment}, '${attachmentType}', '${new Date().toISOString().slice(0, 19).replace('T', ' ')}');`, (error) => {
-    if (error) {
-      res.status(400);
-      res.json({ error });
-    } else {
-      res.status(200);
-      res.json({ id: postId });
-    }
+  _getGroup(req, res, (group) => {
+    connection.query(`INSERT INTO post(id, title, author, groupId, postContent, attachment, attachmentType, datetime)
+        values ('${postId}', '${title}', '${userId}', '${group.id}', '${postContent}',
+        ${attachment}, '${attachmentType}', '${new Date().toISOString().slice(0, 19).replace('T', ' ')}');`, (error) => {
+      if (error) {
+        res.status(400);
+        res.json({ error });
+      } else {
+        res.status(200);
+        res.json({ id: postId });
+      }
+    });
   });
 }
 
@@ -604,7 +605,7 @@ function leaveGroup(req, res) {
   });
 }
 
-function getPosts(req, res) {
+function getGroup(req, res) {
   _getGroup(req, res, (group) => {
     connection.query(`SELECT user.* FROM user INNER JOIN member ON member.userId = user.id WHERE member.groupId = '${group.id}';`, (error0, results0) => {
       if (error0) {
@@ -628,6 +629,7 @@ function getPosts(req, res) {
                         callback(error3);
                       } else {
                         post.comments = results3;
+                        callback();
                       }
                     });
                   },
@@ -751,7 +753,7 @@ module.exports = {
   deleteAdmin,
   postRequest,
   postInvitation,
-  getPosts,
+  getGroup,
   postComment,
   getMessages,
   postMessage,
