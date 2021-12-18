@@ -13,72 +13,141 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import DeleteIcon from '@mui/icons-material/Delete';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import AssistantPhotoIcon from '@mui/icons-material/AssistantPhoto';
+import ThreeSixtyIcon from '@mui/icons-material/ThreeSixty';
+import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
 
 const lib = require('../../fetch');
 
 export default function Posts(props) {
   const { certainGroup } = props;
+  const [hiddenPosts, sethiddenPosts] = useState([]);
 
   async function deletePost(postId) {
     const res = await lib.deletePost(postId);
-    window.location.reload();
+    //window.location.reload();
   }
 
   async function flagPost(postId) {
     const res = await lib.flagPost(postId);
-    window.location.reload();
+    //window.location.reload();
   }
 
-  // useEffect(() => { console.log('nothing'); }, [certainGroup]);
-  const List = () => (
-    certainGroup.posts.map((post) => (
-      <Card key={post.id} sx={{ maxWidth: 700 }}>
-        <CardHeader
-          avatar={(
-            <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
-              R
-            </Avatar>
-          )}
-          action={(
-            <IconButton aria-label="settings">
-              <MoreVertIcon />
+  function hidePost(postId){
+    /*var hidden = hiddenPosts;
+    hidden.push(postId);
+    sethiddenPosts(hidden);*/
+  }
+
+  function MapList() {
+    return certainGroup.posts.map((post) => <PostCard post={post} key={post.id} />);
+  }
+
+  const PostCard = ({post}) => {
+    for (var i = 0; i < hiddenPosts.length; i++) {
+      if (hiddenPosts[i] === post.id){
+        return null;
+      }
+    };
+    if (post.flag) {
+      return (
+        <Card key={post.id} sx={{ maxWidth: 700 }}>
+          <CardHeader
+            avatar={(
+              <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
+                R
+              </Avatar>
+            )}
+            action={(
+              <IconButton aria-label="settings">
+                <MoreVertIcon />
+              </IconButton>
+            )}
+            //title={post.title}
+          />
+          <CardMedia
+            component="img"
+            height="194"
+            image="/images/CIS557.png"
+            alt="pic"
+          />
+          <CardContent id="container">
+            <Typography variant="body2" color="text.secondary">
+              {post.content}
+            </Typography>
+          </CardContent>
+          <CardActions disableSpacing>
+            <IconButton aria-label="add to favorites">
+              <FavoriteIcon />
             </IconButton>
-          )}
-          title={post.title}
-        // subheader="Nov 7, 2021"
-        />
-        <CardMedia
-          component="img"
-          height="194"
-          image="/images/CIS557.png"
-          alt="pic"
-        />
-        <CardContent>
-          <Typography variant="body2" color="text.secondary">
-            {post.content}
-          </Typography>
-        </CardContent>
-        <CardActions disableSpacing>
-          <IconButton aria-label="add to favorites">
-            <FavoriteIcon />
-          </IconButton>
-          <IconButton aria-label="flag" id="flag" onClick={flagPost(post.id)}>
-            <AssistantPhotoIcon />
-          </IconButton>
-          <IconButton aria-label="delete" id="delete" onClick={deletePost(post.id)}>
-            <DeleteIcon />
-          </IconButton>
-        </CardActions>
-      </Card>
-    ))
-  )
+            <IconButton aria-label="flag" id="flag" onClick={flagPost(post.id)}>
+              <AssistantPhotoIcon />
+            </IconButton>
+            <IconButton aria-label="delete" id="delete" onClick={deletePost(post.id)}>
+              <DeleteIcon />
+            </IconButton>
+            <IconButton aria-label="flagdelete">
+              <DeleteForeverOutlinedIcon />
+            </IconButton>
+            <IconButton aria-label="hide" onClick={hidePost(post.id)}>
+              <ThreeSixtyIcon />
+            </IconButton>
+          </CardActions>
+        </Card>
+      )
+    } else{
+      return (
+        <Card key={post.id} sx={{ maxWidth: 700 }}>
+          <CardHeader
+            avatar={(
+              <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
+                R
+              </Avatar>
+            )}
+            action={(
+              <IconButton aria-label="settings">
+                <MoreVertIcon />
+              </IconButton>
+            )}
+            //title={post.title}
+          />
+          <CardMedia
+            component="img"
+            height="194"
+            image="/images/CIS557.png"
+            alt="pic"
+          />
+          <CardContent id="container">
+            <Typography variant="body2" color="text.secondary">
+              {post.content}
+            </Typography>
+          </CardContent>
+          <CardActions disableSpacing>
+            <IconButton aria-label="add to favorites">
+              <FavoriteIcon />
+            </IconButton>
+            <IconButton aria-label="flag" id="flag" onClick={flagPost(post.id)}>
+              <AssistantPhotoIcon />
+            </IconButton>
+            <IconButton aria-label="delete" id="delete" onClick={deletePost(post.id)}>
+              <DeleteIcon />
+            </IconButton>
+            <IconButton aria-label="hide" id="hide" onClick={hidePost(post.id)}>
+              <ThreeSixtyIcon />
+            </IconButton>
+          </CardActions>
+        </Card>
+      )
+    }
+  }
 
   return (
     <>
       {
         certainGroup &&
         (
-          <List />
+          <div>
+            {MapList()}
+          </div>
         )
       }
     </>

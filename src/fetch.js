@@ -90,17 +90,11 @@ async function addPost(groupName, titleV, authorV, contentV) {
 
 async function deletePost(postId) {
   let statusCode;
-  await fetch(`${uri}api/groups/${groupName}/posts`, {
+  await fetch(`${uri}api/groups/${postId}/posts`, {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({
-      title: titleV,
-      // admin: group.admin,
-      author: authorV,
-      content: contentV,
-    }),
   }).then((res) => {
     statusCode = res.status;
   }).catch((err) => {
@@ -113,17 +107,11 @@ async function deletePost(postId) {
 
 async function flagPost(postId) {
   let statusCode;
-  await fetch(`${uri}api/groups/${groupName}/posts`, {
+  await fetch(`${uri}api/groups/${postId}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({
-      title: titleV,
-      // admin: group.admin,
-      author: authorV,
-      content: contentV,
-    }),
   }).then((res) => {
     statusCode = res.status;
   }).catch((err) => {
@@ -153,6 +141,56 @@ async function getProfile(username) {
   return res;
 }
 
+async function editComment(username) {
+  let res;
+  await fetch(`${uri}/api/groups/${groupName}/posts/${postId}/comments/${commentId}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      title: titleV,
+      // admin: group.admin,
+      author: authorV,
+      content: contentV,
+    }),
+  }).then((response) => response.json())
+    .then((data) => {
+      //
+      res = data;
+      window.console.log(data);
+    }).catch((error) => {
+      window.console.log(error);
+    });
+  res = {email: 'aaa@', phone: '12345', gender: 'famale'};
+  return res;
+}
+
+async function deleteComment(username) {
+  let res;
+  await fetch(`${uri}/api/groups/${groupName}/posts/${postId}/comments/${commentId}`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      title: titleV,
+      // admin: group.admin,
+      author: authorV,
+      content: contentV,
+    }),
+  }).then((response) => response.json())
+    .then((data) => {
+      //
+      res = data;
+      window.console.log(data);
+    }).catch((error) => {
+      window.console.log(error);
+    });
+  res = {email: 'aaa@', phone: '12345', gender: 'famale'};
+  return res;
+}
+
 export {
-  register, login, createGroup, addPost, deletePost, flagPost, getProfile,
+  register, login, createGroup, addPost, deletePost, flagPost, getProfile, editComment, deleteComment,
 };
