@@ -107,18 +107,18 @@ async function deletePost(postId) {
 
 async function flagPost(postId) {
   let statusCode;
-  await fetch(`${uri}groups/${postId}`, {
-    method: 'PUT',
+  await fetch(`${uri}posts/${postId}/flag`, {
+    method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
+    credentials: 'include',
   }).then((res) => {
     statusCode = res.status;
   }).catch((err) => {
     // Print the error if there is one.
     window.console.log(err);
   });
-  statusCode = 404;
   return statusCode;
 }
 
