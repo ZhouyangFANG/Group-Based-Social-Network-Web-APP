@@ -45,23 +45,21 @@ async function login(name, pwd) {
   return statusCode;
 }
 
-async function createGroup(nameV, topic, type, personName) {
+async function createGroup(nameV, topic, type) {
   let record;
   await fetch(`${uri}groups`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
+    credentials: 'include',
     body: JSON.stringify({
       name: nameV,
-      // admin: group.admin,
-      members: personName,
-      tags: topic,
-      groupType: type,
+      tag: topic,
+      type: type,
     }),
-  }).then((res) => res.json())
-    .then((recordL) => {
-      record = recordL;
+  }).then((res) => {
+      record = res.status;
     }).catch((err) => {
       // Print the error if there is one.
       window.console.log(err);

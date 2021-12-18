@@ -12,9 +12,19 @@ import Button from '@mui/material/Button';
 import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import GroupInfo from './GroupInfo';
-import Admin from './Admin';
-import Review from './Review';
+import Grid from '@mui/material/Grid';
+import TextField from '@mui/material/TextField';
+import Checkbox from '@mui/material/Checkbox';
+import { useTheme } from '@mui/material/styles';
+import OutlinedInput from '@mui/material/OutlinedInput';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
+import FormLabel from '@mui/material/FormLabel';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
 
 const lib = require('../../fetch');
 
@@ -32,52 +42,77 @@ function Copyright() {
   );
 }
 
-const steps = ['Group Information', 'Administrators', 'Review'];
-
-function getStepContent(step) {
-  switch (step) {
-    case 0:
-      return <GroupInfo />;
-    case 1:
-      return <Admin />;
-    case 2:
-      return <Review />;
-    default:
-      throw new Error('Unknown step');
-  }
-}
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      width: 250,
+    },
+  },
+};
 
 const theme = createTheme();
 
 export default function CreateGroup() {
-  const [activeStep, setActiveStep] = React.useState(0);
-  const [name, setName] = React.useState('');
-  const [topic, setTopic] = React.useState('');
-  const [type, setType] = React.useState('');
-  const [member, setMember] = React.useState('');
+  const [personName, setPersonName] = React.useState([]);
+  const [names, setNames] = React.useState([]);
+
+  async function getTag() {
+    const res = await lib.getAllTag();
+    setNames(res);
+  }
+
+  React.useEffect(async () => {
+    getTag();
+  }, []);
+
+  function getStyles(name, personName, theme) {
+    return {
+      fontWeight:
+        personName.indexOf(name) === -1
+          ? theme.typography.fontWeightRegular
+          : theme.typography.fontWeightMedium,
+    };
+  }
+
+  const handleChange = (event) => {
+    const {
+      target: { value },
+    } = event;
+    setPersonName(
+      // On autofill we get a the stringified value.
+      typeof value === 'string' ? value.split(',') : value,
+    );
+  };
 
   const handleBack = () => {
     setActiveStep(activeStep - 1);
   };
 
   async function createGroup() {
-    if (activeStep === 0) {
-      const groupName = document.getElementById('groupName');
-      setName(groupName.value);
-      const groupTopic = document.getElementById('groupTopics');
-      setTopic(groupTopic.value);
-      const ans = document.getElementsByName('typeLabel');
-      for (let j = 0; j < ans.length; j += 1) {
-        if (ans[j].checked) {
-          setType(ans[j].value);
-        }
+    const groupName = document.getElementById('groupName');
+    const ans = document.getElementsByName('typeLabel');
+    let type;
+    for (let j = 0; j < ans.length; j += 1) {
+      if (ans[j].checked) {
+        type = ans[j].value;
       }
-    } else if (activeStep === 1) {
-      setMember('');
-    } else if (activeStep === 2) {
-      await lib.createGroup(name, topic, type, member);
     }
-    setActiveStep(activeStep + 1);
+
+    const res = await lib.createGroup(groupName.value, personName, type);
+    if (res === 200) {
+      const url = window.location.href;
+      const urlList = url.split('/');
+      urlList.pop();
+      let newUrl = '';
+      for (let i = 0; i < urlList.length; i += 1) {
+        newUrl = `${newUrl}${urlList[i]}/`;
+      }
+      newUrl = `${newUrl}groups`;
+      window.location.href = newUrl;
+    }
   }
 
   return (
@@ -103,49 +138,68 @@ export default function CreateGroup() {
           <Typography component="h1" variant="h4" align="center">
             Create Group
           </Typography>
-          <Stepper activeStep={activeStep} sx={{ pt: 3, pb: 5 }}>
-            {steps.map((label) => (
-              <Step key={label}>
-                <StepLabel>{label}</StepLabel>
-              </Step>
-            ))}
-          </Stepper>
           <>
-            {activeStep === steps.length ? (
               <>
-                <Typography variant="h5" gutterBottom>
-                  Your group is created.
-                </Typography>
-                <Typography variant="subtitle1">
-                  Your group name is XXX. Please follow
-                  {' '}
-                  <Link color="inherit" href="/group:1">
-                    grouplink
-                  </Link>
-                  {' '}
-                  to review details.
-                </Typography>
-              </>
-            ) : (
-              <>
-                {getStepContent(activeStep)}
+                <Grid container spacing={3}>
+                  <Grid item xs={12}>
+                    <TextField
+                      required
+                      id="groupName"
+                      name="groupName"
+                      label="Group name"
+                      fullWidth
+                      variant="standard"
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <FormControl component="fieldset">
+                      <FormLabel component="legend">Group Type</FormLabel>
+                      <RadioGroup
+                        aria-label="group-type"
+                        defaultValue="public"
+                        name="group-type-radio"
+                      >
+                        <FormControlLabel name="typeLabel" value="public" control={<Radio />} label="Public" />
+                        <FormControlLabel name="typeLabel" value="private" control={<Radio />} label="Private" />
+                      </RadioGroup>
+                    </FormControl>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <div>
+                      <FormControl sx={{ m: 1, width: 300 }}>
+                        <InputLabel id="demo-multiple-name-label">Name</InputLabel>
+                        <Select
+                          labelId="demo-multiple-name-label"
+                          id="demo-multiple-name"
+                          multiple
+                          value={personName}
+                          onChange={handleChange}
+                          input={<OutlinedInput label="Name" />}
+                          MenuProps={MenuProps}
+                        >
+                          {names.map((name) => (
+                            <MenuItem
+                              key={name.id}
+                              value={name.id}
+                            >
+                              {name.name}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                    </div>
+                  </Grid>
+                </Grid>
                 <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                  {activeStep !== 0 && (
-                    <Button onClick={handleBack} sx={{ mt: 3, ml: 1 }}>
-                      Back
-                    </Button>
-                  )}
-
                   <Button
                     variant="contained"
                     onClick={createGroup}
                     sx={{ mt: 3, ml: 1 }}
                   >
-                    {activeStep === steps.length - 1 ? 'Create Group' : 'Next'}
+                    Create Group
                   </Button>
                 </Box>
               </>
-            )}
           </>
         </Paper>
         <Copyright />

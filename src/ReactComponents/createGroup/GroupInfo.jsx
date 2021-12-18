@@ -29,15 +29,6 @@ export default function GroupInfo() {
           />
         </Grid>
         <Grid item xs={12}>
-          <TextField
-            id="groupTopics"
-            label="Group Topics"
-            multiline
-            maxRows={4}
-            fullWidth
-          />
-        </Grid>
-        <Grid item xs={12}>
           <FormControl component="fieldset">
             <FormLabel component="legend">Group Type</FormLabel>
             <RadioGroup

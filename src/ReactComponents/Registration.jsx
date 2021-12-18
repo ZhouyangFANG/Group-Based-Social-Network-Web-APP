@@ -27,6 +27,12 @@ export default function SignUp() {
   async function confirmRegister() {
     const pwd = document.getElementById('password');
     const user = document.getElementById('userName');
+    const reg = /^[0-9a-zA-Z]+$/;
+    if (!(pwd.value.match(reg))) {
+      alert('Please enter alphanumeric password values only!');
+      pwd.value = '';
+      return;
+    }
     const res = await lib.register(user.value, pwd.value);
     if (res === 201) {
       const url = window.location.href;
