@@ -6,7 +6,6 @@ CREATE TABLE user (
   phone varchar(255),
   link varchar(255),
   gender varchar(255),
-  registerDate varchar(255),
   primary key (id)
 );
 
@@ -47,50 +46,13 @@ create table tagRelation(
     FOREIGN KEY (groupId) REFERENCES groupInfo(id)
 );
 
-create table post (
-    id varchar(36),
-    title varchar(255) not null,
-    author varchar(36),
-    groupId varchar(36),
-    postContent text,
-    attachment longblob,
-    attachmentType enum('image', 'audio', 'video'),
-    flagger varchar(36),
-    datetime varchar(255),
-    deleted boolean default false,
-    primary key(id),
-    foreign key (author) references user(id),
-    foreign key (groupId) references groupInfo(id),
-    foreign key (flagger) references user(id)
-);
-
-create table comment (
-    id varchar(36),
-    postId varchar(36),
-    content text,
-    author varchar(36),
-    datetime varchar(255),
-    primary key (id),
-    deleted boolean default false,
-    foreign key (postId) references post(id),
-    foreign key (author) references user(id)
-);
-
-create table hide(
-    postId varchar(36),
-    userId varchar(36),
-    primary key (postId, userId),
-    foreign key (postId) references post(id),
-    foreign key (userId) references user(id)
-);
-
 create table request (
     userId varchar(36) not null,
     groupId varchar(36) not null,
     primary key (userId, groupId),
     FOREIGN KEY (userId) REFERENCES user(id),
     FOREIGN KEY (groupId) REFERENCES groupInfo(id)
-);
+)
 
 create table invitation (
     userId varchar(36) not null,
@@ -98,7 +60,7 @@ create table invitation (
     primary key (userId, groupId),
     FOREIGN KEY (userId) REFERENCES user(id),
     FOREIGN KEY (groupId) REFERENCES groupInfo(id)
-);
+)
 
 CREATE TABLE message (
     id varchar(36),
@@ -110,4 +72,4 @@ CREATE TABLE message (
     primary key (id),
     foreign key (sender) references user(id),
     foreign key (receiver) references user(id)
-);
+)
