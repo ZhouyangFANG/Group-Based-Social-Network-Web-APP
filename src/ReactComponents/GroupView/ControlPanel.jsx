@@ -28,6 +28,7 @@ export default function ControlPanel(props) {
     const data = new FormData(event.currentTarget);
     const input = data.get("input");
     console.log(input);
+    console.log(groupName);
     await addAdmin(groupName, input);
   }
   const handleDeleteAdmin = async (event) => {
@@ -45,7 +46,7 @@ export default function ControlPanel(props) {
     await inviteUser(groupName, input);
   }
   const handleLeave = async () => {
-    await leaveGroup(groupName, userName);
+    await leaveGroup(groupName);
   }
 
   return (

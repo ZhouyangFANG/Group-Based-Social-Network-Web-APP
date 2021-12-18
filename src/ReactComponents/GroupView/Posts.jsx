@@ -111,7 +111,7 @@ export default function Posts(props) {
                 <MoreVertIcon />
               </IconButton>
             )}
-            //title={post.title}
+            title={post.title}
           />
           <CardMedia
             component="img"
@@ -121,7 +121,7 @@ export default function Posts(props) {
           />
           <CardContent id="container">
             <Typography variant="body2" color="text.secondary">
-              {post.content}
+              {post.postContent}
             </Typography>
           </CardContent>
           <CardActions disableSpacing>
