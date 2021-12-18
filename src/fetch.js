@@ -67,18 +67,17 @@ async function createGroup(nameV, topic, type) {
   return record;
 }
 
-async function addPost(groupName, titleV, authorV, contentV) {
+async function addPost(groupName, titleV, contentV) {
   let statusCode;
   await fetch(`${uri}groups/${groupName}/posts`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
+    credentials: 'include',
     body: JSON.stringify({
       title: titleV,
-      // admin: group.admin,
-      author: authorV,
-      content: contentV,
+      postContent: contentV,
     }),
   }).then((res) => {
     statusCode = res.status;
@@ -86,7 +85,6 @@ async function addPost(groupName, titleV, authorV, contentV) {
     // Print the error if there is one.
     window.console.log(err);
   });
-  statusCode = 404;//200;// 404
   return statusCode;
 }
 
