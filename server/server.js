@@ -39,7 +39,7 @@ app.post('/api/tag', routes.checkCookie, routes.createTag)
 app.post('/api/groups/:groupId/posts', routes.checkCookie, routes.createPost)
 app.delete('/api/posts/:postId', routes.checkCookie, routes.deletePost)
 app.post('/api/posts/:postId/flag', routes.checkCookie, routes.flagPost)
-app.post('/api/posts/:posdId/hide', routes.checkCookie, routes.hidePost)
+app.post('/api/posts/:postId/hide', routes.checkCookie, routes.hidePost)
 app.get('/api/posts/hide', routes.checkCookie, routes.getHidePost)
 
 app.delete('/api/comments/:commentId', routes.checkCookie, routes.deleteComment)
@@ -57,3 +57,5 @@ const port = process.env.PORT || 8080;
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`)
 })
+
+module.exports = app;

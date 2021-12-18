@@ -230,6 +230,8 @@ async function userInfo(req, res){
 }
 
 async function createGroup(req, res){
+  const userId = req.userInfo.id;
+
   const name = req.body.name;
   const type = req.body.type;
   const groupId = uuid.v4();
@@ -247,50 +249,44 @@ async function createGroup(req, res){
           res.json({ error: error })
         }
       } else {
-        const admin = req.body.admin;
-
-        async.forEachOf(admin, function (adminElement, i, inner_callback){
           connection.query(`INSERT INTO admin(userId, groupId)
-          values ('${adminElement}', '${groupId}');`, function(error, results, fields){
+          values ('${userId}', '${groupId}');`, function(error, results, fields){
               if(error){
-                  inner_callback(error);
+                res.status(400)
+                res.json({ error: error })
               } else {
-                  inner_callback(null);
-              };
-          });
-        }, function(error){
-            if(error){
-              res.status(400)
-              res.json({ error: error })
-            }else{
-              const tag = req.body.tag;
-              async.forEachOf(tag, function (tagElement, i, inner_callback2){
-                connection.query(`INSERT INTO tagRelation(groupId, tagId)
-                values ('${groupId}', '${tagElement}');`, function(error, results, fields){
+                connection.query(`INSERT INTO member(userId, groupId)
+                values ('${userId}', '${groupId}');`, function(error, results, fields){
                     if(error){
-                        inner_callback2(error);
+                      res.status(400)
+                      res.json({ error: error })
                     } else {
-                        inner_callback2(null);
-                    };
-                });
-              }, function(error){
-                  if(error){
-                    res.status(400)
-                    res.json({ error: error })
-                  }else{
-                    res.status(200)
-                    res.json("success")
-                  }
-              });
-            }
+                      const tag = req.body.tag;
+                      let q = 'INSERT INTO tagRelation(groupId, tagId) values ';
+                      for( let i = 0; i<tag.length -1; i ++){
+                        q = q.concat(`('${groupId}', '${tag[i]}'), `)
+                      }
+                      q = q.concat(`('${groupId}', '${tag[tag.length -1]}');`)
+                      connection.query(q, function(error, results, fields){
+                          if(error){
+                            res.status(400)
+                            res.json({ error: error })
+                          } else {
+                            res.status(200)
+                            res.json({id: groupId, name: name, type: type})
+                          };
+                      });
+                  }});
+              };
         });
     }});
 }
 
 async function getPublicGroups(req, res){
-  connection.query(`SELECT groupInfo.id, groupInfo.name, groupInfo.type, max(p.datetime) as latest, count(p.id) as num_posts, t.cnt as num_members from groupInfo
-  left join post p on groupInfo.id = p.groupId,
-  (select groupInfo.id, count(member.userId) as cnt from groupInfo join member on groupInfo.id = member.groupId) t
+  connection.query(`SELECT groupInfo.id, groupInfo.name, groupInfo.type,
+  max(p.datetime) as latest, count(p.id) as num_posts, count(m.userId) as num_members
+from groupInfo left join post p on groupInfo.id = p.groupId
+left join member m on groupInfo.id = m.groupId
 where groupInfo.type = true
 group by groupInfo.id;`, function (error, results, fields) {
     if (error) {
@@ -357,7 +353,7 @@ async function createPost(req, res){
           res.json({ error: error })
         } else {
           res.status(200)
-          res.json('success')
+          res.json({id: postId})
         }
       });
 }
@@ -374,7 +370,7 @@ async function flagPost(req, res){
           res.json({ error: error })
         } else {
           res.status(200)
-          res.json('success')
+          res.json(results)
         }
       });
 }
@@ -387,7 +383,7 @@ async function deletePost(req, res){
       res.json({ error: error })
     } else {
       res.status(200)
-      res.json('success')
+      res.json(results)
     }
   });
 }
@@ -470,7 +466,7 @@ async function groupAnalytic(req, res){
           res.json({ error: error })
         } else {
           res.status(200)
-          res.json(results)
+          res.json(results[0])
         }
       });
 }
