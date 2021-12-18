@@ -55,10 +55,7 @@ describe('Create player endpoint API & integration tests', () => {
 
     test('test updateUser', () => 
       agent.put('/api/users').send({email: 'email@fake'})
-      .expect(200)
-      .then((response) => {
-        expect(JSON.parse(response.text).message).toBe('update success');
-      })); // testing the response status code
+      .expect(200)); // testing the response status code
 
     test('test check cookie and get user info', () => 
     agent.get('/api/users/test')
@@ -123,6 +120,10 @@ describe('Create player endpoint API & integration tests', () => {
       .then((response) => {
         expect(JSON.parse(response.text).affectedRows).toBe(1);
       }));
+
+      test('test get hide post', () => 
+      agent.get(`/api/posts/hide`)
+      .expect(200));
 
     test('test group recommendation', () => 
       agent.get(`/api/groupRecommendation`)
