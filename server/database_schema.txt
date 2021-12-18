@@ -83,3 +83,31 @@ create table hide(
     foreign key (postId) references post(id),
     foreign key (userId) references user(id)
 );
+
+create table request (
+    userId varchar(36) not null,
+    groupId varchar(36) not null,
+    primary key (userId, groupId),
+    FOREIGN KEY (userId) REFERENCES user(id),
+    FOREIGN KEY (groupId) REFERENCES groupInfo(id)
+)
+
+create table invitation (
+    userId varchar(36) not null,
+    groupId varchar(36) not null,
+    primary key (userId, groupId),
+    FOREIGN KEY (userId) REFERENCES user(id),
+    FOREIGN KEY (groupId) REFERENCES groupInfo(id)
+)
+
+CREATE TABLE message (
+    id varchar(36),
+    sender varchar(36) not null,
+    receiver varchar(36) not null,
+    time varchar(255),
+    content longblob,
+    type enum('text', 'image', 'audio', 'video'),
+    primary key (id),
+    foreign key (sender) references user(id),
+    foreign key (receiver) references user(id)
+)

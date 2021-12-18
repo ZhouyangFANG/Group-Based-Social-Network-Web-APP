@@ -47,6 +47,24 @@ app.get('/api/groupRecommendation', routes.checkCookie, routes.groupRecommendati
 
 app.get('/api/groupAnalytic/:groupId', routes.checkCookie, routes.groupAnalytic);
 
+app.get('/api/groups/:groupname/members', routes.checkCookie, routes.getMembers);
+app.post('/api/groups/:groupname/members/:username', routes.checkCookie, routes.addMember);
+app.delete('/api/groups/:groupname/members', routes.checkCookie, routes.leaveGroup);
+
+app.get('/api/groups/:groupname/admins', routes.checkCookie, routes.getAdmins);
+app.post('/api/groups/:groupname/admins/:username', routes.checkCookie, routes.addAdmin);
+app.delete('/api/groups/:groupname/admins/:username', routes.checkCookie, routes.deleteAdmin);
+
+app.post('/api/groups/:groupname/requests', routes.checkCookie, routes.postRequest);
+app.post('/api/groups/:groupname/invites/:username', routes.checkCookie, routes.postInvitation);
+
+app.get('/api/groups/:groupname/posts', routes.checkCookie, routes.getPosts);
+
+app.post('/api/posts/:postId/comments', routes.checkCookie, routes.postComment);
+
+app.get('/api/users/:username/messages', routes.checkCookie, routes.getMessages);
+app.post('/api/users/:username/messages', routes.checkCookie, routes.postMessage);
+
 app.get('/', (req, res) => {
   res.send('Hello World!');
 });
