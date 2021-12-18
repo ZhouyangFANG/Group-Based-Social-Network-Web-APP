@@ -26,9 +26,8 @@ export default function SignUp() {
 
   async function confirmRegister() {
     const pwd = document.getElementById('password');
-    const email = document.getElementById('email');
     const user = document.getElementById('userName');
-    const res = await lib.register(user.value, email.value, pwd.value);
+    const res = await lib.register(user.value, pwd.value);
     if (res === 201) {
       const url = window.location.href;
       const urlList = url.split('/');
@@ -37,10 +36,13 @@ export default function SignUp() {
       for (let i = 0; i < urlList.length; i += 1) {
         newUrl = `${newUrl}${urlList[i]}/`;
       }
-      newUrl = `${newUrl}groups`;
+      newUrl = `${newUrl}login`;
+      alert('Success!');
       window.location.href = newUrl;
     } else {
+      alert('Failure');
       pwd.value = '';
+
     }
   }
 
@@ -70,16 +72,6 @@ export default function SignUp() {
                   id="userName"
                   label="User Name"
                   autoFocus
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  required
-                  fullWidth
-                  id="email"
-                  label="Email Address"
-                  name="email"
-                  autoComplete="email"
                 />
               </Grid>
               <Grid item xs={12}>
