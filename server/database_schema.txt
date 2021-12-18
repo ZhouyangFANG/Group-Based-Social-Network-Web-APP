@@ -6,6 +6,7 @@ CREATE TABLE user (
   phone varchar(255),
   link varchar(255),
   gender varchar(255),
+  registerDate varchar(255),
   primary key (id)
 );
 
@@ -44,4 +45,41 @@ create table tagRelation(
     primary key (groupId, tagId),
     FOREIGN KEY (tagId) REFERENCES tag(id),
     FOREIGN KEY (groupId) REFERENCES groupInfo(id)
+);
+
+create table post (
+    id varchar(36),
+    title varchar(255) not null,
+    author varchar(36),
+    groupId varchar(36),
+    postContent text,
+    attachment longblob,
+    attachmentType enum('image', 'audio', 'video'),
+    flagger varchar(36),
+    datetime varchar(255),
+    deleted boolean default false,
+    primary key(id),
+    foreign key (author) references user(id),
+    foreign key (groupId) references groupInfo(id),
+    foreign key (flagger) references user(id)
+);
+
+create table comment (
+    id varchar(36),
+    postId varchar(36),
+    content text,
+    author varchar(36),
+    datetime varchar(255),
+    primary key (id),
+    deleted boolean default false,
+    foreign key (postId) references post(id),
+    foreign key (author) references user(id)
+);
+
+create table hide(
+    postId varchar(36),
+    userId varchar(36),
+    primary key (postId, userId),
+    foreign key (postId) references post(id),
+    foreign key (userId) references user(id)
 );

@@ -9,6 +9,7 @@
     "@material-ui/icons": "^5.0.0-beta.5",
     "@mui/icons-material": "^5.0.5",
     "@mui/material": "^5.0.6",
+    "@mui/styles": "^5.2.3",
     "@mui/x-data-grid": "^5.0.0-beta.6",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^11.2.7",
@@ -27,7 +28,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "lint": "eslint src/ --ext .js,.ts,.jsx,.tsx --ignore-pattern *.test.js --ignore-pattern *.test.jsx --ignore-pattern *.test.tsx"
+    "lint": "eslint ./ --ext .js,.ts,.jsx,.tsx --ignore-pattern *.test.js --ignore-pattern *.test.jsx"
   },
   "eslintConfig": {
     "extends": [

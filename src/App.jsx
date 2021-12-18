@@ -8,8 +8,7 @@ import Login from './ReactComponents/Login';
 import CreateGroup from './ReactComponents/createGroup/CreateGroup';
 import GroupPage from './ReactComponents/GroupView/GroupPage';
 import AddPost from './ReactComponents/GroupView/AddPost';
-import UserSendMesg from './ReactComponents/UserMsg/UserSendMesg';
-import UserReceivedMesg from './ReactComponents/UserMsg/UserReceivedMsg';
+import Chat from './ReactComponents/ChatRoom/Chat';
 
 function App() {
   return (
@@ -26,8 +25,7 @@ function App() {
           <Route exact path="/user/:username" component={UserProfile} />
           <Route exact path="/createGroup" component={CreateGroup} />
           {/* <Route exact path="/cis557" component={GroupPage} /> */}
-          <Route exact path="/sendMesg" component={UserSendMesg} />
-          <Route exact path="/receiveMesg" component={UserReceivedMesg} />
+          <Route exact path="/chat" component={Chat} />
         </Switch>
       </div>
     </Router>
