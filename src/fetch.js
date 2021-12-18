@@ -1,6 +1,6 @@
-const uri = !process.env.NODE_ENV || process.env.NODE_ENV === 'development' ? 'http://localhost:5000/' : '/';
+const uri = !process.env.NODE_ENV || process.env.NODE_ENV === 'development' ? 'http://localhost:8080/api/' : '/';
 
-async function register(user, emailV, pwd) {
+async function register(user, pwd) {
   let statusCode;
   await fetch(`${uri}users`, {
     method: 'POST',
@@ -9,7 +9,6 @@ async function register(user, emailV, pwd) {
     },
     body: JSON.stringify({
       username: user,
-      email: emailV,
       password: pwd,
     }),
   }).then((res) => {
@@ -17,27 +16,30 @@ async function register(user, emailV, pwd) {
   }).catch((err) => {
     window.console.log(err);
   });
-  statusCode = 201;
   return statusCode;
 }
 
 async function login(name, pwd) {
-  let statusCode;
+  let statusCode, id, username;
   await fetch(`${uri}login`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
+    credentials: 'include',
     body: JSON.stringify({
       username: name,
       password: pwd,
     }),
-  }).then((res) => {
-    statusCode = res.status;
-  }).catch((err) => {
+  }).then((res) => res.json()
+    .then((data) => {
+      id = data.id;
+      username = data.username;
+      statusCode = res.status;
+      window.console.log(data);
+  })).catch((err) => {
     window.console.log(err);
   });
-  statusCode = 200;
   return statusCode;
 }
 

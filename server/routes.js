@@ -3,6 +3,7 @@ const sha256 = require('js-sha256');
 require('dotenv').config();
 const uuid = require('uuid');
 const crypto = require('crypto');
+const async = require('async');
 
 const algorithm = 'aes-256-ctr';
 const secretKey = 'xBLCvFTxhjkqjYTC2ynYuSVg3o6YMB1j';
@@ -120,7 +121,7 @@ async function loginUser(req, res) {
         sameSite: 'lax',
       });
       res.status(200);
-      res.json({ message: 'auth succsess', id: results[0].id });
+      res.json({ message: 'auth succsess', id: results[0].id, username: results[0].username });
     } else {
       res.status(400);
       res.json({ message: 'Password incorrect' });
@@ -472,26 +473,6 @@ function getGroups(req, res) {
   });
 }
 
-function getMembers(req, res) {
-  _getGroup(req, res, (group) => {
-    connection.query(`SELECT * FROM member WHERE userId = '${req.userInfo.id}' AND groupId = '${group.id}';`, (error1, results1) => {
-      if (error1) {
-        res.status(400).json({ error: error1 });
-      } else if (results1.length === 0) {
-        res.status(403).json('member permission needed');
-      } else {
-        connection.query(`SELECT user.* FROM user INNER JOIN member ON member.userId = user.id WHERE member.groupId = '${group.id}';`, (error2, results2) => {
-          if (error2) {
-            res.status(400).json({ error: error2 });
-          } else {
-            res.status(200).json(results2);
-          }
-        });
-      }
-    });
-  });
-}
-
 function addMember(req, res) {
   _getGroup(req, res, (group) => {
     connection.query(`SELECT * FROM admin WHERE userId = '${req.userInfo.id}' AND groupId = '${group.id}';`, (error0, results0) => {
@@ -568,26 +549,6 @@ function deleteAdmin(req, res) {
   });
 }
 
-function getAdmins(req, res) {
-  _getGroup(req, res, (group) => {
-    connection.query(`SELECT * FROM member WHERE userId = '${req.userInfo.id}' AND groupId = '${group.id}';`, (error1, results1) => {
-      if (error1) {
-        res.status(400).json({ error: error1 });
-      } else if (results1.length === 0) {
-        res.status(403).json('member permission needed');
-      } else {
-        connection.query(`SELECT user.* FROM user INNER JOIN admin ON admin.userId = user.id WHERE admin.groupId = '${group.id}';`, (error2, results2) => {
-          if (error2) {
-            res.status(400).json({ error: error2 });
-          } else {
-            res.status(200).json(results2);
-          }
-        });
-      }
-    });
-  });
-}
-
 function postRequest(req, res) {
   _getGroup(req, res, (group) => {
     connection.query(`INSERT INTO request(userId, groupId) VALUES ('${req.userInfo.id}', '${group.id}');`, (error1) => {
@@ -645,30 +606,44 @@ function leaveGroup(req, res) {
 
 function getPosts(req, res) {
   _getGroup(req, res, (group) => {
-    connection.query(`SELECT * FROM post WHERE groupId = '${group.id}';`, (error0, results0) => {
+    connection.query(`SELECT user.* FROM user INNER JOIN member ON member.userId = user.id WHERE member.groupId = '${group.id}';`, (error0, results0) => {
       if (error0) {
         res.status(400).json({ error: error0 });
       } else {
-        async.forEachOf(
-          results0,
-          (post, i, callback) => {
-            connection.query(`SELECT * FROM comment WHERE postId = '${post.id}' ORDER BY datetime DESC;`, (error1, results1) => {
-              if (error1) {
-                callback(error1);
+        group.members = results0;
+        connection.query(`SELECT user.* FROM user INNER JOIN admin ON admin.userId = user.id WHERE admin.groupId = '${group.id}';`, (error1, results1) => {
+          if (error1) {
+            res.status(400).json({ error: error1 });
+          } else {
+            group.admins = results1;
+            connection.query(`SELECT * FROM post WHERE groupId = '${group.id}';`, (error2, results2) => {
+              if (error2) {
+                res.status(400).json({ error: error2 });
               } else {
-                post.comments = results1;
+                async.forEachOf(
+                  results2,
+                  (post, i, callback) => {
+                    connection.query(`SELECT * FROM comment WHERE postId = '${post.id}' ORDER BY datetime DESC;`, (error3, results3) => {
+                      if (error3) {
+                        callback(error3);
+                      } else {
+                        post.comments = results3;
+                      }
+                    });
+                  },
+                  (error4) => {
+                    if (error4) {
+                      res.status(400).json({ error: error4 });
+                    } else {
+                      group.posts = results2;
+                      res.status(200).json(group);
+                    }
+                  },
+                );
               }
             });
-          },
-          (error2) => {
-            if (error2) {
-              res.status(400).json({ error: error2 });
-            } else {
-              group.posts = results0;
-              res.status(200).json(group);
-            }
-          },
-        );
+          }
+        });
       }
     });
   });
@@ -770,12 +745,10 @@ module.exports = {
   groupRecommendation,
   groupAnalytic,
   getGroups,
-  getMembers,
   addMember,
   leaveGroup,
   addAdmin,
   deleteAdmin,
-  getAdmins,
   postRequest,
   postInvitation,
   getPosts,
