@@ -664,7 +664,8 @@ function getPosts(req, res) {
             if (error2) {
               res.status(400).json({ error: error2 });
             } else {
-              res.status(200).json(results0);
+              group.posts = results0;
+              res.status(200).json(group);
             }
           },
         );
