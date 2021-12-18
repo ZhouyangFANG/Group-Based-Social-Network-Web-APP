@@ -82,8 +82,6 @@ export default function SignIn() {
             />
             <Button
               data-testid="submit"
-              component={RouterLink}
-              to="/groups"
               type="submit"
               fullWidth
               variant="contained"

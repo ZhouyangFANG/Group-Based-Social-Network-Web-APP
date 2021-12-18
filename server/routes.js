@@ -121,7 +121,7 @@ async function loginUser(req, res) {
         sameSite: 'lax',
       });
       res.status(200);
-      res.json({ message: 'auth succsess', id: results[0].id });
+      res.json({ message: 'auth succsess', id: results[0].id, username: results[0].username });
     } else {
       res.status(400);
       res.json({ message: 'Password incorrect' });
