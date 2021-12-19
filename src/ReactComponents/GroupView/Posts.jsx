@@ -58,6 +58,16 @@ export default function Posts(props) {
     }
   }
 
+  function Comments(commentL) {
+    return commentL.map((comment) => 
+      <CardContent>
+        <Typography variant="body2" color="text.secondary">
+          {comment.content}
+        </Typography>
+      </CardContent>
+    );
+  }
+
   function MapList() {
     return certainGroup.posts.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((post) => <PostCard post={post} key={post.id} />);
   }
@@ -119,6 +129,9 @@ export default function Posts(props) {
               <ThreeSixtyIcon />
             </IconButton>
           </CardActions>
+          <div>
+            {Comments(post.comments)}
+          </div>
         </Card>
       )
     } else if (!post.flagger && !post.deleted){
@@ -160,6 +173,9 @@ export default function Posts(props) {
               <ThreeSixtyIcon />
             </IconButton>
           </CardActions>
+          <div>
+            {Comments(post.comments)}
+          </div>
         </Card>
       )
     } else {
