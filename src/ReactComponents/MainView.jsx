@@ -22,7 +22,7 @@ import OutlinedInput from '@mui/material/OutlinedInput';
 import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
-import { getGroupList, addAdmin, removeAdmin, requestToJoinGroup, inviteUser, leaveGroup, filterGroupsByTags } from '../api';
+import { getGroupList, addAdmin, removeAdmin, requestToJoinGroup, inviteUser, leaveGroup, filterGroupsByTags, respondInvitation, getNotification } from '../api';
 import { TextField } from '@mui/material';
 
 const lib = require('../fetch');
@@ -93,8 +93,14 @@ function MainView() {
   ];
 
   useEffect(async () => {
+    let isMounted = true;
     const recommendL = await lib.getRecommend();
-    setRecommend(recommendL);
+    const notif = await getNotification();
+    if (isMounted) {
+      setRecommend(recommendL);
+      setNotification(notif);
+    }
+    return (() => { isMounted = false; });
   }, []);
 
   const handleJoinGroup = async (groupName) => {
@@ -190,35 +196,33 @@ function MainView() {
   const List1 = () => {
     const memtions = notification.memtions;
     return (
-      admins.map((person) => (
+      memtions.map((person) => (
         <li key={person.id}>
-          <Link href={`/chat/${person.username}`} variant="body2">
-            {person.username}
-          </Link>
+          {`You are memtioned by ${person.username}`}
         </li>
       ))
     )
   };
   const List2 = () => {
-    const messages = certainGroup.messages;
+    const messages = notification.messages;
     return (
-      members.map((person) => (
+      messages.map((person) => (
         <li key={person.id}>
           <Link href={`/chat/${person.username}`} variant="body2">
-            {person.username}
+            {`User ${person.username} has sent you a message, click to view`}
           </Link>
         </li>
       ))
     )
   };
   const List3 = () => {
-    const invitation = certainGroup.invitation;
+    const invitation = notification.invitation;
     return (
-      requests.map((person) => (
-        <li key={person.id}>
-            {person.username}
-            <Button variant='contained' type="submit" onClick={JoinRequestDecision(groupName, person.username, false)}>Deny</Button>
-            <Button variant='contained' type="submit" onClick={JoinRequestDecision(groupName, person.username, true)}>Accept</Button>
+      invitation.map((group) => (
+        <li key={group.id}>
+            {`You are invited to join ${group.name} group`}
+            <Button variant='contained' type="submit" onClick={respondInvitation(group.name, false)}>Deny</Button>
+            <Button variant='contained' type="submit" onClick={respondInvitation(group.name, true)}>Accept</Button>
         </li>
       ))
     )
