@@ -36,7 +36,7 @@ describe('show start page correctly', () => {
   //   fireEvent.change(screen.getByRole('textbox'), {
   //     target: { value: '^' },
   //   });
-  fireEvent.submit(screen.getByTestId('leave'));
+  // fireEvent.submit(screen.getByTestId('leave'));
   //   // expect(handleLogin).toHaveBeenCalled();
   //   expect(screen.getByText('Invalid User Name!!')).toBeInTheDocument();
   //   // const display = screen.getByText('Display Leaders');
