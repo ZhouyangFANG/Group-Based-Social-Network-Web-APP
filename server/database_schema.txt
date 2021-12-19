@@ -102,14 +102,14 @@ create table invitation (
 
 CREATE TABLE message (
     id varchar(36),
-    sender varchar(36) not null,
-    receiver varchar(36) not null,
+    sender varchar(255) not null,
+    receiver varchar(255) not null,
     time varchar(255),
     content mediumtext,
     type enum('text', 'image', 'audio', 'video'),
     primary key (id),
-    foreign key (sender) references user(id),
-    foreign key (receiver) references user(id)
+    foreign key (sender) references user(username),
+    foreign key (receiver) references user(username)
 );
 
 CREATE TABLE mention (
