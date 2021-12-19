@@ -95,20 +95,36 @@ export default function GroupPage() {
     <>
       <Header title={groupName} />
       <Grid container spacing={2}>
-        <LeftPanel />
-        <ul>
-          <List1 />
-        </ul>
-        <ul>
-          <List2 />
-        </ul>
-        <ul>
-          <List3 />
-        </ul>
+        <Grid item xs={4} md={3}>
+          <LeftPanel />
+        </Grid>
         <Grid item xs={8} md={5}>
           <Posts certainGroup={certainGroup} />
         </Grid>
-        <ControlPanel groupName={groupName} />
+        <Grid item xs={4}>
+          <ControlPanel groupName={groupName} />
+        </Grid>
+        <Grid item xs={4}>
+          {
+            certainGroup &&
+            (
+              <>
+                Admins:
+                <ul>
+                  <List1 />
+                </ul>
+                Members:
+                <ul>
+                  <List2 />
+                </ul>
+                Request to Join:
+                <ul>
+                  <List3 />
+                </ul>
+              </>
+            )
+          }
+        </Grid>
       </Grid>
     </>
   );
