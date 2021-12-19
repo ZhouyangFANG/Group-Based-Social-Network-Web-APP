@@ -307,6 +307,44 @@ group by groupInfo.id;`, (error, results) => {
   });
 }
 
+function getGroupsByTag(req, res) {
+  const userId = req.userInfo.id;
+  connection.query(`SELECT tag.* FROM tag WHERE tag.name = '${req.params.tagname}';`, (error, results) => {
+    if (error) {
+      res.status(400).json({ error });
+    } else {
+      tagId = results[0].id;
+      connection.query(`SELECT groupInfo.id, groupInfo.name, groupInfo.type,
+      max(p.datetime) as latest, count(p.id) as num_posts, count(m.userId) as num_members, true as is_member
+    from groupInfo left join post p on groupInfo.id = p.groupId
+    left join member m on groupInfo.id = m.groupId
+    inner join tagRelation on tagRelation.groupId = groupInfo.id
+    where groupInfo.type = true and
+          '${userId}' in (select userId from member where groupId = groupInfo.id)
+          and tagRelation.tagId = '${tagId}'
+    group by groupInfo.id
+    union
+    SELECT groupInfo.id, groupInfo.name, groupInfo.type,
+      max(p.datetime) as latest, count(p.id) as num_posts, count(m.userId) as num_members, false as is_member
+    from groupInfo left join post p on groupInfo.id = p.groupId
+    left join member m on groupInfo.id = m.groupId
+    inner join tagRelation on tagRelation.groupId = groupInfo.id
+    where groupInfo.type = true and
+          '${userId}' not in (select userId from member where groupId = groupInfo.id)
+          and tagRelation.tagId = '${tagId}'
+    group by groupInfo.id;`, (error, results) => {
+        if (error) {
+          res.status(400);
+          res.json({ error });
+        } else {
+          res.status(200);
+          res.json(results);
+        }
+      });
+    }
+  });
+}
+
 async function getTags(req, res) {
   connection.query('SELECT * from tag', (error, results) => {
     if (error) {
@@ -834,4 +872,5 @@ module.exports = {
   getMessages,
   postMessage,
   getNotifications,
+  getGroupsByTag,
 };
