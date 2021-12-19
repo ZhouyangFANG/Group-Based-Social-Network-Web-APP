@@ -16,6 +16,7 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import AssistantPhotoIcon from '@mui/icons-material/AssistantPhoto';
 import ThreeSixtyIcon from '@mui/icons-material/ThreeSixty';
 import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
+import TextField from '@mui/material/TextField';
 
 const lib = require('../../fetch');
 
@@ -58,11 +59,30 @@ export default function Posts(props) {
     }
   }
 
+  async function addComment(postId){
+    const content = document.getElementById(`comment${postId}`).value;
+    const res = await lib.addComment(postId, content);
+    if (res === 201) {
+      window.location.reload();
+    }
+  }
+
+  function sortCommentTime() {
+    return function (objectN, objectM) {
+      const valueN = objectN.time;
+      const valueM = objectM.time;
+      if (valueN < valueM) return 1;
+      else if (valueN > valueM) return -1;
+      else return 0;
+    }
+  }
+
   function Comments(commentL) {
-    return commentL.map((comment) => 
+    commentL.sort(sortCommentTime());
+    return commentL.map((comment) =>
       <CardContent>
         <Typography variant="body2" color="text.secondary">
-          {comment.content}
+          {comment.username}: {comment.content}
         </Typography>
       </CardContent>
     );
@@ -112,8 +132,9 @@ export default function Posts(props) {
               {post.postContent}
             </Typography>
           </CardContent>
+          <TextField id={`comment${post.id}`} label="add comment" name="add comment"/>
           <CardActions disableSpacing>
-            <IconButton aria-label="add to favorites">
+            <IconButton aria-label="addComment" onClick={() => {addComment(post.id)}}>
               <FavoriteIcon />
             </IconButton>
             <IconButton aria-label="flag" id="flag" onClick={() => {flagPost(post.id)}}>
@@ -160,7 +181,7 @@ export default function Posts(props) {
             </Typography>
           </CardContent>
           <CardActions disableSpacing>
-            <IconButton aria-label="add to favorites">
+            <IconButton aria-label="addComment" onClick={() => {addComment(post.id)}}>
               <FavoriteIcon />
             </IconButton>
             <IconButton aria-label="flag" id="flag" onClick={() => {flagPost(post.id)}}>

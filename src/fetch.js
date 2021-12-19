@@ -276,7 +276,30 @@ async function getRecommend() {
   return res;
 }
 
-async function editComment(username) {
+async function addComment(postId, contentV) {
+  let res;
+  await fetch(`${uri}posts/${postId}/comments`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      content: contentV,
+    }),
+    credentials: 'include',
+  }).then((response) => response.json())
+    .then((data) => {
+      res = response.status;
+      window.console.log(data);
+    }).catch((error) => {
+      window.console.log(error);
+    });
+  return res;
+}
+
+
+
+async function editComment(groupName, postId, commentId) {
   let res;
   await fetch(`${uri}groups/${groupName}/posts/${postId}/comments/${commentId}`, {
     method: 'PUT',
@@ -289,6 +312,7 @@ async function editComment(username) {
       author: authorV,
       content: contentV,
     }),
+    credentials: 'include',
   }).then((response) => response.json())
     .then((data) => {
       //
@@ -314,6 +338,7 @@ async function deleteComment(username) {
       author: authorV,
       content: contentV,
     }),
+    credentials: 'include',
   }).then((response) => response.json())
     .then((data) => {
       //
@@ -329,5 +354,5 @@ async function deleteComment(username) {
 export {
   register, login, createGroup, addPost, deletePost, flagPost, getProfile,
   editComment, deleteComment, updateProfile, updatePwd, getAllTag,
-  hidePost, getHiddenList, getRecommend, getGroupAnaly,
+  hidePost, getHiddenList, getRecommend, getGroupAnaly, addComment,
 };
