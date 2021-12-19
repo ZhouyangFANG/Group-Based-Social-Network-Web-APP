@@ -72,6 +72,8 @@ export default function Posts(props) {
     const res = await lib.deleteComment(commentId);
     if (res === 200) {
       window.location.reload();
+    } else {
+      alert("You cannot delete this comment");
     }
   }
 
@@ -85,9 +87,11 @@ export default function Posts(props) {
     }
   }
 
-  function Comments(commentL) {
-    commentL.sort(sortCommentTime());
-    return commentL.map((comment) =>
+  const Comments = ({comment}) => {
+    if (comment.deleted) {
+      return null;
+    }
+    return (
       <CardContent>
         <Typography variant="body2" color="text.secondary">
           {comment.username}: {comment.content}
@@ -95,6 +99,11 @@ export default function Posts(props) {
         <Button variant='contained' type="submit" onClick={() => {deleteComment(comment.id)}}>Delete</Button>
       </CardContent>
     );
+  }
+
+  function MapCommentList(commentL) {
+    commentL.sort(sortCommentTime());
+    return commentL.map((comment) => <Comments comment={comment} key={comment.id}/>);
   }
 
   function MapList() {
@@ -160,7 +169,7 @@ export default function Posts(props) {
             </IconButton>
           </CardActions>
           <div>
-            {Comments(post.comments)}
+            {MapCommentList(post.comments)}
           </div>
         </Card>
       )
@@ -189,6 +198,7 @@ export default function Posts(props) {
               {post.postContent}
             </Typography>
           </CardContent>
+          <TextField id={`comment${post.id}`} label="add comment" name="add comment"/>
           <CardActions disableSpacing>
             <IconButton aria-label="addComment" onClick={() => {addComment(post.id)}}>
               <FavoriteIcon />
@@ -204,7 +214,7 @@ export default function Posts(props) {
             </IconButton>
           </CardActions>
           <div>
-            {Comments(post.comments)}
+            {MapCommentList(post.comments)}
           </div>
         </Card>
       )

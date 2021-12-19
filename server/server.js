@@ -66,8 +66,6 @@ app.post('/api/posts/:postId/comments', routes.checkCookie, routes.postComment);
 app.get('/api/users/:username/messages', routes.checkCookie, routes.getMessages);
 app.post('/api/users/:username/messages', routes.checkCookie, routes.postMessage);
 
-app.get('/api/mentions', routes.checkCookie, routes.getMentions);
-
 app.get('/api/notification', routes.checkCookie, routes.getNotifications);
 
 app.get('/', (req, res) => {
