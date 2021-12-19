@@ -60,11 +60,57 @@ export default function GroupPage() {
     window.location.href = url;
   }
 
+  const List1 = () => {
+    const admins = certainGroup.admins;
+    return (
+      admins.map((person) => (
+        <li key={person.id}>
+          {person.name}
+          :
+          {person.maxpoints}
+        </li>
+      ))
+    )
+  };
+  const List2 = () => {
+    const members = certainGroup.members;
+    return (
+      members.map((person) => (
+        <li key={person.id}>
+          {person.name}
+          :
+          {person.maxpoints}
+        </li>
+      ))
+    )
+  };
+  const List3 = () => {
+    const requests = certainGroup.requests;
+    return (
+      requests.map((person) => (
+        <li key={person.id}>
+          {person.name}
+          :
+          {person.maxpoints}
+        </li>
+      ))
+    )
+  };
+
   return (
     <>
       <Header title={groupName} />
       <Grid container spacing={2}>
         <LeftPanel />
+        <ul>
+          <List1 />
+        </ul>
+        <ul>
+          <List2 />
+        </ul>
+        <ul>
+          <List3 />
+        </ul>
         <Grid item xs={8} md={5}>
           <Posts certainGroup={certainGroup} />
         </Grid>

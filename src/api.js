@@ -131,3 +131,7 @@ export async function filterGroupsByTags(tag, setGroupList) {
   setGroupList(res.data);
   // setGroupList(groupList);
 }
+
+export async function JoinRequestDecision(groupName, userName, decision) {
+  const res = await axios.put(`${url}/groups/${groupName}/requests/${userName}`, {granted: decision}, { withCredentials: true });
+}

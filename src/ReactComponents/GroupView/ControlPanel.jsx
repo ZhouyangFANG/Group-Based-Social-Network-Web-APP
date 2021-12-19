@@ -47,6 +47,7 @@ export default function ControlPanel(props) {
   }
   const handleLeave = async () => {
     await leaveGroup(groupName);
+    window.location.href = "/groups";
   }
 
   return (
