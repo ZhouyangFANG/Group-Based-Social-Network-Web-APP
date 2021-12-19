@@ -138,8 +138,8 @@ function MainView() {
 
   function objectSortPostNum() {
    return function (objectN, objectM) {
-    const valueN = objectN.posts.length;
-    const valueM = objectM.posts.length;
+    const valueN = objectN.num_posts;
+    const valueM = objectM.num_posts;
     if (valueN < valueM) return 1;
     else if (valueN > valueM) return -1;
     else return 0;
@@ -155,8 +155,8 @@ function MainView() {
 
   function objectSortMemNum() {
    return function (objectN, objectM) {
-    const valueN = objectN.members.length;
-    const valueM = objectM.members.length;
+    const valueN = objectN.num_members;
+    const valueM = objectM.num_members;
     if (valueN < valueM) return 1;
     else if (valueN > valueM) return -1;
     else return 0;
@@ -172,8 +172,15 @@ function MainView() {
 
   function objectSortNewMsg() {
    return function (objectN, objectM) {
-    const valueN = objectN.newestMsg;
-    const valueM = objectM.newestMsg;
+    const valueN = objectN.latest;
+    const valueM = objectM.latest;
+    if (valueN === null && valueM === null) {
+      return 0;
+    } else if (valueN === null) {
+      return 1;
+    } else if (valueM === null) {
+      return -1;
+    }
     if (valueN < valueM) return 1;
     else if (valueN > valueM) return -1;
     else return 0;
