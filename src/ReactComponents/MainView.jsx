@@ -1,5 +1,5 @@
 import { React, useState, useEffect } from 'react';
-import { Link as RouterLink, useParams, useHistory} from 'react-router-dom';
+import { Link as RouterLink, useParams, useHistory } from 'react-router-dom';
 import Link from '@material-ui/core/Link';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -63,7 +63,7 @@ function MainView() {
   const theme = useTheme();
   const [groupList, setGroupList] = useState([]);
   const [recommend, setRecommend] = useState([]);
-  const userName = 'FakeName';
+  const [notification, setNotification] = useState(null);
   const history = useHistory();
   const columns = [
     {
@@ -80,7 +80,7 @@ function MainView() {
       headerName: 'Request to join',
       width: 150,
       renderCell: (params) => (
-        <Button variant="contained" color="primary" onClick={()=> {handleJoinGroup(params.row.name)}}>Join</Button>
+        <Button variant="contained" color="primary" onClick={() => { handleJoinGroup(params.row.name) }}>Join</Button>
       ),
     },
   ];
@@ -116,7 +116,7 @@ function MainView() {
     }
   }
 
-  function toUserPage(){
+  function toUserPage() {
     const url = window.location.href;
     const urlList = url.split('/');
     urlList.pop();
@@ -137,13 +137,13 @@ function MainView() {
   }
 
   function objectSortPostNum() {
-   return function (objectN, objectM) {
-    const valueN = objectN.num_posts;
-    const valueM = objectM.num_posts;
-    if (valueN < valueM) return 1;
-    else if (valueN > valueM) return -1;
-    else return 0;
-   }
+    return function (objectN, objectM) {
+      const valueN = objectN.num_posts;
+      const valueM = objectM.num_posts;
+      if (valueN < valueM) return 1;
+      else if (valueN > valueM) return -1;
+      else return 0;
+    }
   }
 
   const sortByMemberNum = () => {
@@ -154,13 +154,13 @@ function MainView() {
   }
 
   function objectSortMemNum() {
-   return function (objectN, objectM) {
-    const valueN = objectN.num_members;
-    const valueM = objectM.num_members;
-    if (valueN < valueM) return 1;
-    else if (valueN > valueM) return -1;
-    else return 0;
-   }
+    return function (objectN, objectM) {
+      const valueN = objectN.num_members;
+      const valueM = objectM.num_members;
+      if (valueN < valueM) return 1;
+      else if (valueN > valueM) return -1;
+      else return 0;
+    }
   }
 
   const sortByNewestMsg = () => {
@@ -171,21 +171,58 @@ function MainView() {
   }
 
   function objectSortNewMsg() {
-   return function (objectN, objectM) {
-    const valueN = objectN.latest;
-    const valueM = objectM.latest;
-    if (valueN === null && valueM === null) {
-      return 0;
-    } else if (valueN === null) {
-      return 1;
-    } else if (valueM === null) {
-      return -1;
+    return function (objectN, objectM) {
+      const valueN = objectN.latest;
+      const valueM = objectM.latest;
+      if (valueN === null && valueM === null) {
+        return 0;
+      } else if (valueN === null) {
+        return 1;
+      } else if (valueM === null) {
+        return -1;
+      }
+      if (valueN < valueM) return 1;
+      else if (valueN > valueM) return -1;
+      else return 0;
     }
-    if (valueN < valueM) return 1;
-    else if (valueN > valueM) return -1;
-    else return 0;
-   }
   }
+
+  const List1 = () => {
+    const memtions = notification.memtions;
+    return (
+      admins.map((person) => (
+        <li key={person.id}>
+          <Link href={`/chat/${person.username}`} variant="body2">
+            {person.username}
+          </Link>
+        </li>
+      ))
+    )
+  };
+  const List2 = () => {
+    const messages = certainGroup.messages;
+    return (
+      members.map((person) => (
+        <li key={person.id}>
+          <Link href={`/chat/${person.username}`} variant="body2">
+            {person.username}
+          </Link>
+        </li>
+      ))
+    )
+  };
+  const List3 = () => {
+    const invitation = certainGroup.invitation;
+    return (
+      requests.map((person) => (
+        <li key={person.id}>
+            {person.username}
+            <Button variant='contained' type="submit" onClick={JoinRequestDecision(groupName, person.username, false)}>Deny</Button>
+            <Button variant='contained' type="submit" onClick={JoinRequestDecision(groupName, person.username, true)}>Accept</Button>
+        </li>
+      ))
+    )
+  };
 
   return (
     <div id="wrapper">
@@ -217,7 +254,7 @@ function MainView() {
             <DataGrid
               rows={groupList}
               columns={columns}
-              pageSize ={8}
+              pageSize={8}
               rowsPerPageOptions={[5]}
               disableSelectionOnClick
             />
@@ -241,6 +278,29 @@ function MainView() {
               disableSelectionOnClick
             />
           </div>
+        </Grid>
+        <Grid item xs={4} md={4}>
+          <Paper style={{ position: 'fixed' }}>
+            {
+              notification &&
+              (
+                <>
+                  You are memtioned by:
+                  <ul>
+                    <List1 />
+                  </ul>
+                  The user below sent you messages:
+                  <ul>
+                    <List2 />
+                  </ul>
+                  You got invitation to these groups:
+                  <ul>
+                    <List3 />
+                  </ul>
+                </>
+              )
+            }
+          </Paper>
         </Grid>
       </Grid>
     </div>

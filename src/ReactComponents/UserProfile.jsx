@@ -96,13 +96,13 @@ function UserProfile() {
           <Stack spacing={2}>
             Personal Information
             <TextField  id="email" label="Email" autoFocus />
-            <TextField  id="username" label="User Name" />
-            <TextField variant="outlined" margin="normal" id="phone" label="Phone Number" autoFocus />
-            <TextField variant="outlined" margin="normal" id="link" label="Links" autoFocus />
-            <TextField margin="normal" id="gender" label="Gender" autoFocus />
+            <TextField  id="username" label="User Name" defaultValue=" " />
+            <TextField variant="outlined" margin="normal" id="phone" label="Phone Number" defaultValue=" " />
+            <TextField variant="outlined" margin="normal" id="link" label="Links" autoFocus defaultValue=" "/>
+            <TextField margin="normal" id="gender" label="Gender" autoFocus defaultValue=" "/>
             <div id="register">Registration date: </div>
             <Button variant="contained" onClick={updateProfile}>Save</Button>
-            <TextField margin="normal" id="pwd" label="password" autoFocus />
+            <TextField margin="normal" id="pwd" label="password" autoFocus defaultValue=" "/>
             <Button variant="contained" onClick={updatePwd}>Save</Button>
           </Stack>
         </Grid>
