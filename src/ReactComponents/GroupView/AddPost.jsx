@@ -73,8 +73,8 @@ export default function AddPost() {
               id="content"/>
             <Button
               data-testid="submit"
-              component={RouterLink}
               fullWidth
+              id="addBtn"
               variant="contained"
               onClick={addPost}
               sx={{ mt: 3, mb: 2 }}

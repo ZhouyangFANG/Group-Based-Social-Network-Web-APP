@@ -86,7 +86,7 @@ export default function SignIn() {
               required
               fullWidth
               id="email"
-              label="Email Address"
+              label="Username"
               name="email"
               autoComplete="email"
               autoFocus
@@ -103,6 +103,7 @@ export default function SignIn() {
             />
             <Button
               data-testid="submit"
+              id = 'loginBtn'
               type="submit"
               fullWidth
               variant="contained"

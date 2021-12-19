@@ -68,6 +68,8 @@ app.post('/api/users/:username/messages', routes.checkCookie, routes.postMessage
 
 app.get('/api/notification', routes.checkCookie, routes.getNotifications);
 
+app.get('/api/tag/:tagname', routes.checkCookie, routes.getGroupsByTag);
+
 app.get('/', (req, res) => {
   res.send('Hello World!');
 });
