@@ -105,18 +105,9 @@ export default function GroupPage() {
 
   return (
     <>
-      <Header title={groupName} />
+      <Header title={`Group Name: ${groupName}`} userName={`User: ${window.localStorage.getItem("username")}`} />
       <Grid container spacing={2}>
         <Grid item xs={4} md={3}>
-          <LeftPanel />
-        </Grid>
-        <Grid item xs={8} md={5}>
-          <Posts certainGroup={certainGroup} />
-        </Grid>
-        <Grid item xs={4}>
-          <ControlPanel groupName={groupName} />
-        </Grid>
-        <Grid item xs={4}>
         <Paper style={{ position: 'fixed' }}>
           {
             certainGroup &&
@@ -144,6 +135,12 @@ export default function GroupPage() {
             )
           }
           </Paper>
+        </Grid>
+        <Grid item xs={8} md={5}>
+          <Posts certainGroup={certainGroup} />
+        </Grid>
+        <Grid item xs={4}>
+          <ControlPanel groupName={groupName} />
         </Grid>
         <Grid item xs={2} md={2}>
           <Card sx={{ minWidth: 275 }}>

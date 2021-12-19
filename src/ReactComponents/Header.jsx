@@ -14,6 +14,9 @@ export default function Header(props) {
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
           {props.title}
         </Typography>
+        <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+          {props.userName}
+        </Typography>
       </Toolbar>
     </AppBar>
   );
