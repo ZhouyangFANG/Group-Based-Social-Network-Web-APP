@@ -362,13 +362,44 @@ async function flagPost(req, res) {
 
 async function deletePost(req, res) {
   const { postId } = req.params;
-  connection.query(`UPDATE post SET deleted = true where id = '${postId}'`, (error, results) => {
+  const userId = req.userInfo.id;
+  console.log(userId);
+  connection.query(`select a.userId as adminId from post join groupInfo gI on gI.id = post.groupId join admin a on gI.id = a.groupId where
+  post.id = '${postId}';`, (error, results) => {
     if (error) {
       res.status(400);
       res.json({ error });
     } else {
-      res.status(200);
-      res.json(results);
+      let flag = false;
+      for (i=0; i<results.length; i += 1){
+        if (results[i].adminId === userId){
+          flag = true;
+        }
+      }
+      if (flag === true){
+        connection.query(`UPDATE post SET deleted = true where id = '${postId}'`, (error, results) => {
+          if (error) {
+            res.status(400);
+            res.json({ error });
+          } else {
+            res.status(200);
+            res.json(results);
+          }
+        });
+      } else {
+        connection.query(`UPDATE post SET deleted = true where id = '${postId}' and author = '${userId}'`, (error, results) => {
+          if (error) {
+            res.status(400);
+            res.json({ error });
+          } else if (results.affectedRows !==0) {
+            res.status(200);
+            res.json(results);
+          } else {
+            res.status(401);
+            res.json(results);
+          }
+        });
+      }
     }
   });
 }
