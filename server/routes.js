@@ -18,6 +18,17 @@ const connection = mysql.createConnection({
 });
 connection.connect();
 
+function dbQuery(sql) {
+  return new Promise((resolve, reject) => {
+    connection.query(sql, (error, results) => {
+      if (error) {
+        return reject(error);
+      }
+      resolve(results);
+    });
+  })
+}
+
 async function checkCookie(req, res, next) {
   const cookie = req.cookies.token;
   if (!cookie) {
@@ -511,23 +522,12 @@ function _checkAdmin(req, res, callback) {
     connection.query(`SELECT * FROM admin WHERE userId = '${req.userInfo.id}' AND groupId = '${group.id}';`, (error, results) => {
       if (error) {
         res.status(400).json({ error });
-      } else if (results.length === 0) {
-        res.status(403).json('admin permission needed');
       } else {
-        callback(group);
+        callback(group, results.length > 0);
       }
     });
   })
 };
-
-function getGroups(req, res) {
-  connection.query(`SELECT groupInfo.* FROM groupInfo INNER JOIN member ON groupInfo.id = member.groupId WHERE member.userId = '${req.userInfo.id}';`, (error0, results0) => {
-    connection.query(`SELECT * FROM groupInfo
-    WHERE NOT EXISTS (SELECT * FROM member WHERE userId = '${req.userInfo.id}' AND groupId = groupInfo.id) AND type = 1;`, (error1, results1) => {
-      res.status(200).json({ joined: results0, public: results1 });
-    });
-  });
-}
 
 function addMember(req, res) {
   _getGroup(req, res, (group) => {
@@ -607,43 +607,73 @@ function deleteAdmin(req, res) {
 
 function postRequest(req, res) {
   _getGroup(req, res, (group) => {
-    connection.query(`INSERT INTO request(userId, groupId) VALUES ('${req.userInfo.id}', '${group.id}');`, (error1) => {
-      if (error1) {
-        if (error1.code === 'ER_DUP_ENTRY') {
-          res.status(409).json({ message: error1.sqlMessage });
-        } else {
-          res.status(400).json({ error: error1 });
-        }
+    connection.query(`SELECT * FROM member WHERE userId = '${req.userInfo.id}' AND groupId = '${group.id}';`, (error0, results0) => {
+      if (error0 || results0.length > 0) {
+        res.status(400).json('already a member');
       } else {
-        res.status(201).json('success');
+        const promise0 = dbQuery(`INSERT INTO request(userId, groupId) VALUES ('${req.userInfo.id}', '${group.id}');`);
+        const promise1 = dbQuery(`DELETE FROM invitation WHERE userId = '${req.userInfo.id}' AND groupId = '${group.id}';`);
+        return Promise.all([promise0, promise1]).then(() => {
+          res.status(201).json('request posted');
+        }).catch((error) => {
+          res.status(400).json({ error });
+        })
       }
     });
   });
 }
 
+function resolveRequest(req, res) {
+  _checkAdmin(req, res, (group, isAdmin) => {
+    if (!isAdmin) {
+      res.status(403).json('admin permission needed');
+    } else {
+      const promise0 = req.body.granted ? dbQuery(`INSERT INTO member(userId, groupId) SELECT user.id, '${group.id}' FROM user WHERE username = '${req.params.username}';`) : Promise.resolve();
+      const promise1 = dbQuery(`DELETE request FROM request INNER JOIN user ON request.userId = user.id WHERE user.username = '${req.params.username}' AND request.groupId = '${group.id}';`);
+      return Promise.all([promise0, promise1]).then(() => {
+        res.status(200).json('success');
+      }).catch((error) => {
+        res.status(400).json({ error });
+      });
+    }
+  });
+}
+
 function postInvitation(req, res) {
   _getGroup(req, res, (group) => {
-    connection.query(`SELECT * FROM user WHERE username = '${req.params.username}';`, (error1, results1) => {
-      if (error1) {
-        res.statu(400).json({ error: error1 });
-      } else if (results1.length === 0) {
-        res.status(404).json('user not found');
+    const promise0 = dbQuery(`SELECT * FROM member INNER JOIN user ON member.userId = user.id WHERE user.username = '${req.params.username}' AND member.groupId = '${group.id}';`);
+    const promise1 = dbQuery(`SELECT * FROM request INNER JOIN user ON request.userId = user.id WHERE user.username = '${req.params.username}' AND request.groupId = '${group.id}';`);
+    return Promise.all([promise0, promise1]).then(([results0, results1]) => {
+      if (results0.length > 0 || results1.length > 0) {
+        res.status(400).json('invitee is already a member or has already sent an request to be a member');
       } else {
-        const [user] = results1;
-        connection.query(`INSERT INTO invitation(userId, groupId) VALUES ('${user.id}', '${group.id}');`, (error2) => {
-          if (error2) {
-            if (error2.code === 'ER_DUP_ENTRY') {
-              res.status(409).json({ message: error2.sqlMessage });
-            } else {
-              res.status(400).json({ error: error2 });
-            }
+        connection.query(`INSERT INTO invitation(userId, groupId) SELECT user.id, '${group.id}' FROM user WHERE username = '${req.params.username}';`, (error) => {
+          if (error) {
+            res.status(400).json({ error });
           } else {
-            res.status(201).json('success');
+            res.status(200).json('success');
           }
         });
       }
+    }).catch((error) => {
+      res.status(400).json({ error });
     });
   });
+}
+
+function resolveInvitation(req, res) {
+  if (req.body.granted) {
+    postRequest(req, res);
+  } else {
+    connection.query(`DELETE invitation FROM invitation INNER JOIN groupInfo ON invitation.groupId = groupInfo.id
+    WHERE invitation.userId = '${req.userInfo.id}' AND groupInfo.name = '${req.params.groupname}';`, (error) => {
+      if (error) {
+        res.status(400).json({ error });
+      } else {
+        res.status(200).json('success');
+      }
+    });
+  }
 }
 
 function leaveGroup(req, res) {
@@ -665,47 +695,26 @@ function leaveGroup(req, res) {
 }
 
 function getGroup(req, res) {
-  _getGroup(req, res, (group) => {
-    connection.query(`SELECT user.* FROM user INNER JOIN member ON member.userId = user.id WHERE member.groupId = '${group.id}';`, (error0, results0) => {
-      if (error0) {
-        res.status(400).json({ error: error0 });
-      } else {
-        group.members = results0;
-        connection.query(`SELECT user.* FROM user INNER JOIN admin ON admin.userId = user.id WHERE admin.groupId = '${group.id}';`, (error1, results1) => {
-          if (error1) {
-            res.status(400).json({ error: error1 });
-          } else {
-            group.admins = results1;
-            connection.query(`SELECT * FROM post WHERE groupId = '${group.id}';`, (error2, results2) => {
-              if (error2) {
-                res.status(400).json({ error: error2 });
-              } else {
-                async.forEachOf(
-                  results2,
-                  (post, i, callback) => {
-                    connection.query(`SELECT * FROM comment WHERE postId = '${post.id}' ORDER BY datetime DESC;`, (error3, results3) => {
-                      if (error3) {
-                        callback(error3);
-                      } else {
-                        post.comments = results3;
-                        callback();
-                      }
-                    });
-                  },
-                  (error4) => {
-                    if (error4) {
-                      res.status(400).json({ error: error4 });
-                    } else {
-                      group.posts = results2;
-                      res.status(200).json(group);
-                    }
-                  },
-                );
-              }
-            });
-          }
-        });
+  _checkAdmin(req, res, (group, isAdmin) => {
+    const promise0 = dbQuery(`SELECT user.* FROM user INNER JOIN member ON member.userId = user.id WHERE member.groupId = '${group.id}';`);
+    const promise1 = dbQuery(`SELECT user.* FROM user INNER JOIN admin ON admin.userId = user.id WHERE admin.groupId = '${group.id}';`);
+    const promise2 = dbQuery(`SELECT * FROM post WHERE groupId = '${group.id}';`).then(async (results) => {
+      if (results.length > 0) {
+        await Promise.all(results.map(async (post) => {
+          post.comments = await dbQuery(`SELECT * FROM comment WHERE postId = '${post.id}' ORDER BY datetime DESC;`);
+        }));
       }
+      return results;
+    });
+    const promise3 = isAdmin ? dbQuery(`SELECT user.* FROM user INNER JOIN request ON request.userId = user.id WHERE request.groupId = '${group.id}';`) : Promise.resolve(undefined);
+    return Promise.all([promise0, promise1, promise2, promise3]).then(([members, admins, posts, requests]) => {
+      group.members = members;
+      group.admins = admins;
+      group.posts = posts;
+      group.requests = requests;
+      res.status(200).json(group);
+    }).catch((error) => {
+      res.status(400).json({ error });
     });
   });
 }
@@ -805,13 +814,14 @@ module.exports = {
   deleteComment,
   groupRecommendation,
   groupAnalytic,
-  getGroups,
   addMember,
   leaveGroup,
   addAdmin,
   deleteAdmin,
   postRequest,
+  resolveRequest,
   postInvitation,
+  resolveInvitation,
   getGroup,
   postComment,
   getMessages,

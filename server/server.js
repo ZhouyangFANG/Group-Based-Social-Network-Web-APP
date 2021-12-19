@@ -55,7 +55,10 @@ app.post('/api/groups/:groupname/admins/:username', routes.checkCookie, routes.a
 app.delete('/api/groups/:groupname/admins/:username', routes.checkCookie, routes.deleteAdmin);
 
 app.post('/api/groups/:groupname/requests', routes.checkCookie, routes.postRequest);
+app.put('/api/groups/:groupname/requests/:username', routes.checkCookie, routes.resolveRequest);
+
 app.post('/api/groups/:groupname/invites/:username', routes.checkCookie, routes.postInvitation);
+app.put('/api/invites/:groupname', routes.checkCookie, routes.resolveInvitation);
 
 app.get('/api/groups/:groupname', routes.checkCookie, routes.getGroup);
 
