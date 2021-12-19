@@ -69,6 +69,8 @@ app.post('/api/users/:username/messages', routes.checkCookie, routes.postMessage
 app.get('/api/mentions', routes.checkCookie, routes.getMentions);
 app.post('/api/mentions', routes.checkCookie, routes.addMention);
 
+app.get('/api/notification', routes.checkCookie, routes.getNotifications);
+
 app.get('/', (req, res) => {
   res.send('Hello World!');
 });

@@ -118,7 +118,29 @@ const Chat = () => {
                             variant="contained"
                             component="label"
                         >
-                            Send File
+                            Image
+                            <input
+                                type="file"
+                                onChange={handleUpload}
+                                hidden
+                            />
+                        </Button>
+                        <Button
+                            variant="contained"
+                            component="label"
+                        >
+                            Audio
+                            <input
+                                type="file"
+                                onChange={handleUpload}
+                                hidden
+                            />
+                        </Button>
+                        <Button
+                            variant="contained"
+                            component="label"
+                        >
+                            Video
                             <input
                                 type="file"
                                 onChange={handleUpload}

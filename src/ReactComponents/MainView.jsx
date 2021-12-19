@@ -71,7 +71,7 @@ function MainView() {
       headerName: 'Group Name',
       width: 150,
       renderCell: (params) => (
-        <Link component={RouterLink} to={`/groups/${params.value}`} variant="body2">{params.value}</Link>
+        <Link component={RouterLink} to={'groups/'+params.value} variant="body2">{params.value}</Link>
       ),
     },
     { field: 'tags', headerName: 'Tags', width: 200 },
@@ -216,9 +216,9 @@ function MainView() {
     )
   };
   const List3 = () => {
-    const invitation = notification.invitation;
+    const invitations = notification.invitations;
     return (
-      invitation.map((group) => (
+      invitations.map((group) => (
         <li key={group.id}>
             {`You are invited to join ${group.name} group`}
             <Button variant='contained' type="submit" onClick={respondInvitation(group.name, false)}>Deny</Button>

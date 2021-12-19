@@ -118,8 +118,7 @@ export async function requestToJoinGroup(groupName) {
 
 // 8 Invite a user into a group (public and private) (0)
 export async function inviteUser(groupName, userName) {
-  const res = await axios.post(`${url}/groups/${groupName}/invite`, {userName}, { withCredentials: true });
-  return res.data;
+  const res = await axios.post(`${url}/groups/${groupName}/invites/${userName}`, {}, { withCredentials: true });
 }
 
 export async function leaveGroup(groupName) {
@@ -144,3 +143,10 @@ export async function getNotification() {
 export async function respondInvitation(groupName, decision) {
   const res = await axios.put(`${url}/invites/${groupName}`, {granted: decision}, { withCredentials: true });
 }
+
+export async function getMessages(userName) {
+  const res = await axios.get(`${url}/users/${userName}/messages`, { withCredentials: true });
+  return res.data;
+}
+
+
