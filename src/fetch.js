@@ -45,23 +45,21 @@ async function login(name, pwd) {
   return statusCode;
 }
 
-async function createGroup(nameV, topic, type, personName) {
+async function createGroup(nameV, topic, type) {
   let record;
   await fetch(`${uri}groups`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
+    credentials: 'include',
     body: JSON.stringify({
       name: nameV,
-      // admin: group.admin,
-      members: personName,
-      tags: topic,
-      groupType: type,
+      tag: topic,
+      type: type,
     }),
-  }).then((res) => res.json())
-    .then((recordL) => {
-      record = recordL;
+  }).then((res) => {
+      record = res.status;
     }).catch((err) => {
       // Print the error if there is one.
       window.console.log(err);
@@ -69,18 +67,17 @@ async function createGroup(nameV, topic, type, personName) {
   return record;
 }
 
-async function addPost(groupName, titleV, authorV, contentV) {
+async function addPost(groupName, titleV, contentV) {
   let statusCode;
   await fetch(`${uri}groups/${groupName}/posts`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
+    credentials: 'include',
     body: JSON.stringify({
       title: titleV,
-      // admin: group.admin,
-      author: authorV,
-      content: contentV,
+      postContent: contentV,
     }),
   }).then((res) => {
     statusCode = res.status;
@@ -88,7 +85,6 @@ async function addPost(groupName, titleV, authorV, contentV) {
     // Print the error if there is one.
     window.console.log(err);
   });
-  statusCode = 404;//200;// 404
   return statusCode;
 }
 
@@ -111,18 +107,18 @@ async function deletePost(postId) {
 
 async function flagPost(postId) {
   let statusCode;
-  await fetch(`${uri}groups/${postId}`, {
-    method: 'PUT',
+  await fetch(`${uri}posts/${postId}/flag`, {
+    method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
+    credentials: 'include',
   }).then((res) => {
     statusCode = res.status;
   }).catch((err) => {
     // Print the error if there is one.
     window.console.log(err);
   });
-  statusCode = 404;
   return statusCode;
 }
 

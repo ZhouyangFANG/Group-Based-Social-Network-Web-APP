@@ -53,13 +53,6 @@ export default function GroupPage() {
     return (() => { isMounted = false; });
   }, []);
 
-
-  function addPost() {
-    let url = window.location.href;
-    url += "/post";
-    window.location.href = url;
-  }
-
   return (
     <>
       <Header title={groupName} />

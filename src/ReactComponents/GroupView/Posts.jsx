@@ -37,9 +37,10 @@ export default function Posts(props) {
   }
 
   function hidePost(postId){
-    /*var hidden = hiddenPosts;
+    var hidden = hiddenPosts;
     hidden.push(postId);
-    sethiddenPosts(hidden);*/
+    sethiddenPosts(hidden);
+    window.location.reload();
   }
 
   function MapList() {
@@ -65,14 +66,12 @@ export default function Posts(props) {
               <IconButton aria-label="settings">
                 <MoreVertIcon />
               </IconButton>
-            )}
-          />
+            )}/>
           <CardMedia
             component="img"
             height="194"
             image="/images/CIS557.png"
-            alt="pic"
-          />
+            alt="pic"/>
           <CardContent id="container">
             <Typography variant="body2" color="text.secondary">
               {post.postContent}
@@ -82,16 +81,16 @@ export default function Posts(props) {
             <IconButton aria-label="add to favorites">
               <FavoriteIcon />
             </IconButton>
-            <IconButton aria-label="flag" id="flag" onClick={flagPost(post.id)}>
+            <IconButton aria-label="flag" id="flag" onClick={() => {flagPost(post.id)}}>
               <AssistantPhotoIcon />
             </IconButton>
-            <IconButton aria-label="delete" id="delete" onClick={deletePost(post.id)}>
+            <IconButton aria-label="delete" id="delete" onClick={() => {deletePost(post.id)}}>
               <DeleteIcon />
             </IconButton>
             <IconButton aria-label="flagdelete">
               <DeleteForeverOutlinedIcon />
             </IconButton>
-            <IconButton aria-label="hide" onClick={hidePost(post.id)}>
+            <IconButton aria-label="hide" onClick={() => {hidePost(post.id)}}>
               <ThreeSixtyIcon />
             </IconButton>
           </CardActions>
@@ -111,30 +110,28 @@ export default function Posts(props) {
                 <MoreVertIcon />
               </IconButton>
             )}
-            //title={post.title}
-          />
+            title={post.title}/>
           <CardMedia
             component="img"
             height="194"
             image="/images/CIS557.png"
-            alt="pic"
-          />
+            alt="pic"/>
           <CardContent id="container">
             <Typography variant="body2" color="text.secondary">
-              {post.content}
+              {post.postContent}
             </Typography>
           </CardContent>
           <CardActions disableSpacing>
             <IconButton aria-label="add to favorites">
               <FavoriteIcon />
             </IconButton>
-            <IconButton aria-label="flag" id="flag" onClick={flagPost(post.id)}>
+            <IconButton aria-label="flag" id="flag" onClick={() => {flagPost(post.id)}}>
               <AssistantPhotoIcon />
             </IconButton>
-            <IconButton aria-label="delete" id="delete" onClick={deletePost(post.id)}>
+            <IconButton aria-label="delete" id="delete" onClick={() => {deletePost(post.id)}}>
               <DeleteIcon />
             </IconButton>
-            <IconButton aria-label="hide" id="hide" onClick={hidePost(post.id)}>
+            <IconButton aria-label="hide" id="hide" onClick={() => {hidePost(post.id)}}>
               <ThreeSixtyIcon />
             </IconButton>
           </CardActions>

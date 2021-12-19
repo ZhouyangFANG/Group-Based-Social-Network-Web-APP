@@ -28,6 +28,7 @@ export default function ControlPanel(props) {
     const data = new FormData(event.currentTarget);
     const input = data.get("input");
     console.log(input);
+    console.log(groupName);
     await addAdmin(groupName, input);
   }
   const handleDeleteAdmin = async (event) => {
@@ -45,7 +46,15 @@ export default function ControlPanel(props) {
     await inviteUser(groupName, input);
   }
   const handleLeave = async () => {
-    await leaveGroup(groupName, userName);
+    await leaveGroup(groupName);
+  }
+
+  const addPost = () => {
+    let url = window.location.href;
+    if (url.charAt(url.length-1) === '/'){
+      url = url.slice(0,-1);
+    }
+    window.location.href = url + '/post';
   }
 
   return (
@@ -62,7 +71,12 @@ export default function ControlPanel(props) {
         <TextField name="input" placeholder="userName" />
         <Button variant='contained' type="submit">Invite</Button>
       </Box>
-      <Button variant='contained' type="submit" onClick={handleLeave}>Leave</Button>
+      <Box sx={{ mt: 1 }}>
+        <Button variant='contained' type="submit" onClick={addPost}>Add A Post</Button>
+      </Box>
+      <Box component="form" noValidate sx={{ mt: 1 }}>
+        <Button variant='contained' type="submit" onClick={handleLeave}>Leave</Button>
+      </Box>
     </Grid>
   );
 }

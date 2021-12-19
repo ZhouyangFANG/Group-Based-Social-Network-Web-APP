@@ -336,7 +336,7 @@ async function createTag(req, res) {
 async function createPost(req, res) {
   const userId = req.userInfo.id;
   const { title, postContent, attachmentType } = req.body;
-  const attachment = req.body.attachment ? `'${req.body.attachment}''` : 'NULL';
+  const attachment = req.body.attachment ? `'${req.body.attachment}'` : 'NULL';
 
   const postId = uuid.v4();
 

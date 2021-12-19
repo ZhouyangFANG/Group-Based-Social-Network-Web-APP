@@ -28,7 +28,7 @@ export default function AddPost() {
     const urlList = url.split('/');
     urlList.pop();
     const groupID = urlList.pop();
-    const res = await lib.addPost(groupID, title.value, "", content.value);
+    const res = await lib.addPost(groupID, title.value, content.value);
     if (res === 200) {
       let newUrl = '';
       for (let i = 0; i < urlList.length; i += 1) {
@@ -39,9 +39,6 @@ export default function AddPost() {
     } else {
       alert('Error!');
       window.location.href = window.location.href;
-      /* const str = '<Alert severity="error">This is an error alert — check it out!</Alert>\n';
-      const box = document.getElementById('textBox');
-      box.innerHTML = str + box.innerHTML; */
     }
   }
 

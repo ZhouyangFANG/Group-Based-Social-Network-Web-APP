@@ -41,7 +41,7 @@ const Chat = () => {
         console.log(event.target.files[0]);
         const objectURL = URL.createObjectURL(event.target.files[0]);
         console.log(objectURL);
-        
+
         // const sound = () => <audio src={event.target.files[0]} autoPlay />;
         // const audioElement = new Audio(event.target.files[0]);
         // audioElement.play();
@@ -89,7 +89,10 @@ const Chat = () => {
                         <ListItem key="4">
                             <ListItemText primary="Cool. i am good, let's catch up!"></ListItemText>
                             <ListItemText primary="Cool. i am good, let's catch up!"></ListItemText>
-                            <ListItemText primary="Cool. i am good, let's catch up!"></ListItemText>
+                            {/* <audio controls>
+                                <source src={} />
+                                <track default kind="captions" />
+                            </audio> */}
                         </ListItem>
                     </List>
                     <Divider />
