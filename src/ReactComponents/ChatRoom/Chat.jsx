@@ -1,5 +1,5 @@
 import { Link as RouterLink, useParams } from 'react-router-dom';
-import { React, useState } from 'react';
+import { React, useState, useEffect } from 'react';
 import { makeStyles } from '@mui/styles';
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
@@ -17,6 +17,9 @@ import SendIcon from '@material-ui/icons/Send';
 import Button from '@mui/material/Button';
 import Link from '@mui/material/Link';
 import Header from '../Header';
+import {
+    getMessages, SendMessage
+} from '../../api';
 
 const useStyles = makeStyles({
     table: {
@@ -41,6 +44,8 @@ const Chat = () => {
     const { friendName } = useParams();
     const classes = useStyles();
     const [objectURL, setObjectURL] = useState("");
+    const [chatHistory, setChathistory] = useState(null);
+
     const handleUpload = (event) => {
         console.log(event.target.files[0]);
         setObjectURL(URL.createObjectURL(event.target.files[0]));
@@ -57,14 +62,61 @@ const Chat = () => {
         // audioElement.play();
     }
 
+    useEffect(async () => {
+        let isMounted = true;
+        const his = await getMessages(friendName);
+        if (isMounted) {
+            console.log(his);
+            setChathistory(his);
+            console.log('got chat history');
+        }
+        return (() => { isMounted = false; });
+    }, []);
+
+    const ChatList = () => {
+        return (
+            chatHistory.map((message) => {
+                switch (message.type) {
+                    case "text":
+                        console.log("receive text message");
+                        (
+                            <ListItem key={message.id}>
+                                <ListItemText primary={"it's a message"}></ListItemText>
+                            </ListItem>
+                        )
+                        // `${message.sender}: ${message.content}`
+                        break;
+                    case "image":
+                        (
+                            <ListItem key={message.id}>
+                                <ListItemText primary="Cool. i am good, let's catch up!"></ListItemText>
+                            </ListItem>
+                        )
+                        break;
+                    case "audio":
+                        (
+                            <ListItem key={message.id}>
+                                <ListItemText primary="Cool. i am good, let's catch up!"></ListItemText>
+                            </ListItem>
+                        )
+                        break;
+
+                    case "video":
+                        (
+                            <ListItem key={message.id}>
+                                <ListItemText primary="Cool. i am good, let's catch up!"></ListItemText>
+                            </ListItem>
+                        )
+                        break;
+
+                }
+            })
+        )
+    };
+
     return (
         <>
-            <Header title={`Chat with ${friendName}`} />
-            <Grid container>
-                <Grid item xs={12} >
-                    <Typography variant="h5" className="header-message">Chat</Typography>
-                </Grid>
-            </Grid>
+            <Header title={`Chat with ${friendName}`} userName={`User: ${window.localStorage.getItem("username")}`} />
             <Grid container component={Paper} className={classes.chatSection}>
                 <Grid item xs={3} className={classes.borderRight500}>
                     <List>
@@ -73,38 +125,13 @@ const Chat = () => {
                         </ListItem>
                     </List>
                     <Divider />
-                    <Grid item xs={12} style={{ padding: '10px' }}>
-                        <TextField id="outlined-basic-email" label="Search" variant="outlined" fullWidth />
-                    </Grid>
-                    <Divider />
-                    <List>
-                        <ListItem button key="RemySharp">
-                            <ListItemText primary="Remy Sharp">Remy Sharp</ListItemText>
-                            <ListItemText secondary="online" align="right"></ListItemText>
-                        </ListItem>
-                        <ListItem button key="Alice">
-                            <ListItemText primary="Alice">Alice</ListItemText>
-                        </ListItem>
-                        <ListItem button key="CindyBaker">
-                            <ListItemText primary="Cindy Baker">Cindy Baker</ListItemText>
-                        </ListItem>
-                    </List>
                 </Grid>
                 <Grid item xs={9}>
                     <List className={classes.messageArea}>
-                        <ListItem key="3">
-                            <ListItemText primary="Cool. i am good, let's catch up!"></ListItemText>
-                            <ListItemText primary="Cool. i am good, let's catch up!"></ListItemText>
-                            <ListItemText primary="Cool. i am good, let's catch up!"></ListItemText>
-                        </ListItem>
-                        <ListItem key="4">
-                            <ListItemText primary="Cool. i am good, let's catch up!"></ListItemText>
-                            <ListItemText primary="Cool. i am good, let's catch up!"></ListItemText>
-                            {/* <audio controls>
-                                <source src={} />
-                                <track default kind="captions" />
-                            </audio> */}
-                        </ListItem>
+                        {
+                            chatHistory &&
+                            <ChatList />
+                        }
                     </List>
                     <Divider />
                     <Grid container style={{ padding: '20px' }}>
