@@ -22,7 +22,7 @@ import {
 
 export default function ControlPanel(props) {
 
-  const {groupName} = props;
+  const { groupName } = props;
   const handleAddAdmin = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -46,15 +46,17 @@ export default function ControlPanel(props) {
     await inviteUser(groupName, input);
   }
   const handleLeave = async () => {
+    console.log("prepare to leave");
     await leaveGroup(groupName);
-    window.location.href = "/groups";
+    // window.location.href = "http://localhost:3000/groups";
   }
 
   const addPost = () => {
     let url = window.location.href;
-    if (url.charAt(url.length-1) === '/'){
-      url = url.slice(0,-1);
+    if (url.charAt(url.length - 1) === '/') {
+      url = url.slice(0, -1);
     }
+    console.log(window.location.href);
     window.location.href = url + '/post';
   }
 
@@ -72,12 +74,9 @@ export default function ControlPanel(props) {
         <TextField name="input" placeholder="userName" />
         <Button variant='contained' type="submit">Invite</Button>
       </Box>
-      <Box sx={{ mt: 1 }}>
-        <Button variant='contained' type="submit" onClick={addPost}>Add Post</Button>
-      </Box>
-      <Box component="form" noValidate sx={{ mt: 1 }}>
-        <Button variant='contained' type="submit" onClick={handleLeave}>Leave</Button>
-      </Box>
+      <Button variant='contained' type="submit" onClick={addPost}>Add Post</Button>
+      <Button variant='contained' onClick={handleLeave}>Leave</Button>
+
     </Grid>
   );
 }

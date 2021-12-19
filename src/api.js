@@ -122,6 +122,7 @@ export async function inviteUser(groupName, userName) {
 }
 
 export async function leaveGroup(groupName) {
+  console.log("leave the group");
   await axios.delete(`${url}/groups/${groupName}/members`, { withCredentials: true });
 }
 
@@ -141,6 +142,7 @@ export async function getNotification() {
 }
 
 export async function respondInvitation(groupName, decision) {
+  console.log(decision);
   const res = await axios.put(`${url}/invites/${groupName}`, {granted: decision}, { withCredentials: true });
 }
 

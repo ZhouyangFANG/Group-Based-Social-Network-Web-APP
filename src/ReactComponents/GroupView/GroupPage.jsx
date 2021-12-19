@@ -95,9 +95,9 @@ export default function GroupPage() {
     return (
       requests.map((person) => (
         <li key={person.id}>
-            {person.username}
-            <Button variant='contained' type="submit" onClick={JoinRequestDecision(groupName, person.username, false)}>Deny</Button>
-            <Button variant='contained' type="submit" onClick={JoinRequestDecision(groupName, person.username, true)}>Accept</Button>
+          {person.username}
+          <Button variant='contained' type="submit" onClick={JoinRequestDecision(groupName, person.username, false)}>Deny</Button>
+          <Button variant='contained' type="submit" onClick={JoinRequestDecision(groupName, person.username, true)}>Accept</Button>
         </li>
       ))
     )
@@ -105,10 +105,36 @@ export default function GroupPage() {
 
   return (
     <>
-      <Header title={groupName} />
+      <Header title={`Group Name: ${groupName}`} userName={`User: ${window.localStorage.getItem("username")}`} />
       <Grid container spacing={2}>
-        <Grid item xs={4} md={4}>
-          <LeftPanel />
+      <Grid item xs={3} md={3}>
+          <Paper>
+            {
+              certainGroup &&
+              (
+                <>
+                  Admins:
+                  <ul>
+                    <List1 />
+                  </ul>
+                  Members:
+                  <ul>
+                    <List2 />
+                  </ul>
+                  {
+                    certainGroup.requests &&
+                    (<>
+                      Request to Join:
+                      <ul>
+                        <List3 />
+                      </ul>
+                    </>
+                    )
+                  }
+                </>
+              )
+            }
+          </Paper>
         </Grid>
         <Grid item xs={4} md={4}>
           <Posts certainGroup={certainGroup} />
@@ -139,35 +165,6 @@ export default function GroupPage() {
               </Typography>
             </CardContent>
           </Card>
-        </Grid>
-        <Grid item xs={3} md ={3}>
-        <Paper>
-          {
-            certainGroup &&
-            (
-              <>
-                Admins:
-                <ul>
-                  <List1 />
-                </ul>
-                Members:
-                <ul>
-                  <List2 />
-                </ul>
-                {
-                  certainGroup.requests &&
-                  (<>
-                    Request to Join:
-                    <ul>
-                      <List3 />
-                    </ul>
-                  </>
-                  )
-                }
-              </>
-            )
-          }
-          </Paper>
         </Grid>
       </Grid>
     </>

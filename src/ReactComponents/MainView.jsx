@@ -24,6 +24,7 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import { getGroupList, addAdmin, removeAdmin, requestToJoinGroup, inviteUser, leaveGroup, filterGroupsByTags, respondInvitation, getNotification } from '../api';
 import { TextField } from '@mui/material';
+import Header from './Header';
 
 const lib = require('../fetch');
 
@@ -65,6 +66,7 @@ function MainView() {
   const [recommend, setRecommend] = useState([]);
   const [notification, setNotification] = useState(null);
   const history = useHistory();
+  const whoami = window.localStorage.getItem("username");
   const columns = [
     {
       field: 'name',
@@ -130,8 +132,7 @@ function MainView() {
     for (let i = 0; i < urlList.length; i += 1) {
       newUrl = `${newUrl}${urlList[i]}/`;
     }
-    const userName = window.localStorage.getItem("username");
-    newUrl = `${newUrl}user/${userName}`;
+    newUrl = `${newUrl}user/${whoami}`;
     window.location.href = newUrl;
   }
 
@@ -194,9 +195,10 @@ function MainView() {
   }
 
   const List1 = () => {
-    const memtions = notification.memtions;
+    console.log(notification);
+    const mentions = notification.mentions;
     return (
-      memtions.map((person) => (
+      mentions.map((person) => (
         <li key={person.id}>
           {`You are memtioned by ${person.username}`}
         </li>
@@ -230,27 +232,30 @@ function MainView() {
 
   return (
     <div id="wrapper">
-      <Box sx={{ flexGrow: 1 }}>
-        <AppBar position="static">
-          <Toolbar>
-            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-              Public Group List
-            </Typography>
-            <Button color="inherit">Logout</Button>
-          </Toolbar>
-        </AppBar>
-      </Box>
+      <Header title="Public Group List" userName={whoami} />
 
       <Grid container spacing={1}>
-        <Grid item xs={2} md={2}>
-          <Paper>
-            <MenuList>
-              <MenuItem onClick={toUserPage}>Personal Information</MenuItem>
-              <MenuItem>Settings</MenuItem>
-              <MenuItem>My Groups</MenuItem>
-              <MenuItem>Friends</MenuItem>
-              <MenuItem>Logout</MenuItem>
-            </MenuList>
+      <Grid item xs={4} md={3}>
+          <Paper style={{ position: 'fixed' }}>
+            {
+              notification &&
+              (
+                <>
+                  You are mentioned by:
+                  <ul>
+                    <List1 />
+                  </ul>
+                  The user below sent you messages:
+                  <ul>
+                    <List2 />
+                  </ul>
+                  You got invitation to these groups:
+                  <ul>
+                    <List3 />
+                  </ul>
+                </>
+              )
+            }
           </Paper>
         </Grid>
         <Grid item xs={8} md={6}>
@@ -282,29 +287,6 @@ function MainView() {
               disableSelectionOnClick
             />
           </div>
-        </Grid>
-        <Grid item xs={4} md={4}>
-          <Paper style={{ position: 'fixed' }}>
-            {
-              notification &&
-              (
-                <>
-                  You are memtioned by:
-                  <ul>
-                    <List1 />
-                  </ul>
-                  The user below sent you messages:
-                  <ul>
-                    <List2 />
-                  </ul>
-                  You got invitation to these groups:
-                  <ul>
-                    <List3 />
-                  </ul>
-                </>
-              )
-            }
-          </Paper>
         </Grid>
       </Grid>
     </div>
