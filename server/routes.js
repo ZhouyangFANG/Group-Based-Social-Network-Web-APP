@@ -711,7 +711,7 @@ function postComment(req, res) {
     if (error) {
       res.status(400).json({ error });
     } else {
-      res.status(201).json({
+      res.status(200).json({
         id, postId, content, userId, datetime,
       });
     }

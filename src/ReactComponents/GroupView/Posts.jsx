@@ -62,7 +62,7 @@ export default function Posts(props) {
   async function addComment(postId){
     const content = document.getElementById(`comment${postId}`).value;
     const res = await lib.addComment(postId, content);
-    if (res === 201) {
+    if (res === 200) {
       window.location.reload();
     }
   }

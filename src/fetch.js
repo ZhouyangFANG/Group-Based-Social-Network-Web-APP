@@ -287,10 +287,8 @@ async function addComment(postId, contentV) {
       content: contentV,
     }),
     credentials: 'include',
-  }).then((response) => response.json())
-    .then((data) => {
-      res = response.status;
-      window.console.log(data);
+  }).then((response) => {
+    res = response.status;
     }).catch((error) => {
       window.console.log(error);
     });
