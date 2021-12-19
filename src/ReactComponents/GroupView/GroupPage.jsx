@@ -18,7 +18,7 @@ import {
   getGroupList,
   addAdmin,
   removeAdmin,
-  requestToJoinGroup, inviteUser, leaveGroup, filterGroupsByTags, getGroupPage
+  requestToJoinGroup, inviteUser, leaveGroup, filterGroupsByTags, getGroupPage, JoinRequestDecision
 } from '../../api';
 import Header from '../Header';
 import Posts from './Posts';
@@ -31,7 +31,7 @@ export default function GroupPage() {
 
   const { groupName } = useParams();
   const [certainGroup, setCertainGroup] = useState(null);
-  const [groupAnal, setGroupAnal] = useState({num_member:-1, num_post:-1, num_deleted:-1, num_flagged:-1, num_hidden:-1});
+  const [groupAnal, setGroupAnal] = useState({ num_member: -1, num_post: -1, num_deleted: -1, num_flagged: -1, num_hidden: -1 });
   // const [certainGroup, setCertainGroup] = useState({
   //   id: '',
   //   name: '',
@@ -95,9 +95,9 @@ export default function GroupPage() {
     return (
       requests.map((person) => (
         <li key={person.id}>
-          <Link href={`/chat/${person.username}`} variant="body2">
             {person.username}
-          </Link>
+            <Button variant='contained' type="submit" onClick={JoinRequestDecision(groupName, person.username, false)}>Deny</Button>
+            <Button variant='contained' type="submit" onClick={JoinRequestDecision(groupName, person.username, true)}>Accept</Button>
         </li>
       ))
     )
@@ -117,6 +117,7 @@ export default function GroupPage() {
           <ControlPanel groupName={groupName} />
         </Grid>
         <Grid item xs={4}>
+        <Paper style={{ position: 'fixed' }}>
           {
             certainGroup &&
             (
@@ -129,13 +130,20 @@ export default function GroupPage() {
                 <ul>
                   <List2 />
                 </ul>
-                Request to Join:
-                <ul>
-                  <List3 />
-                </ul>
+                {
+                  certainGroup.requests &&
+                  (<>
+                    Request to Join:
+                    <ul>
+                      <List3 />
+                    </ul>
+                  </>
+                  )
+                }
               </>
             )
           }
+          </Paper>
         </Grid>
       </Grid>
     </>
