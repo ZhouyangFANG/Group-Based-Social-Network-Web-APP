@@ -1,7 +1,7 @@
 const mysql = require('mysql');
 const app = require('./server');
 const request = require('supertest');
-const { post } = require('superagent');
+const { post, agent } = require('superagent');
 require('dotenv').config();
 
 const connection = mysql.createConnection({
@@ -17,6 +17,7 @@ let userId;
 let tagId;
 let groupId;
 let postId;
+let groupName;
 
 afterAll(async () => {
     connection.query(`delete from member where userId = '${userId}'`);
@@ -33,19 +34,18 @@ describe('Create player endpoint API & integration tests', () => {
     const agent = request.agent(app);
   
     test('test register', () => 
-    request(app).post('/api/users').send({username: 'test', password: 'password'})
+    agent.post('/api/users').send({username: 'test', password: 'password'})
     .expect(201) // testing the response status code
     .then((response) => {
       expect(JSON.parse(response.text).username).toBe('test');
       userId = JSON.parse(response.text).id;
+      console.log(userId);
     }));
 
     test('test register duplicate', () => 
     agent.post('/api/users').send({username: 'test', password: 'password'})
     .expect(409) // testing the response status code
     );
-
-    let res;
 
     test('test login', () => 
     agent.post('/api/login').send({username: 'test', password: 'password'})
@@ -75,23 +75,26 @@ describe('Create player endpoint API & integration tests', () => {
       .expect(200)
       .then((response) => {
         tagId = JSON.parse(response.text).id;
+        console.log(tagId);
       }) // testing the response status code
     );
 
     test('test create group', () => 
-      agent.post('/api/group').send({name: 'testGroup', type: 'public', tag: [tagId]})
+      agent.post('/api/groups').send({name: 'testGroup', type: 'public', tag: [tagId]})
       .expect(200) // testing the response status code
       .then((response) => {
         groupId = JSON.parse(response.text).id;
+        groupName = JSON.parse(response.text).name;
+        console.log(groupId);
       })
     );
 
     test('test get public group', () => 
-      agent.get('/api/group')
+      agent.get('/api/groups')
       .expect(200));
 
     test('test create post', () => 
-      agent.post(`/api/groups/${groupId}/posts`)
+      agent.post(`/api/groups/${groupName}/posts`)
       .send({
           title: 'postTitle',
           postContent: 'blah blah blah'
@@ -121,16 +124,12 @@ describe('Create player endpoint API & integration tests', () => {
         expect(JSON.parse(response.text).affectedRows).toBe(1);
       }));
 
-      test('test get hide post', () => 
-      agent.get(`/api/posts/hide`)
-      .expect(200));
-
     test('test group recommendation', () => 
       agent.get(`/api/groupRecommendation`)
       .expect(200));
 
     test('test get group analytics', () => 
-      agent.get(`/api/groupAnalytic/${groupId}`)
+      agent.get(`/api/groupAnalytic/${groupName}`)
       .expect(200)
       .then((response) => {
         expect(JSON.parse(response.text).id).toBe(groupId);

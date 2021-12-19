@@ -465,8 +465,11 @@ async function deleteComment(req, res) {
       if (error) {
         res.status(400);
         res.json({ error });
-      } else {
+      } else if (results.affectedRows !==0) {
         res.status(200);
+        res.json(results);
+      } else {
+        res.status(401);
         res.json(results);
       }
     });
