@@ -67,6 +67,41 @@ async function createGroup(nameV, topic, type) {
   return record;
 }
 
+async function hidePost(postId) {
+  let record;
+  await fetch(`${uri}posts/${postId}/hide`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include',
+  }).then((res) => {
+      record = res.status;
+    }).catch((err) => {
+      // Print the error if there is one.
+      window.console.log(err);
+    });
+  return record;
+}
+
+async function getHiddenList() {
+  let record = [];
+  await fetch(`${uri}posts/hide`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include',
+  }).then((response) => response.json())
+    .then((data) => {
+      record = data;
+    }).catch((err) => {
+      // Print the error if there is one.
+      window.console.log(err);
+    });
+  return record;
+}
+
 async function addPost(groupName, titleV, contentV) {
   let statusCode;
   await fetch(`${uri}groups/${groupName}/posts`, {
@@ -90,18 +125,18 @@ async function addPost(groupName, titleV, contentV) {
 
 async function deletePost(postId) {
   let statusCode;
-  await fetch(`${uri}groups/${postId}/posts`, {
+  await fetch(`${uri}posts/${postId}`, {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',
     },
+    credentials: 'include',
   }).then((res) => {
     statusCode = res.status;
   }).catch((err) => {
     // Print the error if there is one.
     window.console.log(err);
   });
-  statusCode = 404;
   return statusCode;
 }
 
@@ -205,6 +240,42 @@ async function getAllTag(tags) {
   return res;
 }
 
+async function getGroupAnaly(groupName) {
+  let res;
+  await fetch(`${uri}groupAnalytic/${groupName}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include',
+  }).then((response) => response.json())
+    .then((data) => {
+      res = data;
+      window.console.log(data);
+    }).catch((error) => {
+      window.console.log(error);
+    });
+  return res;
+}
+
+async function getRecommend() {
+  let res;
+  await fetch(`${uri}groupRecommendation`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include',
+  }).then((response) => response.json())
+    .then((data) => {
+      res = data;
+      window.console.log(data);
+    }).catch((error) => {
+      window.console.log(error);
+    });
+  return res;
+}
+
 async function editComment(username) {
   let res;
   await fetch(`${uri}groups/${groupName}/posts/${postId}/comments/${commentId}`, {
@@ -256,5 +327,7 @@ async function deleteComment(username) {
 }
 
 export {
-  register, login, createGroup, addPost, deletePost, flagPost, getProfile, editComment, deleteComment, updateProfile, updatePwd, getAllTag,
+  register, login, createGroup, addPost, deletePost, flagPost, getProfile,
+  editComment, deleteComment, updateProfile, updatePwd, getAllTag,
+  hidePost, getHiddenList, getRecommend, getGroupAnaly,
 };

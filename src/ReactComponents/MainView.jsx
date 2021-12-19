@@ -1,4 +1,4 @@
-import { React, useState } from 'react';
+import { React, useState, useEffect } from 'react';
 import { Link as RouterLink, useParams, useHistory} from 'react-router-dom';
 import Link from '@material-ui/core/Link';
 import AppBar from '@mui/material/AppBar';
@@ -25,6 +25,8 @@ import Select from '@mui/material/Select';
 import { getGroupList, addAdmin, removeAdmin, requestToJoinGroup, inviteUser, leaveGroup, filterGroupsByTags } from '../api';
 import { TextField } from '@mui/material';
 
+const lib = require('../fetch');
+
 const style = {
   position: 'absolute',
   top: '50%',
@@ -48,19 +50,6 @@ const MenuProps = {
   },
 };
 
-const names = [
-  'Oliver Hansen',
-  'Van Henry',
-  'April Tucker',
-  'Ralph Hubbard',
-  'Omar Alexander',
-  'Carlos Abbott',
-  'Miriam Wagner',
-  'Bradley Wilkerson',
-  'Virginia Andrews',
-  'Kelly Snyder',
-];
-
 function getStyles(name, personName, theme) {
   return {
     fontWeight:
@@ -73,6 +62,7 @@ function getStyles(name, personName, theme) {
 function MainView() {
   const theme = useTheme();
   const [groupList, setGroupList] = useState([]);
+  const [recommend, setRecommend] = useState([]);
   const userName = 'FakeName';
   const history = useHistory();
   const columns = [
@@ -136,8 +126,8 @@ function MainView() {
 
   function objectSortPostNum() {
    return function (objectN, objectM) {
-    const valueN = objectN.posts.length;
-    const valueM = objectM.posts.length;
+    const valueN = objectN.num_posts;
+    const valueM = objectM.num_posts;
     if (valueN < valueM) return 1;
     else if (valueN > valueM) return -1;
     else return 0;
@@ -153,8 +143,8 @@ function MainView() {
 
   function objectSortMemNum() {
    return function (objectN, objectM) {
-    const valueN = objectN.members.length;
-    const valueM = objectM.members.length;
+    const valueN = objectN.num_members;
+    const valueM = objectM.num_members;
     if (valueN < valueM) return 1;
     else if (valueN > valueM) return -1;
     else return 0;
@@ -170,8 +160,15 @@ function MainView() {
 
   function objectSortNewMsg() {
    return function (objectN, objectM) {
-    const valueN = objectN.newestMsg;
-    const valueM = objectM.newestMsg;
+    const valueN = objectN.latest;
+    const valueM = objectM.latest;
+    if (valueN === null && valueM === null) {
+      return 0;
+    } else if (valueN === null) {
+      return 1;
+    } else if (valueM === null) {
+      return -1;
+    }
     if (valueN < valueM) return 1;
     else if (valueN > valueM) return -1;
     else return 0;
@@ -208,7 +205,6 @@ function MainView() {
             <DataGrid
               rows={groupList}
               columns={columns}
-              pageSize={8}
               rowsPerPageOptions={[5]}
               disableSelectionOnClick
             />
@@ -222,6 +218,16 @@ function MainView() {
           <Button variant='contained' type="submit" onClick={sortByPostsNum}>Sort groups by number of posts</Button>
           <Button variant='contained' type="submit" onClick={sortByMemberNum}>Sort groups by number of members</Button>
           <Button variant='contained' type="submit" onClick={sortByNewestMsg}>Sort groups by newest messages</Button>
+        </Grid>
+        <Grid item xs={3} md={3}>
+          <div style={{ height: 800, width: '100%' }}>
+            <DataGrid
+              rows={recommend}
+              columns={columnsRec}
+              rowsPerPageOptions={[5]}
+              disableSelectionOnClick
+            />
+          </div>
         </Grid>
       </Grid>
     </div>

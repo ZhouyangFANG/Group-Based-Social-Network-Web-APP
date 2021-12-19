@@ -16,9 +16,6 @@ const lib = require('../../fetch');
 const theme = createTheme();
 
 export default function AddPost() {
-  const handleSubmit = (event) => {
-    event.preventDefault();
-  };
 
   async function addPost() {
     const content = document.getElementById('content');
@@ -57,7 +54,7 @@ export default function AddPost() {
           <Typography component="h1" variant="h5">
             Add A Post
           </Typography>
-          <Box component="form" id="textBox" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+          <Box id="textBox" sx={{ mt: 1 }}>
             <TextField
               margin="normal"
               required
@@ -65,8 +62,7 @@ export default function AddPost() {
               id="title"
               label="Title"
               name="title"
-              autoFocus
-            />
+              autoFocus/>
             <TextField
               margin="normal"
               required
@@ -74,8 +70,7 @@ export default function AddPost() {
               name="content"
               label="Content"
               type="content"
-              id="content"
-            />
+              id="content"/>
             <Button
               data-testid="submit"
               component={RouterLink}

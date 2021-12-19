@@ -488,12 +488,12 @@ async function groupRecommendation(req, res) {
 }
 
 async function groupAnalytic(req, res) {
-  const { groupId } = req.params;
-  connection.query(`select t1.id, num_member, num_post, num_deleted, num_flagged, t3.num_hidden from (select g.id, count(m.userId) as num_member from groupInfo g
-  join member m on g.id = m.groupId where g.id = '${groupId}') t1,
+  const { groupname } = req.params;
+  connection.query(`select t1.id, t1.name, num_member, num_post, num_deleted, num_flagged, t3.num_hidden from (select g.id, g.name, count(m.userId) as num_member from groupInfo g
+  left join member m on g.id = m.groupId where g.name = '${groupname}') t1,
             (select g.id, count(p.id) as num_post, COALESCE(sum(p.deleted = true),0) as num_deleted, COALESCE(sum(p.flagger IS NOT NULL),0) as num_flagged
-            from groupInfo g join post p on g.id = p.groupId where g.id = '${groupId}') t2,
-(select g.id, count(*) as num_hidden from groupInfo g join post p on g.id = p.groupId join hide h on p.id = h.postId where g.id = '${groupId}') t3;`, (error, results) => {
+            from groupInfo g left join post p on g.id = p.groupId where g.name = '${groupname}') t2,
+(select g.id, count(*) as num_hidden from groupInfo g left join post p on g.id = p.groupId join hide h on p.id = h.postId where g.name = '${groupname}') t3;`, (error, results) => {
     if (error) {
       res.status(400);
       res.json({ error });

@@ -46,7 +46,7 @@ app.delete('/api/comments/:commentId', routes.checkCookie, routes.deleteComment)
 
 app.get('/api/groupRecommendation', routes.checkCookie, routes.groupRecommendation);
 
-app.get('/api/groupAnalytic/:groupId', routes.checkCookie, routes.groupAnalytic);
+app.get('/api/groupAnalytic/:groupname', routes.checkCookie, routes.groupAnalytic);
 
 app.delete('/api/groups/:groupname/members', routes.checkCookie, routes.leaveGroup);
 

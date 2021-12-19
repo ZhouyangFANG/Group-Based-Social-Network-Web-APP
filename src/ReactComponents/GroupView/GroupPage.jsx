@@ -25,10 +25,13 @@ import Posts from './Posts';
 import ControlPanel from './ControlPanel';
 import LeftPanel from '../LeftPanel';
 
+const lib = require('../../fetch');
+
 export default function GroupPage() {
 
   const { groupName } = useParams();
   const [certainGroup, setCertainGroup] = useState(null);
+  const [groupAnal, setGroupAnal] = useState({num_member:-1, num_post:-1, num_deleted:-1, num_flagged:-1, num_hidden:-1});
   // const [certainGroup, setCertainGroup] = useState({
   //   id: '',
   //   name: '',
@@ -47,8 +50,10 @@ export default function GroupPage() {
   useEffect(async () => {
     let isMounted = true;
     const groupInfo = await getGroupPage(groupName);
+    const analy = await lib.getGroupAnaly(groupName);
     if (isMounted) {
       setCertainGroup(groupInfo);
+      setGroupAnal(analy);
       console.log('got group info');
     }
     return (() => { isMounted = false; });

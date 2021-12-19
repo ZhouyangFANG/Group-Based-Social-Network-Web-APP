@@ -26,6 +26,8 @@ export default function Posts(props) {
     const res = await lib.deletePost(postId);
     if (res === 200) {
       window.location.reload();
+    } else {
+      alert("unauthorized!");
     }
   }
 
@@ -36,24 +38,34 @@ export default function Posts(props) {
     }
   }
 
-  function hidePost(postId){
-    var hidden = hiddenPosts;
-    hidden.push(postId);
-    sethiddenPosts(hidden);
-    window.location.reload();
+  async function hidePost(postId){
+    const res = await lib.hidePost(postId);
+    if (res === 200) {
+      window.location.reload();
+    }
   }
 
   function MapList() {
     return certainGroup.posts.map((post) => <PostCard post={post} key={post.id} />);
   }
 
+  useEffect(async () => {
+    const url = window.location.href;
+    let urlList = url.split('/');
+    const groupName = urlList.pop();
+
+    const hide = await lib.getHiddenList(groupName);
+    sethiddenPosts(hide);
+  }, []);
+
   const PostCard = ({post}) => {
     for (var i = 0; i < hiddenPosts.length; i++) {
-      if (hiddenPosts[i] === post.id){
+      if (hiddenPosts[i].postId === post.id){
         return null;
       }
     };
-    if (post.flag) {
+
+    if (post.flagger && !post.deleted) {
       return (
         <Card key={post.id} sx={{ maxWidth: 700 }}>
           <CardHeader
@@ -87,7 +99,7 @@ export default function Posts(props) {
             <IconButton aria-label="delete" id="delete" onClick={() => {deletePost(post.id)}}>
               <DeleteIcon />
             </IconButton>
-            <IconButton aria-label="flagdelete">
+            <IconButton aria-label="flagdelete" onClick={() => {deletePost(post.id)}}>
               <DeleteForeverOutlinedIcon />
             </IconButton>
             <IconButton aria-label="hide" onClick={() => {hidePost(post.id)}}>
@@ -96,7 +108,7 @@ export default function Posts(props) {
           </CardActions>
         </Card>
       )
-    } else{
+    } else if (!post.flagger && !post.deleted){
       return (
         <Card key={post.id} sx={{ maxWidth: 700 }}>
           <CardHeader
@@ -137,6 +149,8 @@ export default function Posts(props) {
           </CardActions>
         </Card>
       )
+    } else {
+      return null;
     }
   }
 
