@@ -91,6 +91,14 @@ const Chat = () => {
         return (() => { isMounted = false; });
     }, []);
 
+    const SendText = async (event) => {
+        event.preventDefault();
+        const data = new FormData(event.currentTarget);
+        const input = data.get("input");
+        console.log(input);
+        SendMessage(friendName, input, "text");
+    }
+
     const ChatList = () => {
         return (
             chatHistory.map((message) => {
@@ -160,10 +168,12 @@ const Chat = () => {
                         <Grid item xs={1} align="right">
                             <Fab color="primary" aria-label="add"><SendIcon /></Fab>
                         </Grid> */}
-                        <Box component="form" noValidate sx={{ mt: 1 }}>
-                            <TextField name="input" placeholder="userName" />
-                            <Button variant='contained' type="submit">Invite</Button>
-                        </Box>
+                        <Grid item xs={11}>
+                            <Box component="form" onSubmit={SendText} noValidate sx={{ mt: 1 }}>
+                                <TextField name="input" placeholder="Type Something" fullWidth />
+                                <Button variant='contained' type="submit">Send</Button>
+                            </Box>
+                        </Grid>
                         <Button
                             variant="contained"
                             component="label"
