@@ -223,8 +223,8 @@ function MainView() {
       invitations.map((group) => (
         <li key={group.id}>
             {`You are invited to join ${group.name} group`}
-            <Button variant='contained' type="submit" onClick={respondInvitation(group.name, false)}>Deny</Button>
-            <Button variant='contained' type="submit" onClick={respondInvitation(group.name, true)}>Accept</Button>
+            <Button variant='contained' type="submit" onClick={() => {respondInvitation(group.name, false)}}>Deny</Button>
+            <Button variant='contained' type="submit" onClick={() => {respondInvitation(group.name, true)}}>Accept</Button>
         </li>
       ))
     )
@@ -235,8 +235,7 @@ function MainView() {
       <Header title="Public Group List" userName={whoami} />
 
       <Grid container spacing={1}>
-      <Grid item xs={4} md={3}>
-          <Paper style={{ position: 'fixed' }}>
+      <Grid item xs={2} md={2}>
             {
               notification &&
               (
@@ -256,7 +255,6 @@ function MainView() {
                 </>
               )
             }
-          </Paper>
         </Grid>
         <Grid item xs={8} md={6}>
           <div style={{ height: 800, width: '100%' }}>
