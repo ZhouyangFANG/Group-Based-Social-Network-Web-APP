@@ -149,4 +149,8 @@ export async function getMessages(userName) {
   return res.data;
 }
 
+export async function SendMessage(userName, content, type) {
+  const res = await axios.post(`${url}/users/${userName}/messages`, {content: content, type: type}, { withCredentials: true });
+}
+
 
