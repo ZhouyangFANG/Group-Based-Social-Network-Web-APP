@@ -93,6 +93,7 @@ export default function SignUp() {
               </Grid>
             </Grid>
             <Button
+              id = 'registerBtn'
               data-testid="submit"
               type="submit"
               fullWidth
