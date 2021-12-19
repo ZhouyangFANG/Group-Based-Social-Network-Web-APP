@@ -53,8 +53,8 @@ const Chat = () => {
         reader.addEventListener("load", function () {
             // convert image file to base64 string
             console.log(reader.result);
-            SendMessage(friendName, reader.result, "image");       
-          }, false);
+            SendMessage(friendName, reader.result, "image");
+        }, false);
 
         // setObjectURL(URL.createObjectURL(event.target.files[0]));
         // console.log(objectURL);
@@ -72,12 +72,12 @@ const Chat = () => {
     const handleAudio = (event) => {
         console.log(event.target.files[0]);
         reader.readAsDataURL(event.target.files[0])
-        SendMessage(friendName, reader.result, "audio");    
+        SendMessage(friendName, reader.result, "audio");
     }
     const handleVideo = (event) => {
         console.log(event.target.files[0]);
         reader.readAsDataURL(event.target.files[0])
-        SendMessage(friendName, reader.result, "video");    
+        SendMessage(friendName, reader.result, "video");
     }
 
     useEffect(async () => {
@@ -107,7 +107,7 @@ const Chat = () => {
                         return (
                             <ListItem key={message.id}>
                                 <ListItemText primary={`${message.sender}: `}></ListItemText>
-                                <img src={message.content}/>
+                                <img src={message.content} />
                             </ListItem>
                         )
                     case "audio":
@@ -115,7 +115,7 @@ const Chat = () => {
                         return (
                             <ListItem key={message.id}>
                                 <ListItemText primary={`${message.sender}: `}></ListItemText>
-                                <audio src={message.content}/>
+                                <audio src={message.content} />
                             </ListItem>
                         )
 
@@ -124,7 +124,7 @@ const Chat = () => {
                         return (
                             <ListItem key={message.id}>
                                 <ListItemText primary={`${message.sender}: `}></ListItemText>
-                                <video src={message.content}/>
+                                <video src={message.content} />
                             </ListItem>
                         )
 
@@ -140,7 +140,7 @@ const Chat = () => {
                 <Grid item xs={3} className={classes.borderRight500}>
                     <List>
                         <ListItem button key="RemySharp">
-                            <ListItemText primary="John Wick"></ListItemText>
+                            <ListItemText primary={`Chat with ${friendName}`}></ListItemText>
                         </ListItem>
                     </List>
                     <Divider />
@@ -154,12 +154,16 @@ const Chat = () => {
                     </List>
                     <Divider />
                     <Grid container style={{ padding: '20px' }}>
-                        <Grid item xs={11}>
+                        {/* <Grid item xs={11}>
                             <TextField id="outlined-basic-email" label="Type Something" fullWidth />
                         </Grid>
                         <Grid item xs={1} align="right">
                             <Fab color="primary" aria-label="add"><SendIcon /></Fab>
-                        </Grid>
+                        </Grid> */}
+                        <Box component="form" noValidate sx={{ mt: 1 }}>
+                            <TextField name="input" placeholder="userName" />
+                            <Button variant='contained' type="submit">Invite</Button>
+                        </Box>
                         <Button
                             variant="contained"
                             component="label"

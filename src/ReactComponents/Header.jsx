@@ -6,6 +6,7 @@ import Typography from '@mui/material/Typography';
 // import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
+import Link from '@mui/material/Link';
 
 export default function Header(props) {
   return (
@@ -15,7 +16,9 @@ export default function Header(props) {
           {props.title}
         </Typography>
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-          {props.userName}
+          {/* <Link href={`/user/${props.userName}`} variant="body2"> */}
+            {`User: ${props.userName}`}
+          {/* </Link> */}
         </Typography>
       </Toolbar>
     </AppBar>
