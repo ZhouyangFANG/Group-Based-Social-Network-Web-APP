@@ -72,6 +72,30 @@ async function checkCookie(req, res, next) {
   }
 }
 
+function _getGroup(req, res, callback) { // eslint-disable-line no-underscore-dangle
+  connection.query(`SELECT * FROM groupInfo WHERE name = '${req.params.groupname}';`, (error, results) => {
+    if (error) {
+      res.status(400).json({ error });
+    } else if (results.length === 0) {
+      res.status(404).json('group not found');
+    } else {
+      callback(results[0]);
+    }
+  });
+}
+
+function _checkAdmin(req, res, callback) {
+  _getGroup(req, res, (group) => {
+    connection.query(`SELECT * FROM admin WHERE userId = '${req.userInfo.id}' AND groupId = '${group.id}';`, (error, results) => {
+      if (error) {
+        res.status(400).json({ error });
+      } else {
+        callback(group, results.length > 0);
+      }
+    });
+  })
+};
+
 async function createUser(req, res) {
   const { username, password } = req.body;
   const passwordHash = sha256(password);
@@ -313,7 +337,7 @@ function getGroupsByTag(req, res) {
     if (error) {
       res.status(400).json({ error });
     } else {
-      tagId = results[0].id;
+      const tagId = results[0].id;
       connection.query(`SELECT groupInfo.id, groupInfo.name, groupInfo.type,
       max(p.datetime) as latest, count(p.id) as num_posts, count(m.userId) as num_members, true as is_member
     from groupInfo left join post p on groupInfo.id = p.groupId
@@ -332,13 +356,13 @@ function getGroupsByTag(req, res) {
     where groupInfo.type = true and
           '${userId}' not in (select userId from member where groupId = groupInfo.id)
           and tagRelation.tagId = '${tagId}'
-    group by groupInfo.id;`, (error, results) => {
-        if (error) {
+    group by groupInfo.id;`, (error1, results1) => {
+        if (error1) {
           res.status(400);
-          res.json({ error });
+          res.json({ error: error1 });
         } else {
           res.status(200);
-          res.json(results);
+          res.json(results1);
         }
       });
     }
@@ -547,30 +571,6 @@ async function groupAnalytic(req, res) {
   });
 }
 
-function _getGroup(req, res, callback) { // eslint-disable-line no-underscore-dangle
-  connection.query(`SELECT * FROM groupInfo WHERE name = '${req.params.groupname}';`, (error, results) => {
-    if (error) {
-      res.status(400).json({ error });
-    } else if (results.length === 0) {
-      res.status(404).json('group not found');
-    } else {
-      callback(results[0]);
-    }
-  });
-}
-
-function _checkAdmin(req, res, callback) {
-  _getGroup(req, res, (group) => {
-    connection.query(`SELECT * FROM admin WHERE userId = '${req.userInfo.id}' AND groupId = '${group.id}';`, (error, results) => {
-      if (error) {
-        res.status(400).json({ error });
-      } else {
-        callback(group, results.length > 0);
-      }
-    });
-  })
-};
-
 function addAdmin(req, res) {
   _getGroup(req, res, (group) => {
     connection.query(`SELECT * FROM admin WHERE userId = '${req.userInfo.id}' AND groupId = '${group.id}';`, (error1, results1) => {
@@ -770,10 +770,10 @@ function getMessages(req, res) {
     } else if (results0.length === 0) {
       res.status(404).json('user not found');
     } else {
-      const userId = req.userInfo.id;
-      const otherId = results0[0].id;
+      const username = req.userInfo.username;
+      const othername = results0[0].username;
       connection.query(`SELECT * FROM message
-      WHERE (sender = '${userId}' and receiver = '${otherId}') or (sender = '${otherId}' and receiver = '${userId}')
+      WHERE (sender = '${username}' and receiver = '${othername}') or (sender = '${othername}' and receiver = '${username}')
       ORDER BY time DESC`, (error1, results1) => {
         if (error1) {
           res.status(400).json({ error: error1 });
@@ -796,19 +796,19 @@ function postMessage(req, res) {
       } else if (results0.length === 0) {
         res.status(404).json('user not found');
       } else {
-        const userId = req.userInfo.id;
-        const otherId = results0[0].id;
-        if (userId === otherId) {
+        const username = req.userInfo.username;
+        const othername = results0[0].username;
+        if (username === othername) {
           res.status(400).json('cannot send message to self');
         } else {
           const id = uuid.v4();
           const time = new Date().toISOString().slice(0, 19).replace('T', ' ');
-          connection.query(`INSERT INTO message(id, sender, receiver, time, content, type) VALUES (?, ?, ?, ?, ?, ?);`, [id, userId, otherId, time, content, type], (error1) => {
+          connection.query(`INSERT INTO message(id, sender, receiver, time, content, type) VALUES (?, ?, ?, ?, ?, ?);`, [id, username, othername, time, content, type], (error1) => {
             if (error1) {
               res.status(400).json({ error: error1 });
             } else {
               res.status(201).json({
-                id, userId, otherId, time, content, type,
+                id, username, othername, time, content, type,
               });
             }
           });
@@ -831,7 +831,7 @@ function addMentions(text, userId) {
 function getNotifications(req, res) {
   const promise0 = dbQuery(`SELECT groupInfo.* FROM groupInfo INNER JOIN invitation ON invitation.groupId = groupInfo.id WHERE invitation.userId = '${req.userInfo.id}';`);
   const promise1 = dbQuery(`SELECT user.* FROM user INNER JOIN mention ON mention.mentioner = user.id WHERE mention.mentioned = '${req.userInfo.id}';`);
-  const promise2 = dbQuery(`SELECT user.* FROM user INNER JOIN message ON message.sender = user.id WHERE message.receiver = '${req.userInfo.id}';`);
+  const promise2 = dbQuery(`SELECT user.* FROM user INNER JOIN message ON message.sender = user.username WHERE message.receiver = '${req.userInfo.username}';`);
   return Promise.all([promise0, promise1, promise2]).then(([invitations, mentions, messages]) => {
     res.status(200).json({ invitations, mentions, messages });
   }).catch((error) => {
