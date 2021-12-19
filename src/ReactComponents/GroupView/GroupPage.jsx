@@ -107,8 +107,41 @@ export default function GroupPage() {
     <>
       <Header title={`Group Name: ${groupName}`} userName={`User: ${window.localStorage.getItem("username")}`} />
       <Grid container spacing={2}>
-        <Grid item xs={4} md={3}>
-        <Paper style={{ position: 'fixed' }}>
+        <Grid item xs={4} md={4}>
+          <LeftPanel />
+        </Grid>
+        <Grid item xs={4} md={4}>
+          <Posts certainGroup={certainGroup} />
+        </Grid>
+        <Grid item xs={2} md={2}>
+          <ControlPanel groupName={groupName} />
+        </Grid>
+        <Grid item xs={2} md={2}>
+          <Card sx={{ minWidth: 200 }}>
+            <CardContent>
+              <Typography sx={{ mb: 1.5 }} color="text.secondary">
+                Group Analytics
+              </Typography>
+              <Typography variant="body2">
+                Member Number: {groupAnal.num_member}
+              </Typography>
+              <Typography variant="body2">
+                Post Number: {groupAnal.num_post}
+              </Typography>
+              <Typography variant="body2">
+                Deleted Number: {groupAnal.num_deleted}
+              </Typography>
+              <Typography variant="body2">
+                Flagged Number: {groupAnal.num_flagged}
+              </Typography>
+              <Typography variant="body2">
+                Hidden Number: {groupAnal.num_hidden}
+              </Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+        <Grid item xs={3} md ={3}>
+        <Paper>
           {
             certainGroup &&
             (
@@ -136,6 +169,7 @@ export default function GroupPage() {
           }
           </Paper>
         </Grid>
+<<<<<<< HEAD
         <Grid item xs={8} md={5}>
           <Posts certainGroup={certainGroup} />
         </Grid>
@@ -166,6 +200,8 @@ export default function GroupPage() {
             </CardContent>
           </Card>
         </Grid>
+=======
+>>>>>>> 6cfc647ec798ab27046d306703516ada92966d6e
       </Grid>
     </>
   );

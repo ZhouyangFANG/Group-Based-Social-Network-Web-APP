@@ -16,6 +16,8 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import AssistantPhotoIcon from '@mui/icons-material/AssistantPhoto';
 import ThreeSixtyIcon from '@mui/icons-material/ThreeSixty';
 import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
 
 const lib = require('../../fetch');
 
@@ -58,12 +60,39 @@ export default function Posts(props) {
     }
   }
 
+  async function addComment(postId){
+    const content = document.getElementById(`comment${postId}`).value;
+    const res = await lib.addComment(postId, content);
+    if (res === 200) {
+      window.location.reload();
+    }
+  }
+
+  async function deleteComment(commentId){
+    const res = await lib.deleteComment(commentId);
+    if (res === 200) {
+      window.location.reload();
+    }
+  }
+
+  function sortCommentTime() {
+    return function (objectN, objectM) {
+      const valueN = objectN.time;
+      const valueM = objectM.time;
+      if (valueN < valueM) return 1;
+      else if (valueN > valueM) return -1;
+      else return 0;
+    }
+  }
+
   function Comments(commentL) {
-    return commentL.map((comment) => 
+    commentL.sort(sortCommentTime());
+    return commentL.map((comment) =>
       <CardContent>
         <Typography variant="body2" color="text.secondary">
-          {comment.content}
+          {comment.username}: {comment.content}
         </Typography>
+        <Button variant='contained' type="submit" onClick={() => {deleteComment(comment.id)}}>Delete</Button>
       </CardContent>
     );
   }
@@ -90,7 +119,7 @@ export default function Posts(props) {
 
     if (post.flagger && !post.deleted) {
       return (
-        <Card key={post.id} sx={{ maxWidth: 700 }}>
+        <Card key={post.id} sx={{ maxWidth: 500 }}>
           <CardHeader
             avatar={(
               <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
@@ -112,8 +141,9 @@ export default function Posts(props) {
               {post.postContent}
             </Typography>
           </CardContent>
+          <TextField id={`comment${post.id}`} label="add comment" name="add comment"/>
           <CardActions disableSpacing>
-            <IconButton aria-label="add to favorites">
+            <IconButton aria-label="addComment" onClick={() => {addComment(post.id)}}>
               <FavoriteIcon />
             </IconButton>
             <IconButton aria-label="flag" id="flag" onClick={() => {flagPost(post.id)}}>
@@ -136,7 +166,7 @@ export default function Posts(props) {
       )
     } else if (!post.flagger && !post.deleted){
       return (
-        <Card key={post.id} sx={{ maxWidth: 700 }}>
+        <Card key={post.id} sx={{ maxWidth: 500 }}>
           <CardHeader
             avatar={(
               <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
@@ -160,7 +190,7 @@ export default function Posts(props) {
             </Typography>
           </CardContent>
           <CardActions disableSpacing>
-            <IconButton aria-label="add to favorites">
+            <IconButton aria-label="addComment" onClick={() => {addComment(post.id)}}>
               <FavoriteIcon />
             </IconButton>
             <IconButton aria-label="flag" id="flag" onClick={() => {flagPost(post.id)}}>

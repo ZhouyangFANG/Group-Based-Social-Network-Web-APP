@@ -276,58 +276,44 @@ async function getRecommend() {
   return res;
 }
 
-async function editComment(username) {
+async function addComment(postId, contentV) {
   let res;
-  await fetch(`${uri}groups/${groupName}/posts/${postId}/comments/${commentId}`, {
-    method: 'PUT',
+  await fetch(`${uri}posts/${postId}/comments`, {
+    method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      title: titleV,
-      // admin: group.admin,
-      author: authorV,
       content: contentV,
     }),
-  }).then((response) => response.json())
-    .then((data) => {
-      //
-      res = data;
-      window.console.log(data);
+    credentials: 'include',
+  }).then((response) => {
+    res = response.status;
     }).catch((error) => {
       window.console.log(error);
     });
-  res = {email: 'aaa@', phone: '12345', gender: 'famale'};
   return res;
 }
 
-async function deleteComment(username) {
+
+async function deleteComment(commentId) {
   let res;
-  await fetch(`${uri}/api/groups/${groupName}/posts/${postId}/comments/${commentId}`, {
+  await fetch(`${uri}comments/${commentId}`, {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({
-      title: titleV,
-      // admin: group.admin,
-      author: authorV,
-      content: contentV,
-    }),
-  }).then((response) => response.json())
-    .then((data) => {
-      //
-      res = data;
-      window.console.log(data);
+    credentials: 'include',
+  }).then((response) => {
+      res = response.status;
     }).catch((error) => {
       window.console.log(error);
     });
-  res = {email: 'aaa@', phone: '12345', gender: 'famale'};
   return res;
 }
 
 export {
   register, login, createGroup, addPost, deletePost, flagPost, getProfile,
-  editComment, deleteComment, updateProfile, updatePwd, getAllTag,
-  hidePost, getHiddenList, getRecommend, getGroupAnaly,
+  deleteComment, updateProfile, updatePwd, getAllTag,
+  hidePost, getHiddenList, getRecommend, getGroupAnaly, addComment,
 };

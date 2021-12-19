@@ -465,8 +465,11 @@ async function deleteComment(req, res) {
       if (error) {
         res.status(400);
         res.json({ error });
-      } else {
+      } else if (results.affectedRows !==0) {
         res.status(200);
+        res.json(results);
+      } else {
+        res.status(401);
         res.json(results);
       }
     });
@@ -703,7 +706,7 @@ function getGroup(req, res) {
 function postComment(req, res) {
   const id = uuid.v4();
   const { postId } = req.params;
-  const content = req.body;
+  const { content } = req.body;
   const userId = req.userInfo.id;
   const datetime = new Date().toISOString().slice(0, 19).replace('T', ' ');
   connection.query(`INSERT INTO comment(id, postId, content, author, datetime)
@@ -711,7 +714,7 @@ function postComment(req, res) {
     if (error) {
       res.status(400).json({ error });
     } else {
-      res.status(201).json({
+      res.status(200).json({
         id, postId, content, userId, datetime,
       });
     }
@@ -784,15 +787,11 @@ function getMentions(req, res) {
   });
 }
 
-function addMention(req, res) {
-  const id = uuid.v4();
-  connection.query(`INSERT INTO mention(id, userId, context) SELECT '${id}', user.id, '${req.body.context}' FROM user WHERE username = '${req.body.name}';`, (error) => {
-    if (error) {
-      res.status(400).json({ error });
-    } else {
-      res.status(201).json('success');
-    }
-  });
+function addMention(text, username) {
+  const pattern = /\B@[a-z0-9_-]+/gi;
+  Promise.all(text.match(pattern).map(async (mention) => {
+    const name = mention.slice(1);
+  }));
 }
 
 function getNotifications(req, res) {
