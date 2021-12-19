@@ -192,6 +192,7 @@ export default function CreateGroup() {
                 </Grid>
                 <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
                   <Button
+                  id="btn1"
                     variant="contained"
                     onClick={createGroup}
                     sx={{ mt: 3, ml: 1 }}

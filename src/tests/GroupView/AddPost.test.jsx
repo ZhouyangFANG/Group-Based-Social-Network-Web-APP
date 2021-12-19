@@ -5,4 +5,5 @@ test('test add post function', () => {
   render(<AddPost />);
   const btn = document.getElementById('addBtn');
   btn.click();
+  
 });

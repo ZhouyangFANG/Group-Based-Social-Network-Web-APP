@@ -268,13 +268,13 @@ function MainView() {
           </div>
         </Grid>
         <Grid item xs={2} md={1}>
-          <Box component="form" onSubmit={handleGetGroupList} noValidate sx={{ mt: 1 }}>
+          <Box component="form" id="groupList" onSubmit={handleGetGroupList} noValidate sx={{ mt: 1 }}>
             <TextField name="tags" placeholder="tags" />
             <Button variant='contained' type="submit">Get Group List</Button>
           </Box>
-          <Button variant='contained' type="submit" onClick={sortByPostsNum}>Sort groups by number of posts</Button>
-          <Button variant='contained' type="submit" onClick={sortByMemberNum}>Sort groups by number of members</Button>
-          <Button variant='contained' type="submit" onClick={sortByNewestMsg}>Sort groups by newest messages</Button>
+          <Button id="btn1" variant='contained' type="submit" onClick={sortByPostsNum}>Sort groups by number of posts</Button>
+          <Button id="btn2" variant='contained' type="submit" onClick={sortByMemberNum}>Sort groups by number of members</Button>
+          <Button id="btn3" variant='contained' type="submit" onClick={sortByNewestMsg}>Sort groups by newest messages</Button>
         </Grid>
         <Grid item xs={3} md={3}>
           <div style={{ height: 800, width: '100%' }}>
