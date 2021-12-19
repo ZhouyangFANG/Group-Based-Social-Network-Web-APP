@@ -42,7 +42,7 @@ export default function SignIn() {
     const res = await lib.login(email.value, pwd.value);
     if (res === 200) {
       if (curr !== null) {
-        window.localStorage.setItem(email.value, JSON.stringify({count: 0}));
+        window.localStorage.setItem(email.value, JSON.stringify({count: 0, time: timeV}));
       }
 
       const url = window.location.href;
