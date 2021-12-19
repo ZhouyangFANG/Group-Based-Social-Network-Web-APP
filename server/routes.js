@@ -3,7 +3,6 @@ const sha256 = require('js-sha256');
 require('dotenv').config();
 const uuid = require('uuid');
 const crypto = require('crypto');
-const async = require('async');
 
 const algorithm = 'aes-256-ctr';
 const secretKey = 'xBLCvFTxhjkqjYTC2ynYuSVg3o6YMB1j';
@@ -650,6 +649,16 @@ function getInvitations(req, res) {
   });
 }
 
+function deleteInvitation(req, res) {
+  connection.query(`DELETE FROM invitation WHERE userId = '${req.userInfo.id}';`, (error, results) => {
+    if (error) {
+      res.status(400).json({ error });
+    } else {
+      res.status(200).json('success');
+    }
+  });
+}
+
 function leaveGroup(req, res) {
   _getGroup(req, res, (group) => {
     connection.query(`DELETE FROM admin WHERE userId = '${req.userInfo.id}' and groupId = '${group.id}';`, (error0) => {
@@ -765,6 +774,27 @@ function postMessage(req, res) {
   }
 }
 
+function getMentions(req, res) {
+  connection.query(`SELECT * FROM mention WHERE userId = '${req.userInfo.id}';`, (error, results) => {
+    if (error) {
+      res.status(400).json({ error });
+    } else {
+      res.status(200).json(results);
+    }
+  });
+}
+
+function addMention(req, res) {
+  const id = uuid.v4();
+  connection.query(`INSERT INTO mention(id, userId, context) SELECT '${id}', user.id, '${req.body.context}' FROM user WHERE username = '${req.body.name}';`, (error) => {
+    if (error) {
+      res.status(400).json({ error });
+    } else {
+      res.status(201).json('success');
+    }
+  });
+}
+
 module.exports = {
   createUser,
   loginUser,
@@ -794,8 +824,11 @@ module.exports = {
   postRequest,
   postInvitation,
   getInvitations,
+  deleteInvitation,
   getGroup,
   postComment,
   getMessages,
   postMessage,
+  getMentions,
+  addMention,
 };
