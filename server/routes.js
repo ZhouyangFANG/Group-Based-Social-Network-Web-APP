@@ -307,6 +307,44 @@ group by groupInfo.id;`, (error, results) => {
   });
 }
 
+function getGroupsByTag(req, res) {
+  const userId = req.userInfo.id;
+  connection.query(`SELECT tag.* FROM tag WHERE tag.name = '${req.params.tagname}';`, (error, results) => {
+    if (error) {
+      res.status(400).json({ error });
+    } else {
+      tagId = results[0].id;
+      connection.query(`SELECT groupInfo.id, groupInfo.name, groupInfo.type,
+      max(p.datetime) as latest, count(p.id) as num_posts, count(m.userId) as num_members, true as is_member
+    from groupInfo left join post p on groupInfo.id = p.groupId
+    left join member m on groupInfo.id = m.groupId
+    inner join tagRelation on tagRelation.groupId = groupInfo.id
+    where groupInfo.type = true and
+          '${userId}' in (select userId from member where groupId = groupInfo.id)
+          and tagRelation.tagId = '${tagId}'
+    group by groupInfo.id
+    union
+    SELECT groupInfo.id, groupInfo.name, groupInfo.type,
+      max(p.datetime) as latest, count(p.id) as num_posts, count(m.userId) as num_members, false as is_member
+    from groupInfo left join post p on groupInfo.id = p.groupId
+    left join member m on groupInfo.id = m.groupId
+    inner join tagRelation on tagRelation.groupId = groupInfo.id
+    where groupInfo.type = true and
+          '${userId}' not in (select userId from member where groupId = groupInfo.id)
+          and tagRelation.tagId = '${tagId}'
+    group by groupInfo.id;`, (error, results) => {
+        if (error) {
+          res.status(400);
+          res.json({ error });
+        } else {
+          res.status(200);
+          res.json(results);
+        }
+      });
+    }
+  });
+}
+
 async function getTags(req, res) {
   connection.query('SELECT * from tag', (error, results) => {
     if (error) {
@@ -357,8 +395,10 @@ async function createPost(req, res) {
         res.status(400);
         res.json({ error });
       } else {
-        res.status(200);
-        res.json({ id: postId });
+        addMentions(postContent, req.userInfo.id).then(() => {
+          res.status(200);
+          res.json({ id: postId });
+        });
       }
     });
   });
@@ -666,7 +706,7 @@ function leaveGroup(req, res) {
       if (error0) {
         res.status(400).json({ error: error0 });
       } else {
-        connection.query(`DELETE FROM member WHERE userId = '${req.userInfo.id}' and groupId = '${group.id}';`, (error1, results1) => {
+        connection.query(`DELETE FROM member WHERE userId = '${req.userInfo.id}' and groupId = '${group.id}';`, (error1) => {
           if (error1) {
             res.status(400).json({ error: error1 });
           } else {
@@ -714,8 +754,10 @@ function postComment(req, res) {
     if (error) {
       res.status(400).json({ error });
     } else {
-      res.status(200).json({
-        id, postId, content, userId, datetime,
+      addMentions(content, req.userInfo.id).then(() => {
+        res.status(201).json({
+          id, postId, content, userId, datetime,
+        });
       });
     }
   });
@@ -761,8 +803,7 @@ function postMessage(req, res) {
         } else {
           const id = uuid.v4();
           const time = new Date().toISOString().slice(0, 19).replace('T', ' ');
-          connection.query(`INSERT INTO message(id, sender, receiver, time, content, type)
-          VALUES ('${id}', '${userId}', '${otherId}', '${time}', BINARY(:data), '${type}');`, { content }, (error1) => {
+          connection.query(`INSERT INTO message(id, sender, receiver, time, content, type) VALUES (?, ?, ?, ?, ?, ?);`, [id, userId, otherId, time, content, type], (error1) => {
             if (error1) {
               res.status(400).json({ error: error1 });
             } else {
@@ -777,32 +818,25 @@ function postMessage(req, res) {
   }
 }
 
-function getMentions(req, res) {
-  connection.query(`SELECT * FROM mention WHERE userId = '${req.userInfo.id}';`, (error, results) => {
-    if (error) {
-      res.status(400).json({ error });
-    } else {
-      res.status(200).json(results);
-    }
-  });
-}
-
-function addMention(text, username) {
+function addMentions(text, userId) {
   const pattern = /\B@[a-z0-9_-]+/gi;
-  Promise.all(text.match(pattern).map(async (mention) => {
+  return Promise.all(text.match(pattern).map(async (mention) => {
     const name = mention.slice(1);
+    try {
+      await dbQuery(`INSERT INTO mention(mentioner, mentioned) SELECT '${userId}', user.id FROM user WHERE username = '${name}';`)
+    } catch (error) {};
   }));
 }
 
 function getNotifications(req, res) {
   const promise0 = dbQuery(`SELECT groupInfo.* FROM groupInfo INNER JOIN invitation ON invitation.groupId = groupInfo.id WHERE invitation.userId = '${req.userInfo.id}';`);
-  const promise1 = Promise.resolve([]);
-  const promise2 = Promise.resolve([]);
+  const promise1 = dbQuery(`SELECT user.* FROM user INNER JOIN mention ON mention.mentioner = user.id WHERE mention.mentioned = '${req.userInfo.id}';`);
+  const promise2 = dbQuery(`SELECT user.* FROM user INNER JOIN message ON message.sender = user.id WHERE message.receiver = '${req.userInfo.id}';`);
   return Promise.all([promise0, promise1, promise2]).then(([invitations, mentions, messages]) => {
     res.status(200).json({ invitations, mentions, messages });
   }).catch((error) => {
     res.status(400).json({ error });
-  })
+  });
 }
 
 module.exports = {
@@ -837,7 +871,6 @@ module.exports = {
   postComment,
   getMessages,
   postMessage,
-  getMentions,
-  addMention,
   getNotifications,
+  getGroupsByTag,
 };
