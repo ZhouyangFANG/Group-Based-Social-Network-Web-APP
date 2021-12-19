@@ -271,11 +271,21 @@ async function createGroup(req, res) {
 }
 
 async function getPublicGroups(req, res) {
+  const userId = req.userInfo.id;
   connection.query(`SELECT groupInfo.id, groupInfo.name, groupInfo.type,
-  max(p.datetime) as latest, count(p.id) as num_posts, count(m.userId) as num_members
+  max(p.datetime) as latest, count(p.id) as num_posts, count(m.userId) as num_members, true as is_member
 from groupInfo left join post p on groupInfo.id = p.groupId
 left join member m on groupInfo.id = m.groupId
-where groupInfo.type = true
+where groupInfo.type = true and
+      '${userId}' in (select userId from member where groupId = groupInfo.id)
+group by groupInfo.id
+union
+SELECT groupInfo.id, groupInfo.name, groupInfo.type,
+  max(p.datetime) as latest, count(p.id) as num_posts, count(m.userId) as num_members, false as is_member
+from groupInfo left join post p on groupInfo.id = p.groupId
+left join member m on groupInfo.id = m.groupId
+where groupInfo.type = true and
+      '${userId}' not in (select userId from member where groupId = groupInfo.id)
 group by groupInfo.id;`, (error, results) => {
     if (error) {
       res.status(400);
