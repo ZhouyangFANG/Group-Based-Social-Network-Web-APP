@@ -282,11 +282,21 @@ async function createGroup(req, res) {
 }
 
 async function getPublicGroups(req, res) {
+  const userId = req.userInfo.id;
   connection.query(`SELECT groupInfo.id, groupInfo.name, groupInfo.type,
-  max(p.datetime) as latest, count(p.id) as num_posts, count(m.userId) as num_members
+  max(p.datetime) as latest, count(p.id) as num_posts, count(m.userId) as num_members, true as is_member
 from groupInfo left join post p on groupInfo.id = p.groupId
 left join member m on groupInfo.id = m.groupId
-where groupInfo.type = true
+where groupInfo.type = true and
+      '${userId}' in (select userId from member where groupId = groupInfo.id)
+group by groupInfo.id
+union
+SELECT groupInfo.id, groupInfo.name, groupInfo.type,
+  max(p.datetime) as latest, count(p.id) as num_posts, count(m.userId) as num_members, false as is_member
+from groupInfo left join post p on groupInfo.id = p.groupId
+left join member m on groupInfo.id = m.groupId
+where groupInfo.type = true and
+      '${userId}' not in (select userId from member where groupId = groupInfo.id)
 group by groupInfo.id;`, (error, results) => {
     if (error) {
       res.status(400);
@@ -373,13 +383,44 @@ async function flagPost(req, res) {
 
 async function deletePost(req, res) {
   const { postId } = req.params;
-  connection.query(`UPDATE post SET deleted = true where id = '${postId}'`, (error, results) => {
+  const userId = req.userInfo.id;
+  console.log(userId);
+  connection.query(`select a.userId as adminId from post join groupInfo gI on gI.id = post.groupId join admin a on gI.id = a.groupId where
+  post.id = '${postId}';`, (error, results) => {
     if (error) {
       res.status(400);
       res.json({ error });
     } else {
-      res.status(200);
-      res.json(results);
+      let flag = false;
+      for (i=0; i<results.length; i += 1){
+        if (results[i].adminId === userId){
+          flag = true;
+        }
+      }
+      if (flag === true){
+        connection.query(`UPDATE post SET deleted = true where id = '${postId}'`, (error, results) => {
+          if (error) {
+            res.status(400);
+            res.json({ error });
+          } else {
+            res.status(200);
+            res.json(results);
+          }
+        });
+      } else {
+        connection.query(`UPDATE post SET deleted = true where id = '${postId}' and author = '${userId}'`, (error, results) => {
+          if (error) {
+            res.status(400);
+            res.json({ error });
+          } else if (results.affectedRows !==0) {
+            res.status(200);
+            res.json(results);
+          } else {
+            res.status(401);
+            res.json(results);
+          }
+        });
+      }
     }
   });
 }
