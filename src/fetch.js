@@ -240,6 +240,42 @@ async function getAllTag(tags) {
   return res;
 }
 
+async function getGroupAnaly(groupName) {
+  let res;
+  await fetch(`${uri}groupAnalytic/${groupName}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include',
+  }).then((response) => response.json())
+    .then((data) => {
+      res = data;
+      window.console.log(data);
+    }).catch((error) => {
+      window.console.log(error);
+    });
+  return res;
+}
+
+async function getRecommend() {
+  let res;
+  await fetch(`${uri}groupRecommendation`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include',
+  }).then((response) => response.json())
+    .then((data) => {
+      res = data;
+      window.console.log(data);
+    }).catch((error) => {
+      window.console.log(error);
+    });
+  return res;
+}
+
 async function editComment(username) {
   let res;
   await fetch(`${uri}groups/${groupName}/posts/${postId}/comments/${commentId}`, {
@@ -291,6 +327,7 @@ async function deleteComment(username) {
 }
 
 export {
-  register, login, createGroup, addPost, deletePost, flagPost, getProfile, editComment, deleteComment, updateProfile, updatePwd, getAllTag,
-  hidePost, getHiddenList,
+  register, login, createGroup, addPost, deletePost, flagPost, getProfile,
+  editComment, deleteComment, updateProfile, updatePwd, getAllTag,
+  hidePost, getHiddenList, getRecommend, getGroupAnaly,
 };
