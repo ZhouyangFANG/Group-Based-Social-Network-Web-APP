@@ -71,7 +71,7 @@ function MainView() {
       headerName: 'Group Name',
       width: 150,
       renderCell: (params) => (
-        <Link component={RouterLink} to={`/groups/${params.value}`} variant="body2">{params.value}</Link>
+        <Link component={RouterLink} to={'groups/'+params.value} variant="body2">{params.value}</Link>
       ),
     },
     { field: 'tags', headerName: 'Tags', width: 200 },
