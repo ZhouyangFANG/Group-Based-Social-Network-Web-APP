@@ -45,21 +45,35 @@ const Chat = () => {
     const classes = useStyles();
     const [objectURL, setObjectURL] = useState("");
     const [chatHistory, setChathistory] = useState(null);
+    const reader = new FileReader();
 
-    const handleUpload = (event) => {
+    const handleImage = (event) => {
         console.log(event.target.files[0]);
-        setObjectURL(URL.createObjectURL(event.target.files[0]));
-        console.log(objectURL);
-        let video = document.getElementsByTagName('video')[0];
-        video.src = URL.createObjectURL(event.target.files[0]);
-        video.load();
-        video.onloadeddata = function () {
-            video.play();
-        }
+        reader.readAsDataURL(event.target.files[0])
+        SendMessage(friendName, reader.result, "image");       
+
+        // setObjectURL(URL.createObjectURL(event.target.files[0]));
+        // console.log(objectURL);
+        // let video = document.getElementsByTagName('video')[0];
+        // video.src = URL.createObjectURL(event.target.files[0]);
+        // video.load();
+        // video.onloadeddata = function () {
+        //     video.play();
+        // }
 
         // const sound = () => <audio src={event.target.files[0]} autoPlay />;
         // const audioElement = new Audio(event.target.files[0]);
         // audioElement.play();
+    }
+    const handleAudio = (event) => {
+        console.log(event.target.files[0]);
+        reader.readAsDataURL(event.target.files[0])
+        SendMessage(friendName, reader.result, "audio");    
+    }
+    const handleVideo = (event) => {
+        console.log(event.target.files[0]);
+        reader.readAsDataURL(event.target.files[0])
+        SendMessage(friendName, reader.result, "video");    
     }
 
     useEffect(async () => {
@@ -79,12 +93,11 @@ const Chat = () => {
                 switch (message.type) {
                     case "text":
                         console.log("receive text message");
-                        (
+                        return (
                             <ListItem key={message.id}>
-                                <ListItemText primary={"it's a message"}></ListItemText>
+                                <ListItemText primary={`${message.sender}: ${message.content}`}></ListItemText>
                             </ListItem>
                         )
-                        // `${message.sender}: ${message.content}`
                         break;
                     case "image":
                         (
@@ -94,6 +107,7 @@ const Chat = () => {
                         )
                         break;
                     case "audio":
+                        console.log("receive audio message");
                         (
                             <ListItem key={message.id}>
                                 <ListItemText primary="Cool. i am good, let's catch up!"></ListItemText>
@@ -102,10 +116,10 @@ const Chat = () => {
                         break;
 
                     case "video":
+                        console.log("receive video message");
                         (
-                            <ListItem key={message.id}>
-                                <ListItemText primary="Cool. i am good, let's catch up!"></ListItemText>
-                            </ListItem>
+                            <video>
+                            </video>
                         )
                         break;
 
@@ -148,7 +162,7 @@ const Chat = () => {
                             Image
                             <input
                                 type="file"
-                                onChange={handleUpload}
+                                onChange={handleImage}
                                 hidden
                             />
                         </Button>
@@ -159,7 +173,7 @@ const Chat = () => {
                             Audio
                             <input
                                 type="file"
-                                onChange={handleUpload}
+                                onChange={handleAudio}
                                 hidden
                             />
                         </Button>
@@ -170,15 +184,10 @@ const Chat = () => {
                             Video
                             <input
                                 type="file"
-                                onChange={handleUpload}
+                                onChange={handleVideo}
                                 hidden
                             />
                         </Button>
-                        <Link href={objectURL} variant="body2">
-                            Play media
-                        </Link>
-                        <video>
-                        </video>
                     </Grid>
                 </Grid>
             </Grid>
