@@ -90,7 +90,7 @@ export default function Posts(props) {
 
     if (post.flagger && !post.deleted) {
       return (
-        <Card key={post.id} sx={{ maxWidth: 700 }}>
+        <Card key={post.id} sx={{ maxWidth: 500 }}>
           <CardHeader
             avatar={(
               <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
@@ -136,7 +136,7 @@ export default function Posts(props) {
       )
     } else if (!post.flagger && !post.deleted){
       return (
-        <Card key={post.id} sx={{ maxWidth: 700 }}>
+        <Card key={post.id} sx={{ maxWidth: 500 }}>
           <CardHeader
             avatar={(
               <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
