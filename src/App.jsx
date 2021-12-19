@@ -25,7 +25,7 @@ function App() {
           <Route exact path="/user/:username" component={UserProfile} />
           <Route exact path="/createGroup" component={CreateGroup} />
           {/* <Route exact path="/cis557" component={GroupPage} /> */}
-          <Route exact path="/chat" component={Chat} />
+          <Route path="/chat/:friendName" component={Chat} />
         </Switch>
       </div>
     </Router>

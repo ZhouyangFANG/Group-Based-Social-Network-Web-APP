@@ -111,8 +111,8 @@ export async function removeAdmin(groupName, userName) {
   return res.data;
 }
 
-export async function requestToJoinGroup(groupName, userName) {
-  const res = await axios.post(`${url}/groups/${groupName}/join`, {userName}, { withCredentials: true });
+export async function requestToJoinGroup(groupName) {
+  const res = await axios.post(`${url}/groups/${groupName}/requests`, {}, { withCredentials: true });
   return res.data;
 }
 
@@ -130,4 +130,17 @@ export async function filterGroupsByTags(tag, setGroupList) {
   const res = await axios.get(`${url}/groups/tags/${tag}`, { withCredentials: true });
   setGroupList(res.data);
   // setGroupList(groupList);
+}
+
+export async function JoinRequestDecision(groupName, userName, decision) {
+  const res = await axios.put(`${url}/groups/${groupName}/requests/${userName}`, {granted: decision}, { withCredentials: true });
+}
+
+export async function getNotification() {
+  const res = await axios.get(`${url}/notification`, { withCredentials: true });
+  return res.data;
+}
+
+export async function respondInvitation(groupName, decision) {
+  const res = await axios.put(`${url}/invites/${groupName}`, {granted: decision}, { withCredentials: true });
 }

@@ -48,7 +48,6 @@ app.get('/api/groupRecommendation', routes.checkCookie, routes.groupRecommendati
 
 app.get('/api/groupAnalytic/:groupname', routes.checkCookie, routes.groupAnalytic);
 
-app.post('/api/groups/:groupname/members/:username', routes.checkCookie, routes.addMember);
 app.delete('/api/groups/:groupname/members', routes.checkCookie, routes.leaveGroup);
 
 app.post('/api/groups/:groupname/admins/:username', routes.checkCookie, routes.addAdmin);
@@ -66,6 +65,9 @@ app.post('/api/posts/:postId/comments', routes.checkCookie, routes.postComment);
 
 app.get('/api/users/:username/messages', routes.checkCookie, routes.getMessages);
 app.post('/api/users/:username/messages', routes.checkCookie, routes.postMessage);
+
+app.get('/api/mentions', routes.checkCookie, routes.getMentions);
+app.post('/api/mentions', routes.checkCookie, routes.addMention);
 
 app.get('/', (req, res) => {
   res.send('Hello World!');

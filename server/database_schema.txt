@@ -111,3 +111,11 @@ CREATE TABLE message (
     foreign key (sender) references user(id),
     foreign key (receiver) references user(id)
 );
+
+CREATE TABLE mention (
+    id varchar(36),
+    userId varchar(36) not null,
+    context text,
+    primary key (id),
+    foreign key (userId) references user(id)
+)

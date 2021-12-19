@@ -3,7 +3,6 @@ const sha256 = require('js-sha256');
 require('dotenv').config();
 const uuid = require('uuid');
 const crypto = require('crypto');
-const async = require('async');
 
 const algorithm = 'aes-256-ctr';
 const secretKey = 'xBLCvFTxhjkqjYTC2ynYuSVg3o6YMB1j';
@@ -529,24 +528,6 @@ function _checkAdmin(req, res, callback) {
   })
 };
 
-function addMember(req, res) {
-  _getGroup(req, res, (group) => {
-    connection.query(`SELECT * FROM admin WHERE userId = '${req.userInfo.id}' AND groupId = '${group.id}';`, (error0, results0) => {
-      if (error0 || results0.length === 0) {
-        res.status(403).json('admin permission needed');
-      } else {
-        connection.query(`INSERT INTO member(userId, groupId) SELECT user.id, '${group.id}' FROM user WHERE username = '${req.params.username}';`, (error1) => {
-          if (error1) {
-            res.status(400).json({ error: error1 });
-          } else {
-            res.status(201).json('success');
-          }
-        });
-      }
-    });
-  });
-}
-
 function addAdmin(req, res) {
   _getGroup(req, res, (group) => {
     connection.query(`SELECT * FROM admin WHERE userId = '${req.userInfo.id}' AND groupId = '${group.id}';`, (error1, results1) => {
@@ -793,6 +774,27 @@ function postMessage(req, res) {
   }
 }
 
+function getMentions(req, res) {
+  connection.query(`SELECT * FROM mention WHERE userId = '${req.userInfo.id}';`, (error, results) => {
+    if (error) {
+      res.status(400).json({ error });
+    } else {
+      res.status(200).json(results);
+    }
+  });
+}
+
+function addMention(req, res) {
+  const id = uuid.v4();
+  connection.query(`INSERT INTO mention(id, userId, context) SELECT '${id}', user.id, '${req.body.context}' FROM user WHERE username = '${req.body.name}';`, (error) => {
+    if (error) {
+      res.status(400).json({ error });
+    } else {
+      res.status(201).json('success');
+    }
+  });
+}
+
 module.exports = {
   createUser,
   loginUser,
@@ -814,7 +816,6 @@ module.exports = {
   deleteComment,
   groupRecommendation,
   groupAnalytic,
-  addMember,
   leaveGroup,
   addAdmin,
   deleteAdmin,
@@ -826,4 +827,6 @@ module.exports = {
   postComment,
   getMessages,
   postMessage,
+  getMentions,
+  addMention,
 };
