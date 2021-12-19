@@ -23,19 +23,6 @@ const MenuProps = {
   },
 };
 
-const names = [
-  'Oliver Hansen',
-  'Van Henry',
-  'April Tucker',
-  'Ralph Hubbard',
-  'Omar Alexander',
-  'Carlos Abbott',
-  'Miriam Wagner',
-  'Bradley Wilkerson',
-  'Virginia Andrews',
-  'Kelly Snyder',
-];
-
 function getStyles(name, personName, theme) {
   return {
     fontWeight:
@@ -48,10 +35,11 @@ function getStyles(name, personName, theme) {
 export default function Admin() {
   const theme = useTheme();
   const [personName, setPersonName] = React.useState([]);
+  const [names, setNames] = React.useState([]);
 
   async function getTag() {
     const res = await lib.getAllTag();
-    setPersonName(res);
+    setNames(res);
   }
 
   React.useEffect(async () => {
@@ -71,7 +59,7 @@ export default function Admin() {
   return (
     <>
       <Typography variant="h6" gutterBottom>
-        Group Administrator
+        Group Tags
       </Typography>
       <Grid container spacing={3}>
         <Grid item xs={12}>
@@ -87,13 +75,12 @@ export default function Admin() {
                 input={<OutlinedInput label="Name" />}
                 MenuProps={MenuProps}
               >
-                {personName.map((name) => (
+                {names.map((name) => (
                   <MenuItem
                     key={name.id}
                     value={name.name}
-                    style={getStyles(name.name, personName, theme)}
                   >
-                    {name}
+                    {name.name}
                   </MenuItem>
                 ))}
               </Select>

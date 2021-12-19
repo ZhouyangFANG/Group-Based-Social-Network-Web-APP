@@ -50,6 +50,14 @@ export default function ControlPanel(props) {
     window.location.href = "/groups";
   }
 
+  const addPost = () => {
+    let url = window.location.href;
+    if (url.charAt(url.length-1) === '/'){
+      url = url.slice(0,-1);
+    }
+    window.location.href = url + '/post';
+  }
+
   return (
     <Grid item xs={2} md={2} container spacing={1}>
       <Box component="form" onSubmit={handleAddAdmin} noValidate sx={{ mt: 1 }}>
@@ -64,7 +72,12 @@ export default function ControlPanel(props) {
         <TextField name="input" placeholder="userName" />
         <Button variant='contained' type="submit">Invite</Button>
       </Box>
-      <Button variant='contained' type="submit" onClick={handleLeave}>Leave</Button>
+      <Box sx={{ mt: 1 }}>
+        <Button variant='contained' type="submit" onClick={addPost}>Add A Post</Button>
+      </Box>
+      <Box component="form" noValidate sx={{ mt: 1 }}>
+        <Button variant='contained' type="submit" onClick={handleLeave}>Leave</Button>
+      </Box>
     </Grid>
   );
 }
