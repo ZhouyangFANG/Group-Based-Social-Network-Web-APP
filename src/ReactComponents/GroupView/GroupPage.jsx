@@ -13,6 +13,7 @@ import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import { TextField } from '@mui/material';
+import Link from '@mui/material/Link';
 import {
   getGroupList,
   addAdmin,
@@ -65,7 +66,9 @@ export default function GroupPage() {
     return (
       admins.map((person) => (
         <li key={person.id}>
-          {person.username}
+          <Link href={`/chat/${person.username}`} variant="body2">
+            {person.username}
+          </Link>
         </li>
       ))
     )
@@ -75,7 +78,9 @@ export default function GroupPage() {
     return (
       members.map((person) => (
         <li key={person.id}>
-          {person.username}
+          <Link href={`/chat/${person.username}`} variant="body2">
+            {person.username}
+          </Link>
         </li>
       ))
     )
@@ -85,7 +90,9 @@ export default function GroupPage() {
     return (
       requests.map((person) => (
         <li key={person.id}>
-          {person.username}
+          <Link href={`/chat/${person.username}`} variant="body2">
+            {person.username}
+          </Link>
         </li>
       ))
     )

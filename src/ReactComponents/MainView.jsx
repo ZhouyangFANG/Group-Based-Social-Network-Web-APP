@@ -97,10 +97,8 @@ function MainView() {
 
   const handleJoinGroup = async (group) => {
     console.log(group);
-    await requestToJoinGroup(group.id, userName);
+    await requestToJoinGroup(group.name, userName);
     // const path = `/${group.row.name}`;
-    const path = `/${group.id}`;
-    history.push(path);
   }
 
   const handleGetGroupList = async (event) => {
