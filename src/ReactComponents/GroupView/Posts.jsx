@@ -198,6 +198,7 @@ export default function Posts(props) {
               {post.postContent}
             </Typography>
           </CardContent>
+          <TextField id={`comment${post.id}`} label="add comment" name="add comment"/>
           <CardActions disableSpacing>
             <IconButton aria-label="addComment" onClick={() => {addComment(post.id)}}>
               <FavoriteIcon />
