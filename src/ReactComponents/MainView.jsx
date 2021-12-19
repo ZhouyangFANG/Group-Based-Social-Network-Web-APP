@@ -84,6 +84,18 @@ function MainView() {
       ),
     },
   ];
+  const columnsRec = [
+    {
+      field: 'name',
+      headerName: 'Recommend Groups',
+      width: 250,
+    },
+  ];
+
+  useEffect(async () => {
+    const recommendL = await lib.getRecommend();
+    setRecommend(recommendL);
+  }, []);
 
   const handleJoinGroup = async (groupName) => {
     console.log(groupName);
