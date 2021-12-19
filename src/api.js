@@ -111,8 +111,8 @@ export async function removeAdmin(groupName, userName) {
   return res.data;
 }
 
-export async function requestToJoinGroup(groupName, userName) {
-  const res = await axios.post(`${url}/groups/${groupName}/join`, {userName}, { withCredentials: true });
+export async function requestToJoinGroup(groupName) {
+  const res = await axios.post(`${url}/groups/${groupName}/requests`, {}, { withCredentials: true });
   return res.data;
 }
 

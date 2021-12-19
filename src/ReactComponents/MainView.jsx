@@ -90,14 +90,14 @@ function MainView() {
       headerName: 'Request to join',
       width: 150,
       renderCell: (params) => (
-        <Button variant="contained" color="primary" onClick={()=> {handleJoinGroup(params)}}>Join</Button>
+        <Button variant="contained" color="primary" onClick={()=> {handleJoinGroup(params.row.name)}}>Join</Button>
       ),
     },
   ];
 
-  const handleJoinGroup = async (group) => {
-    console.log(group);
-    await requestToJoinGroup(group.name, userName);
+  const handleJoinGroup = async (groupName) => {
+    console.log(groupName);
+    await requestToJoinGroup(groupName);
     // const path = `/${group.row.name}`;
   }
 
