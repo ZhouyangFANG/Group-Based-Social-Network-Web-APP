@@ -67,7 +67,6 @@ app.get('/api/users/:username/messages', routes.checkCookie, routes.getMessages)
 app.post('/api/users/:username/messages', routes.checkCookie, routes.postMessage);
 
 app.get('/api/mentions', routes.checkCookie, routes.getMentions);
-app.post('/api/mentions', routes.checkCookie, routes.addMention);
 
 app.get('/api/notification', routes.checkCookie, routes.getNotifications);
 
