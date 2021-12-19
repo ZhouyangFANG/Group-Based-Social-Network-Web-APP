@@ -774,7 +774,7 @@ function getMessages(req, res) {
       const othername = results0[0].username;
       connection.query(`SELECT * FROM message
       WHERE (sender = '${username}' and receiver = '${othername}') or (sender = '${othername}' and receiver = '${username}')
-      ORDER BY time DESC`, (error1, results1) => {
+      ORDER BY time ASC`, (error1, results1) => {
         if (error1) {
           res.status(400).json({ error: error1 });
         } else {

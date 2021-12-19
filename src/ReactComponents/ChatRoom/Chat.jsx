@@ -49,8 +49,12 @@ const Chat = () => {
 
     const handleImage = (event) => {
         console.log(event.target.files[0]);
-        reader.readAsDataURL(event.target.files[0])
-        SendMessage(friendName, reader.result, "image");       
+        reader.readAsDataURL(event.target.files[0]);
+        reader.addEventListener("load", function () {
+            // convert image file to base64 string
+            console.log(reader.result);
+            SendMessage(friendName, reader.result, "image");       
+          }, false);
 
         // setObjectURL(URL.createObjectURL(event.target.files[0]));
         // console.log(objectURL);
@@ -98,30 +102,31 @@ const Chat = () => {
                                 <ListItemText primary={`${message.sender}: ${message.content}`}></ListItemText>
                             </ListItem>
                         )
-                        break;
                     case "image":
-                        (
+                        console.log("receive image message");
+                        return (
                             <ListItem key={message.id}>
-                                <ListItemText primary="Cool. i am good, let's catch up!"></ListItemText>
+                                <ListItemText primary={`${message.sender}: `}></ListItemText>
+                                <img src={message.content}/>
                             </ListItem>
                         )
-                        break;
                     case "audio":
                         console.log("receive audio message");
-                        (
+                        return (
                             <ListItem key={message.id}>
-                                <ListItemText primary="Cool. i am good, let's catch up!"></ListItemText>
+                                <ListItemText primary={`${message.sender}: `}></ListItemText>
+                                <audio src={message.content}/>
                             </ListItem>
                         )
-                        break;
 
                     case "video":
                         console.log("receive video message");
-                        (
-                            <video>
-                            </video>
+                        return (
+                            <ListItem key={message.id}>
+                                <ListItemText primary={`${message.sender}: `}></ListItemText>
+                                <video src={message.content}/>
+                            </ListItem>
                         )
-                        break;
 
                 }
             })
