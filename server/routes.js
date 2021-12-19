@@ -25,7 +25,7 @@ function dbQuery(sql) {
       }
       resolve(results);
     });
-  })
+  });
 }
 
 async function checkCookie(req, res, next) {
@@ -741,11 +741,11 @@ function getMessages(req, res) {
 }
 
 function postMessage(req, res) {
-  const { receiver, content, type } = req.body;
+  const { content, type } = req.body;
   if (type !== 'text' && type !== 'audio' && type !== 'image' && type !== 'video') {
     res.status.json(400).json('invalid content type');
   } else {
-    connection.query(`SELECT * FROM user WHERE username = '${receiver}';`, (error0, results0) => {
+    connection.query(`SELECT * FROM user WHERE username = '${req.params.username}';`, (error0, results0) => {
       if (error0) {
         res.status(400).json({ error: error0 });
       } else if (results0.length === 0) {
@@ -795,6 +795,17 @@ function addMention(req, res) {
   });
 }
 
+function getNotifications(req, res) {
+  const promise0 = dbQuery(`SELECT groupInfo.* FROM groupInfo INNER JOIN invitation ON invitation.groupId = groupInfo.id WHERE invitation.userId = '${req.userInfo.id}';`);
+  const promise1 = Promise.resolve([]);
+  const promise2 = Promise.resolve([]);
+  return Promise.all([promise0, promise1, promise2]).then(([invitations, mentions, messages]) => {
+    res.status(200).json({ invitations, mentions, messages });
+  }).catch((error) => {
+    res.status(400).json({ error });
+  })
+}
+
 module.exports = {
   createUser,
   loginUser,
@@ -829,4 +840,5 @@ module.exports = {
   postMessage,
   getMentions,
   addMention,
+  getNotifications,
 };
