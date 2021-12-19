@@ -135,3 +135,12 @@ export async function filterGroupsByTags(tag, setGroupList) {
 export async function JoinRequestDecision(groupName, userName, decision) {
   const res = await axios.put(`${url}/groups/${groupName}/requests/${userName}`, {granted: decision}, { withCredentials: true });
 }
+
+export async function getNotification() {
+  const res = await axios.get(`${url}/notification`, { withCredentials: true });
+  return res.data;
+}
+
+export async function respondInvitation(groupName, decision) {
+  const res = await axios.put(`${url}/invites/${groupName}`, {granted: decision}, { withCredentials: true });
+}

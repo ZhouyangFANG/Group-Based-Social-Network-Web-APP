@@ -59,10 +59,10 @@ export default function ControlPanel(props) {
   }
 
   return (
-    <Grid item xs={2} md={2} container spacing={1}>
-      <Box component="form" onSubmit={handleAddAdmin} noValidate sx={{ mt: 1 }}>
+    <Grid item xs={4} md={6} container spacing={1}>
+      <Box component="form" onSubmit={handleAddAdmin} noValidate sx={{ mt: 2 }}>
         <TextField name="input" placeholder="addAdmin" />
-        <Button variant='contained' type="submit">Add to Admin</Button>
+        <Button variant='contained' type="submit">Add Admin</Button>
       </Box>
       <Box component="form" onSubmit={handleDeleteAdmin} noValidate sx={{ mt: 1 }}>
         <TextField name="input" placeholder="deleteAdmin" />
