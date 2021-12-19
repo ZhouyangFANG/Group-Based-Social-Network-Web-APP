@@ -216,9 +216,9 @@ function MainView() {
     )
   };
   const List3 = () => {
-    const invitation = notification.invitation;
+    const invitations = notification.invitations;
     return (
-      invitation.map((group) => (
+      invitations.map((group) => (
         <li key={group.id}>
             {`You are invited to join ${group.name} group`}
             <Button variant='contained' type="submit" onClick={respondInvitation(group.name, false)}>Deny</Button>
