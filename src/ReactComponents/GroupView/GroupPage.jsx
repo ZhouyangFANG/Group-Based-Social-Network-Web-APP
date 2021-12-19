@@ -65,9 +65,7 @@ export default function GroupPage() {
     return (
       admins.map((person) => (
         <li key={person.id}>
-          {person.name}
-          :
-          {person.maxpoints}
+          {person.username}
         </li>
       ))
     )
@@ -77,9 +75,7 @@ export default function GroupPage() {
     return (
       members.map((person) => (
         <li key={person.id}>
-          {person.name}
-          :
-          {person.maxpoints}
+          {person.username}
         </li>
       ))
     )
@@ -89,9 +85,7 @@ export default function GroupPage() {
     return (
       requests.map((person) => (
         <li key={person.id}>
-          {person.name}
-          :
-          {person.maxpoints}
+          {person.username}
         </li>
       ))
     )
