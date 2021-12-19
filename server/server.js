@@ -48,13 +48,15 @@ app.get('/api/groupRecommendation', routes.checkCookie, routes.groupRecommendati
 
 app.get('/api/groupAnalytic/:groupId', routes.checkCookie, routes.groupAnalytic);
 
-app.post('/api/groups/:groupname/members/:username', routes.checkCookie, routes.addMember);
 app.delete('/api/groups/:groupname/members', routes.checkCookie, routes.leaveGroup);
 
 app.post('/api/groups/:groupname/admins/:username', routes.checkCookie, routes.addAdmin);
 app.delete('/api/groups/:groupname/admins/:username', routes.checkCookie, routes.deleteAdmin);
 
 app.post('/api/groups/:groupname/requests', routes.checkCookie, routes.postRequest);
+app.put('/api/groups/:groupname/requests/:username', routes.checkCookie, routes.resolveRequest);
+
+app.get('/api/invitations', routes.checkCookie, routes.getInvitations);
 app.post('/api/groups/:groupname/invites/:username', routes.checkCookie, routes.postInvitation);
 
 app.get('/api/groups/:groupname', routes.checkCookie, routes.getGroup);
