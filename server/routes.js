@@ -24,7 +24,7 @@ function dbQuery(sql) {
         return reject(error);
       }
       resolve(results);
-    })
+    });
   })
 }
 
@@ -528,31 +528,6 @@ function _checkAdmin(req, res, callback) {
   })
 };
 
-function getGroups(req, res) {
-  connection.query(`SELECT groupInfo.* FROM groupInfo INNER JOIN member ON groupInfo.id = member.groupId WHERE member.userId = '${req.userInfo.id}';`, (error0, results0) => {
-    connection.query(`SELECT * FROM groupInfo
-    WHERE NOT EXISTS (SELECT * FROM member WHERE userId = '${req.userInfo.id}' AND groupId = groupInfo.id) AND type = 1;`, (error1, results1) => {
-      res.status(200).json({ joined: results0, public: results1 });
-    });
-  });
-}
-
-function resolveRequest(req, res) {
-  _checkAdmin(req, res, (group, isAdmin) => {
-    if (!isAdmin) {
-      res.status(403).json('admin permission needed');
-    } else {
-      const promise0 = req.body.granted ? dbQuery(`INSERT INTO member(userId, groupId) SELECT user.id, '${group.id}' FROM user WHERE username = '${req.params.username}';`) : Promise.resolve();
-      const promise1 = dbQuery(`DELETE request FROM request INNER JOIN user on request.userId = user.id WHERE user.username = '${req.params.username}' and request.groupId = '${group.id}';`);
-      return Promise.all([promise0, promise1]).then(() => {
-        res.status(201).json('success');
-      }).catch((error) => {
-        res.status(400).json({ error });
-      })
-    }
-  });
-}
-
 function addAdmin(req, res) {
   _getGroup(req, res, (group) => {
     connection.query(`SELECT * FROM admin WHERE userId = '${req.userInfo.id}' AND groupId = '${group.id}';`, (error1, results1) => {
@@ -613,13 +588,35 @@ function deleteAdmin(req, res) {
 
 function postRequest(req, res) {
   _getGroup(req, res, (group) => {
-    const promise0 = dbQuery(`INSERT INTO request(userId, groupId) VALUES ('${req.userInfo.id}', '${group.id}');`);
-    const promise1 = dbQuery(`DELETE from invitation WHERE invitation.userId = '${req.userInfo.id}' AND invitation.groupId = '${group.id}';`);
-    return Promise.all([promise0, promise1]).then(() => {
-      res.status(201).json('success');
-    }).catch((error) => {
-      res.status(400).json({ error });
+    connection.query(`SELECT * FROM member WHERE userId = '${req.userInfo.id}' AND groupId = '${group.id}';`, (error0, results0) => {
+      if (error0 || results0.length > 0) {
+        res.status(400).json('already a member');
+      } else {
+        const promise0 = dbQuery(`INSERT INTO request(userId, groupId) VALUES ('${req.userInfo.id}', '${group.id}');`);
+        const promise1 = dbQuery(`DELETE FROM invitation WHERE userId = '${req.userInfo.id}' AND groupId = '${group.id}';`);
+        return Promise.all([promise0, promise1]).then(() => {
+          res.status(201).json('request posted');
+        }).catch((error) => {
+          res.status(400).json({ error });
+        })
+      }
     });
+  });
+}
+
+function resolveRequest(req, res) {
+  _checkAdmin(req, res, (group, isAdmin) => {
+    if (!isAdmin) {
+      res.status(403).json('admin permission needed');
+    } else {
+      const promise0 = req.body.granted ? dbQuery(`INSERT INTO member(userId, groupId) SELECT user.id, '${group.id}' FROM user WHERE username = '${req.params.username}';`) : Promise.resolve();
+      const promise1 = dbQuery(`DELETE request FROM request INNER JOIN user ON request.userId = user.id WHERE user.username = '${req.params.username}' AND request.groupId = '${group.id}';`);
+      return Promise.all([promise0, promise1]).then(() => {
+        res.status(200).json('success');
+      }).catch((error) => {
+        res.status(400).json({ error });
+      });
+    }
   });
 }
 
@@ -629,34 +626,35 @@ function postInvitation(req, res) {
     const promise1 = dbQuery(`SELECT * FROM request INNER JOIN user ON request.userId = user.id WHERE user.username = '${req.params.username}' AND request.groupId = '${group.id}';`);
     return Promise.all([promise0, promise1]).then(([results0, results1]) => {
       if (results0.length > 0 || results1.length > 0) {
-        return Promise.reject(new Error('invitee is already a member of the group or has already sent an request to join group'));
+        res.status(400).json('invitee is already a member or has already sent an request to be a member');
+      } else {
+        connection.query(`INSERT INTO invitation(userId, groupId) SELECT user.id, '${group.id}' FROM user WHERE username = '${req.params.username}';`, (error) => {
+          if (error) {
+            res.status(400).json({ error });
+          } else {
+            res.status(200).json('success');
+          }
+        });
       }
-    }).then(() => dbQuery(`INSERT INTO invitation(userId, groupId) SELECT user.id, '${group.id}' FROM user WHERE username = '${req.params.username}';`)).then(() => {
-      res.status(201).json('success');
     }).catch((error) => {
-      res.status(200).json({ error });
+      res.status(400).json({ error });
     });
   });
 }
 
-function getInvitations(req, res) {
-  connection.query(`SELECT groupInfo.* FROM groupInfo INNER JOIN invitation ON groupInfo.id = invitation.groupId WHERE invitation.userId = '${req.userInfo.id}';`, (error, results) => {
-    if (error) {
-      res.status(400).json({ error });
-    } else {
-      res.status(200).json(results);
-    }
-  });
-}
-
-function deleteInvitation(req, res) {
-  connection.query(`DELETE FROM invitation WHERE userId = '${req.userInfo.id}';`, (error, results) => {
-    if (error) {
-      res.status(400).json({ error });
-    } else {
-      res.status(200).json('success');
-    }
-  });
+function resolveInvitation(req, res) {
+  if (req.body.granted) {
+    postRequest(req, res);
+  } else {
+    connection.query(`DELETE invitation FROM invitation INNER JOIN groupInfo ON invitation.groupId = groupInfo.id
+    WHERE invitation.userId = '${req.userInfo.id}' AND groupInfo.name = '${req.params.groupname}';`, (error) => {
+      if (error) {
+        res.status(400).json({ error });
+      } else {
+        res.status(200).json('success');
+      }
+    });
+  }
 }
 
 function leaveGroup(req, res) {
@@ -681,13 +679,15 @@ function getGroup(req, res) {
   _checkAdmin(req, res, (group, isAdmin) => {
     const promise0 = dbQuery(`SELECT user.* FROM user INNER JOIN member ON member.userId = user.id WHERE member.groupId = '${group.id}';`);
     const promise1 = dbQuery(`SELECT user.* FROM user INNER JOIN admin ON admin.userId = user.id WHERE admin.groupId = '${group.id}';`);
-    const promise2 = dbQuery(`SELECT * FROM post WHERE groupId = '${group.id}';`).then(async (posts) => {
-      await Promise.all(posts.map(async (post) => {
-        await dbQuery(`SELECT * FROM comment WHERE postId = '${post.id}' ORDER BY datetime DESC;`);
-      }));
-      return posts;
+    const promise2 = dbQuery(`SELECT * FROM post WHERE groupId = '${group.id}';`).then(async (results) => {
+      if (results.length > 0) {
+        await Promise.all(results.map(async (post) => {
+          post.comments = await dbQuery(`SELECT * FROM comment WHERE postId = '${post.id}' ORDER BY datetime DESC;`);
+        }));
+      }
+      return results;
     });
-    const promise3 = isAdmin ? dbQuery(`SELECT user.* FROM user INNER JOIN request ON request.userId = user.id WHERE request.groupId = '${group.id}'`) : Promise.resolve(undefined);
+    const promise3 = isAdmin ? dbQuery(`SELECT user.* FROM user INNER JOIN request ON request.userId = user.id WHERE request.groupId = '${group.id}';`) : Promise.resolve(undefined);
     return Promise.all([promise0, promise1, promise2, promise3]).then(([members, admins, posts, requests]) => {
       group.members = members;
       group.admins = admins;
@@ -816,15 +816,13 @@ module.exports = {
   deleteComment,
   groupRecommendation,
   groupAnalytic,
-  getGroups,
-  resolveRequest,
   leaveGroup,
   addAdmin,
   deleteAdmin,
   postRequest,
+  resolveRequest,
   postInvitation,
-  getInvitations,
-  deleteInvitation,
+  resolveInvitation,
   getGroup,
   postComment,
   getMessages,
