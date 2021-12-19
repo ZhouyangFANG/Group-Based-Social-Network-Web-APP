@@ -47,6 +47,7 @@ export default function ControlPanel(props) {
   }
   const handleLeave = async () => {
     await leaveGroup(groupName);
+    window.location.href = "/groups";
   }
 
   const addPost = () => {
@@ -72,7 +73,7 @@ export default function ControlPanel(props) {
         <Button variant='contained' type="submit">Invite</Button>
       </Box>
       <Box sx={{ mt: 1 }}>
-        <Button variant='contained' type="submit" onClick={addPost}>Add A Post</Button>
+        <Button variant='contained' type="submit" onClick={addPost}>Add Post</Button>
       </Box>
       <Box component="form" noValidate sx={{ mt: 1 }}>
         <Button variant='contained' type="submit" onClick={handleLeave}>Leave</Button>

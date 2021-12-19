@@ -1,4 +1,5 @@
-import React from 'react';
+import { Link as RouterLink, useParams } from 'react-router-dom';
+import { React, useState } from 'react';
 import { makeStyles } from '@mui/styles';
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
@@ -14,6 +15,8 @@ import Avatar from '@mui/material/Avatar';
 import Fab from '@mui/material/Fab';
 import SendIcon from '@material-ui/icons/Send';
 import Button from '@mui/material/Button';
+import Link from '@mui/material/Link';
+import Header from '../Header';
 
 const useStyles = makeStyles({
     table: {
@@ -35,12 +38,19 @@ const useStyles = makeStyles({
 });
 
 const Chat = () => {
+    const { friendName } = useParams();
     const classes = useStyles();
-
+    const [objectURL, setObjectURL] = useState("");
     const handleUpload = (event) => {
         console.log(event.target.files[0]);
-        const objectURL = URL.createObjectURL(event.target.files[0]);
+        setObjectURL(URL.createObjectURL(event.target.files[0]));
         console.log(objectURL);
+        let video = document.getElementsByTagName('video')[0];
+        video.src = URL.createObjectURL(event.target.files[0]);
+        video.load();
+        video.onloadeddata = function () {
+            video.play();
+        }
 
         // const sound = () => <audio src={event.target.files[0]} autoPlay />;
         // const audioElement = new Audio(event.target.files[0]);
@@ -48,7 +58,8 @@ const Chat = () => {
     }
 
     return (
-        <div>
+        <>
+            <Header title={`Chat with ${friendName}`} />
             <Grid container>
                 <Grid item xs={12} >
                     <Typography variant="h5" className="header-message">Chat</Typography>
@@ -114,10 +125,16 @@ const Chat = () => {
                                 hidden
                             />
                         </Button>
+                        <Link href={objectURL} variant="body2">
+                            Play media
+                        </Link>
+                        <video>
+                        </video>
                     </Grid>
                 </Grid>
             </Grid>
-        </div>
+        </>
+
     );
 }
 
