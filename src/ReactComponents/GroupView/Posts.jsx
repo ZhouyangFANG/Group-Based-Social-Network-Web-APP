@@ -1,4 +1,5 @@
-import { React, useState, useEffect } from 'react';
+import React, { Component, useState, useEffect } from 'react';
+import TablePagination from "@material-ui/core/TablePagination";
 // import { styled } from '@mui/material/styles';
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
@@ -21,6 +22,18 @@ const lib = require('../../fetch');
 export default function Posts(props) {
   const { certainGroup } = props;
   const [hiddenPosts, sethiddenPosts] = useState([]);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [data, setData] = useState([]);
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
 
   async function deletePost(postId) {
     const res = await lib.deletePost(postId);
@@ -46,7 +59,7 @@ export default function Posts(props) {
   }
 
   function MapList() {
-    return certainGroup.posts.map((post) => <PostCard post={post} key={post.id} />);
+    return certainGroup.posts.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((post) => <PostCard post={post} key={post.id} />);
   }
 
   useEffect(async () => {
@@ -160,7 +173,20 @@ export default function Posts(props) {
         certainGroup &&
         (
           <div>
-            {MapList()}
+            <div>
+              {MapList()}
+            </div>
+            <div>
+            <TablePagination
+              rowsPerPageOptions={[2, 5, 10]}
+              component="div"
+              count={certainGroup.posts.length}
+              page={page}
+              onPageChange={handleChangePage}
+              rowsPerPage={rowsPerPage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+            />
+            </div>
           </div>
         )
       }
