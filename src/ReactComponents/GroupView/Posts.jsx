@@ -17,6 +17,7 @@ import AssistantPhotoIcon from '@mui/icons-material/AssistantPhoto';
 import ThreeSixtyIcon from '@mui/icons-material/ThreeSixty';
 import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
 import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
 
 const lib = require('../../fetch');
 
@@ -67,6 +68,13 @@ export default function Posts(props) {
     }
   }
 
+  async function deleteComment(commentId){
+    const res = await lib.deleteComment(commentId);
+    if (res === 200) {
+      window.location.reload();
+    }
+  }
+
   function sortCommentTime() {
     return function (objectN, objectM) {
       const valueN = objectN.time;
@@ -84,6 +92,7 @@ export default function Posts(props) {
         <Typography variant="body2" color="text.secondary">
           {comment.username}: {comment.content}
         </Typography>
+        <Button variant='contained' type="submit" onClick={() => {deleteComment(comment.id)}}>Delete</Button>
       </CardContent>
     );
   }
