@@ -48,14 +48,17 @@ app.get('/api/groupRecommendation', routes.checkCookie, routes.groupRecommendati
 
 app.get('/api/groupAnalytic/:groupname', routes.checkCookie, routes.groupAnalytic);
 
-app.post('/api/groups/:groupname/members/:username', routes.checkCookie, routes.addMember);
 app.delete('/api/groups/:groupname/members', routes.checkCookie, routes.leaveGroup);
 
 app.post('/api/groups/:groupname/admins/:username', routes.checkCookie, routes.addAdmin);
 app.delete('/api/groups/:groupname/admins/:username', routes.checkCookie, routes.deleteAdmin);
 
 app.post('/api/groups/:groupname/requests', routes.checkCookie, routes.postRequest);
+app.put('/api/groups/:groupname/requests/:username', routes.checkCookie, routes.resolveRequest);
+
+app.get('/api/invitations', routes.checkCookie, routes.getInvitations);
 app.post('/api/groups/:groupname/invites/:username', routes.checkCookie, routes.postInvitation);
+app.delete('/api/invitations/:groupname', routes.checkCookie, routes.deleteInvitation);
 
 app.get('/api/groups/:groupname', routes.checkCookie, routes.getGroup);
 
@@ -63,6 +66,9 @@ app.post('/api/posts/:postId/comments', routes.checkCookie, routes.postComment);
 
 app.get('/api/users/:username/messages', routes.checkCookie, routes.getMessages);
 app.post('/api/users/:username/messages', routes.checkCookie, routes.postMessage);
+
+app.get('/api/mentions', routes.checkCookie, routes.getMentions);
+app.post('/api/mentions', routes.checkCookie, routes.addMention);
 
 app.get('/', (req, res) => {
   res.send('Hello World!');

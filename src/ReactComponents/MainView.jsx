@@ -71,7 +71,7 @@ function MainView() {
       headerName: 'Group Name',
       width: 150,
       renderCell: (params) => (
-        <Link component={RouterLink} to="/cis557" variant="body2">{params.value}</Link>
+        <Link component={RouterLink} to={`/groups/${params.value}`} variant="body2">{params.value}</Link>
       ),
     },
     { field: 'tags', headerName: 'Tags', width: 200 },
@@ -80,11 +80,10 @@ function MainView() {
       headerName: 'Request to join',
       width: 150,
       renderCell: (params) => (
-        <Button variant="contained" color="primary" onClick={()=> {handleJoinGroup(params)}}>Join</Button>
+        <Button variant="contained" color="primary" onClick={()=> {handleJoinGroup(params.row.name)}}>Join</Button>
       ),
     },
   ];
-
   const columnsRec = [
     {
       field: 'name',
@@ -98,12 +97,10 @@ function MainView() {
     setRecommend(recommendL);
   }, []);
 
-  const handleJoinGroup = async (group) => {
-    console.log(group);
-    await requestToJoinGroup(group.id, userName);
+  const handleJoinGroup = async (groupName) => {
+    console.log(groupName);
+    await requestToJoinGroup(groupName);
     // const path = `/${group.row.name}`;
-    const path = `/${group.id}`;
-    history.push(path);
   }
 
   const handleGetGroupList = async (event) => {

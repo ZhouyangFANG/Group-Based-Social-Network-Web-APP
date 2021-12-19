@@ -13,6 +13,7 @@ import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import { TextField } from '@mui/material';
+import Link from '@mui/material/Link';
 import {
   getGroupList,
   addAdmin,
@@ -58,38 +59,83 @@ export default function GroupPage() {
     return (() => { isMounted = false; });
   }, []);
 
+
+  function addPost() {
+    let url = window.location.href;
+    url += "/post";
+    window.location.href = url;
+  }
+
+  const List1 = () => {
+    const admins = certainGroup.admins;
+    return (
+      admins.map((person) => (
+        <li key={person.id}>
+          <Link href={`/chat/${person.username}`} variant="body2">
+            {person.username}
+          </Link>
+        </li>
+      ))
+    )
+  };
+  const List2 = () => {
+    const members = certainGroup.members;
+    return (
+      members.map((person) => (
+        <li key={person.id}>
+          <Link href={`/chat/${person.username}`} variant="body2">
+            {person.username}
+          </Link>
+        </li>
+      ))
+    )
+  };
+  const List3 = () => {
+    const requests = certainGroup.requests;
+    return (
+      requests.map((person) => (
+        <li key={person.id}>
+          <Link href={`/chat/${person.username}`} variant="body2">
+            {person.username}
+          </Link>
+        </li>
+      ))
+    )
+  };
+
   return (
     <>
       <Header title={groupName} />
       <Grid container spacing={2}>
-        <LeftPanel />
+        <Grid item xs={4} md={3}>
+          <LeftPanel />
+        </Grid>
         <Grid item xs={8} md={5}>
           <Posts certainGroup={certainGroup} />
         </Grid>
-        <ControlPanel groupName={groupName} />
-        <Grid item xs={2} md={2}>
-          <Card sx={{ minWidth: 275 }}>
-            <CardContent>
-              <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                Group Analytics
-              </Typography>
-              <Typography variant="body2">
-                Member Number: {groupAnal.num_member}
-              </Typography>
-              <Typography variant="body2">
-                Post Number: {groupAnal.num_post}
-              </Typography>
-              <Typography variant="body2">
-                Deleted Number: {groupAnal.num_deleted}
-              </Typography>
-              <Typography variant="body2">
-                Flagged Number: {groupAnal.num_flagged}
-              </Typography>
-              <Typography variant="body2">
-                Hidden Number: {groupAnal.num_hidden}
-              </Typography>
-            </CardContent>
-          </Card>
+        <Grid item xs={4}>
+          <ControlPanel groupName={groupName} />
+        </Grid>
+        <Grid item xs={4}>
+          {
+            certainGroup &&
+            (
+              <>
+                Admins:
+                <ul>
+                  <List1 />
+                </ul>
+                Members:
+                <ul>
+                  <List2 />
+                </ul>
+                Request to Join:
+                <ul>
+                  <List3 />
+                </ul>
+              </>
+            )
+          }
         </Grid>
       </Grid>
     </>
