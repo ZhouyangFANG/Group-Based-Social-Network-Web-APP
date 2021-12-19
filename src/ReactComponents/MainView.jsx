@@ -220,6 +220,7 @@ function MainView() {
             <DataGrid
               rows={groupList}
               columns={columns}
+              pageSize ={8}
               rowsPerPageOptions={[5]}
               disableSelectionOnClick
             />
