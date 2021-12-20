@@ -19,12 +19,12 @@ module.exports = {
   ],
   rules: {
     'react/jsx-no-bind': 'off',
-    'no-console': 'off',
     'no-alert': 'off',
     'react/prop-types': 'off',
     'react/destructuring-assignment': 'off',
     'jsx-a11y/media-has-caption': 'off',
     'max-len': 'off',
     'no-self-assign': 'off',
+    'no-param-reassign': ['error', { 'props': false }],
   },
 };
