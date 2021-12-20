@@ -179,7 +179,7 @@ export default function Posts(props) {
           <CardHeader
             avatar={(
               <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
-                R
+                {post.author.slice(0,1)}
               </Avatar>
             )}
             action={(
@@ -187,12 +187,10 @@ export default function Posts(props) {
                 <MoreVertIcon />
               </IconButton>
             )}
-            title={post.title}/>
-          <CardMedia
-            component="img"
-            height="194"
-            image="/images/CIS557.png"
-            alt="pic"/>
+            title={post.title}
+            subheader={'Author: '+post.author}/>
+            
+            
           <CardContent id="container">
             <Typography variant="body2" color="text.secondary">
               {post.postContent}
