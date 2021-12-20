@@ -85,6 +85,23 @@ async function hidePost(postId) {
   return record;
 }
 
+async function deleteUser() {
+  let record;
+  await fetch(`${uri}users`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include',
+  }).then((res) => {
+    record = res.status;
+  }).catch((err) => {
+    // Print the error if there is one.
+    window.console.log(err);
+  });
+  return record;
+}
+
 async function getHiddenList() {
   let record = [];
   await fetch(`${uri}posts/hide`, {
@@ -317,4 +334,5 @@ export {
   register, login, createGroup, addPost, deletePost, flagPost, getProfile,
   deleteComment, updateProfile, updatePwd, getAllTag,
   hidePost, getHiddenList, getRecommend, getGroupAnaly, addComment,
+  deleteUser
 };

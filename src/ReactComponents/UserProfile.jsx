@@ -54,6 +54,10 @@ function UserProfile() {
     await lib.updatePwd(pwd.value);
   };
 
+  const deleteUser = async () => {
+    await lib.deleteUser();
+  };
+
   const toGroupPage = () => {
     window.location.href = `${window.location.protocol}//${window.location.host}/groups`;
   };
@@ -107,6 +111,7 @@ function UserProfile() {
             <Button variant="contained" onClick={updateProfile}>Save</Button>
             <TextField margin="normal" id="pwd" label="password" autoFocus defaultValue=" " />
             <Button variant="contained" onClick={updatePwd}>Save</Button>
+            <Button variant="contained" onClick={deleteUser}>Delete User</Button>
           </Stack>
         </Grid>
         <Grid item xs={2} md={2}>
