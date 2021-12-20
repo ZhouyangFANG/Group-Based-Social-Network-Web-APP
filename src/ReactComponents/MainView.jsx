@@ -1,73 +1,25 @@
 import { React, useState, useEffect } from 'react';
-import { Link as RouterLink, useParams, useHistory } from 'react-router-dom';
+import { Link as RouterLink} from 'react-router-dom';
 import Link from '@material-ui/core/Link';
-import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
-import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
-import Paper from '@mui/material/Paper';
-import MenuItem from '@mui/material/MenuItem';
-import MenuList from '@mui/material/MenuList';
 import Grid from '@mui/material/Grid';
-import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
-import CardContent from '@mui/material/CardContent';
 import { DataGrid } from '@mui/x-data-grid';
-import Modal from '@mui/material/Modal';
-import { useTheme } from '@mui/material/styles';
-import OutlinedInput from '@mui/material/OutlinedInput';
-import InputLabel from '@mui/material/InputLabel';
-import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
 import { TextField } from '@mui/material';
 import {
-  getGroupList, addAdmin, removeAdmin, requestToJoinGroup, inviteUser, leaveGroup, filterGroupsByTags, respondInvitation, getNotification,
+  getGroupList, requestToJoinGroup, filterGroupsByTags, respondInvitation, getNotification,
 } from '../api';
 import Header from './Header';
 
 const lib = require('../fetch');
 
-const style = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 400,
-  bgcolor: 'background.paper',
-  border: '2px solid #000',
-  boxShadow: 24,
-  p: 4,
-};
 
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 8;
-const MenuProps = {
-  PaperProps: {
-    style: {
-      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-      width: 250,
-    },
-  },
-};
 
-function getStyles(name, personName, theme) {
-  return {
-    fontWeight:
-      personName.indexOf(name) === -1
-        ? theme.typography.fontWeightRegular
-        : theme.typography.fontWeightMedium,
-  };
-}
 
 function MainView() {
-  const theme = useTheme();
   const [groupList, setGroupList] = useState([]);
   const [recommend, setRecommend] = useState([]);
   const [notification, setNotification] = useState(null);
-  const history = useHistory();
   const whoami = window.localStorage.getItem('username');
   const columns = [
     {
@@ -75,7 +27,7 @@ function MainView() {
       headerName: 'Group Name',
       width: 150,
       renderCell: (params) => (
-        <Link component={RouterLink} to={`groups/${params.value}`} variant="body2">{params.value}</Link>
+        <Link component={RouterLink} to={`/groups/${params.value}`} variant="body2">{params.value}</Link>
       ),
     },
     {

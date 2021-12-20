@@ -1,23 +1,19 @@
-import { Link as RouterLink, useParams } from 'react-router-dom';
-import { React, useState, useEffect } from 'react';
-import { makeStyles } from '@mui/styles';
-import Paper from '@mui/material/Paper';
-import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
-import TextField from '@mui/material/TextField';
+import Grid from '@mui/material/Grid';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
-import Avatar from '@mui/material/Avatar';
-import Fab from '@mui/material/Fab';
-import SendIcon from '@material-ui/icons/Send';
-import Button from '@mui/material/Button';
-import Link from '@mui/material/Link';
-import Header from '../Header';
+import Paper from '@mui/material/Paper';
+import TextField from '@mui/material/TextField';
+import { makeStyles } from '@mui/styles';
+import { React, useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import {
-  getMessages, SendMessage,
+  getMessages, SendMessage
 } from '../../api';
+import Header from '../Header';
 
 const useStyles = makeStyles({
   table: {

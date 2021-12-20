@@ -1,23 +1,10 @@
-import { Link as RouterLink, useParams } from 'react-router-dom';
-import CssBaseline from '@mui/material/CssBaseline';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { React, useState } from 'react';
-import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
-import Paper from '@mui/material/Paper';
-import MenuItem from '@mui/material/MenuItem';
-import MenuList from '@mui/material/MenuList';
-import Grid from '@mui/material/Grid';
-import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
-import CardContent from '@mui/material/CardContent';
 import { TextField } from '@mui/material';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Grid from '@mui/material/Grid';
+import { React } from 'react';
 import {
-  getGroupList,
-  addAdmin,
-  removeAdmin,
-  requestToJoinGroup, inviteUser, leaveGroup, filterGroupsByTags, getGroupPage,
+  addAdmin, inviteUser, leaveGroup, removeAdmin
 } from '../../api';
 
 export default function ControlPanel(props) {

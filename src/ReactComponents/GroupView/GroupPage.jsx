@@ -1,29 +1,16 @@
-import { Link as RouterLink, useParams } from 'react-router-dom';
-import CssBaseline from '@mui/material/CssBaseline';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { React, useState, useEffect } from 'react';
-import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
-import Paper from '@mui/material/Paper';
-import MenuItem from '@mui/material/MenuItem';
-import MenuList from '@mui/material/MenuList';
-import Grid from '@mui/material/Grid';
-import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
-import { TextField } from '@mui/material';
+import Grid from '@mui/material/Grid';
 import Link from '@mui/material/Link';
-import {
-  getGroupList,
-  addAdmin,
-  removeAdmin,
-  requestToJoinGroup, inviteUser, leaveGroup, filterGroupsByTags, getGroupPage, JoinRequestDecision,
-} from '../../api';
+import Paper from '@mui/material/Paper';
+import Typography from '@mui/material/Typography';
+import { React, useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { getGroupPage, JoinRequestDecision } from '../../api';
 import Header from '../Header';
-import Posts from './Posts';
 import ControlPanel from './ControlPanel';
-import LeftPanel from '../LeftPanel';
+import Posts from './Posts';
 
 const lib = require('../../fetch');
 
@@ -124,12 +111,12 @@ export default function GroupPage() {
                   {
                     certainGroup.requests
                     && (
-                    <>
-                      Request to Join:
-                      <ul>
-                        <List3 />
-                      </ul>
-                    </>
+                      <>
+                        Request to Join:
+                        <ul>
+                          <List3 />
+                        </ul>
+                      </>
                     )
                   }
                 </>
