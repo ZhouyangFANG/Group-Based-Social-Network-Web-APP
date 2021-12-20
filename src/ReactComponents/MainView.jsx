@@ -124,18 +124,6 @@ function MainView() {
     }
   }
 
-  function toUserPage() {
-    const url = window.location.href;
-    const urlList = url.split('/');
-    urlList.pop();
-    let newUrl = '';
-    for (let i = 0; i < urlList.length; i += 1) {
-      newUrl = `${newUrl}${urlList[i]}/`;
-    }
-    newUrl = `${newUrl}user/${whoami}`;
-    window.location.href = newUrl;
-  }
-
   const sortByPostsNum = () => {
     let arr = [...groupList];
     arr.sort(objectSortPostNum());

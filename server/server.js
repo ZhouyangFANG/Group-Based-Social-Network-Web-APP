@@ -6,7 +6,7 @@ const routes = require('./routes');
 
 const app = express();
 
-app.use(express.json());
+app.use(express.json({ limit: 16777216 }));
 app.use(helmet());
 app.use(cookieParser());
 app.use(
