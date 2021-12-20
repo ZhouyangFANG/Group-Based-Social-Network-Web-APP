@@ -722,13 +722,17 @@ function getGroup(req, res) {
   _checkAdmin(req, res, (group, isAdmin) => {
     const promise0 = dbQuery(`SELECT user.* FROM user INNER JOIN member ON member.userId = user.id WHERE member.groupId = '${group.id}';`);
     const promise1 = dbQuery(`SELECT user.* FROM user INNER JOIN admin ON admin.userId = user.id WHERE admin.groupId = '${group.id}';`);
-    const promise2 = dbQuery(`SELECT * FROM post WHERE groupId = '${group.id}';`).then(async (results) => {
+    const promise2 = dbQuery(`SELECT post.id, post.title, user.username AS author, post.postContent, post.attachment, post.attachmentType, post.flagger, post.datetime, post.deleted
+    FROM post INNER JOIN user ON post.author = user.id WHERE groupId = '${group.id}';`).then(async (results) => {
       if (results.length > 0) {
         await Promise.all(results.map(async (post) => {
           post.comments = await dbQuery(`SELECT * FROM comment WHERE postId = '${post.id}' ORDER BY datetime DESC;`);
         }));
       }
       return results;
+    }).catch((error) => {
+      res.status(400).json({ error });
+      return;
     });
     const promise3 = isAdmin ? dbQuery(`SELECT user.* FROM user INNER JOIN request ON request.userId = user.id WHERE request.groupId = '${group.id}';`) : Promise.resolve(undefined);
     return Promise.all([promise0, promise1, promise2, promise3]).then(([members, admins, posts, requests]) => {
@@ -820,7 +824,8 @@ function postMessage(req, res) {
 
 function addMentions(text, userId) {
   const pattern = /\B@[a-z0-9_-]+/gi;
-  return Promise.all(text.match(pattern).map(async (mention) => {
+  const mentions = text.match(pattern) || [];
+  return Promise.all(mentions.map(async (mention) => {
     const name = mention.slice(1);
     try {
       await dbQuery(`INSERT INTO mention(mentioner, mentioned) SELECT '${userId}', user.id FROM user WHERE username = '${name}';`)
