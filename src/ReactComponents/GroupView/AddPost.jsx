@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { React, useState, useEffect } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -16,7 +16,9 @@ const lib = require('../../fetch');
 const theme = createTheme();
 
 export default function AddPost() {
-
+  const [media, setMedia] = useState(null);
+  const [mediaType, setMediaType] = useState("null");
+  const reader = new FileReader();
   async function addPost() {
     const content = document.getElementById('content');
     const title = document.getElementById('title');
@@ -25,7 +27,7 @@ export default function AddPost() {
     const urlList = url.split('/');
     urlList.pop();
     const groupID = urlList.pop();
-    const res = await lib.addPost(groupID, title.value, content.value);
+    const res = await lib.addPost(groupID, title.value, content.value, media, mediaType);
     if (res === 200) {
       let newUrl = '';
       for (let i = 0; i < urlList.length; i += 1) {
@@ -38,6 +40,49 @@ export default function AddPost() {
       window.location.href = window.location.href;
     }
   }
+  const handleImage = (event) => {
+    console.log(event.target.files[0]);
+    reader.readAsDataURL(event.target.files[0]);
+    reader.addEventListener("load", function () {
+        // convert image file to base64 string
+        console.log(reader.result);
+        setMedia(reader.result);
+        setMediaType("image");
+    }, false);
+
+    // setObjectURL(URL.createObjectURL(event.target.files[0]));
+    // console.log(objectURL);
+    // let video = document.getElementsByTagName('video')[0];
+    // video.src = URL.createObjectURL(event.target.files[0]);
+    // video.load();
+    // video.onloadeddata = function () {
+    //     video.play();
+    // }
+
+    // const sound = () => <audio src={event.target.files[0]} autoPlay />;
+    // const audioElement = new Audio(event.target.files[0]);
+    // audioElement.play();
+}
+const handleAudio = (event) => {
+    console.log(event.target.files[0]);
+    reader.readAsDataURL(event.target.files[0]);
+    reader.addEventListener("load", function () {
+        // convert image file to base64 string
+        console.log(reader.result);
+        setMedia(reader.result);
+        setMediaType("audio");
+    }, false);
+}
+const handleVideo = (event) => {
+    console.log(event.target.files[0]);
+    reader.readAsDataURL(event.target.files[0]);
+    reader.addEventListener("load", function () {
+        // convert image file to base64 string
+        console.log(reader.result);
+        setMedia(reader.result);
+        setMediaType("video");
+    }, false);
+}
 
   return (
     <ThemeProvider theme={theme}>
@@ -62,7 +107,7 @@ export default function AddPost() {
               id="title"
               label="Title"
               name="title"
-              autoFocus/>
+              autoFocus />
             <TextField
               margin="normal"
               required
@@ -70,7 +115,7 @@ export default function AddPost() {
               name="content"
               label="Content"
               type="content"
-              id="content"/>
+              id="content" />
             <Button
               data-testid="submit"
               fullWidth
@@ -80,6 +125,39 @@ export default function AddPost() {
               sx={{ mt: 3, mb: 2 }}
             >
               Submit
+            </Button>
+            <Button
+              variant="contained"
+              component="label"
+            >
+              Image
+              <input
+                type="file"
+                onChange={handleImage}
+                hidden
+              />
+            </Button>
+            <Button
+              variant="contained"
+              component="label"
+            >
+              Audio
+              <input
+                type="file"
+                onChange={handleAudio}
+                hidden
+              />
+            </Button>
+            <Button
+              variant="contained"
+              component="label"
+            >
+              Video
+              <input
+                type="file"
+                onChange={handleVideo}
+                hidden
+              />
             </Button>
             <Grid container>
               <Grid item>

@@ -10,15 +10,15 @@ import Link from '@mui/material/Link';
 
 export default function Header(props) {
   const toUserPage = (whoami) => {
-    const url = window.location.href;
-    const urlList = url.split('/');
-    urlList.pop();
-    let newUrl = '';
-    for (let i = 0; i < urlList.length; i += 1) {
-      newUrl = `${newUrl}${urlList[i]}/`;
-    }
-    newUrl = `${newUrl}user/${whoami}`;
-    window.location.href = newUrl;
+    window.location.href = window.location.protocol + "//" + window.location.host + `/user/${whoami}`;
+  }
+
+  const toMain = () => {
+    window.location.href = window.location.protocol + "//" + window.location.host + `/groups`;
+  }
+
+  const toCreateGroup = () => {
+    window.location.href = window.location.protocol + "//" + window.location.host + `/createGroup`;
   }
 
   return (
@@ -28,6 +28,8 @@ export default function Header(props) {
           {props.title}
         </Typography>
         {/* <Link href={`/user/${props.userName}`} variant="body2"> */}
+        <Button id="btn3" style={{color:"white"}} onClick={() => {toMain()}}>{'Back to Main'}</Button>
+        <Button id="btn2" style={{color:"white"}} onClick={() => {toCreateGroup()}}>{'Create a Group'}</Button>
         <Button id="btn1" style={{color:"white"}} onClick={() => {toUserPage(props.userName)}}>{`User: ${props.userName}`}</Button>
         {/* </Link> */}
       </Toolbar>
