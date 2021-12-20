@@ -48,7 +48,7 @@ function MainView() {
       headerName: 'Request to join',
       width: 150,
       renderCell: (params) => (
-        params.row.type === 1 && params.row.is_member === false
+        params.row.type === 1 && params.row.is_member === 0
           ? <Button variant="contained" color="primary" onClick={() => { handleJoinGroup(params.row.name); }}>Join</Button>
           : null
       ),
@@ -179,6 +179,18 @@ function MainView() {
     );
   };
 
+  const List4 = () => {
+    return (
+      groupList.map((group) => (
+        group.is_member === 1 ?
+        <li key={group.id}>
+          {`You are accepted by ${group.name} group`}
+        </li> 
+        : null
+      ))
+    );
+  };
+
   return (
     <div id="wrapper">
       <Header title="Public Group List" userName={whoami} />
@@ -200,6 +212,10 @@ function MainView() {
                   You got invitation to these groups:
                   <ul>
                     <List3 />
+                  </ul>
+                  You are accepted to join these groups:
+                  <ul>
+                    <List4 />
                   </ul>
                 </>
               )
