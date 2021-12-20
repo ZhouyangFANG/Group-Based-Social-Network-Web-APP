@@ -88,6 +88,7 @@ function MainView() {
   };
 
   function objectSortPostNum() {
+    /* eslint-disable func-names */
     return function (objectN, objectM) {
       const valueN = objectN.num_posts;
       const valueM = objectM.num_posts;

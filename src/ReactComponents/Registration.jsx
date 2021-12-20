@@ -24,11 +24,12 @@ export default function SignUp() {
     });
   };
 
-  async function confirmRegister() {
+  const confirmRegister = async () => {
     const pwd = document.getElementById('password');
     const user = document.getElementById('userName');
     const reg = /^[0-9a-zA-Z]+$/;
     if (!(pwd.value.match(reg)) || pwd.value.length < 6) {
+      /* eslint-disable no-alert */
       alert('Please enter alphanumeric password which has more than 5 characters values only!');
       pwd.value = '';
       return;
@@ -49,7 +50,7 @@ export default function SignUp() {
       alert('Failure');
       pwd.value = '';
     }
-  }
+  };
 
   return (
     <ThemeProvider theme={theme}>

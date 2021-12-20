@@ -34,8 +34,9 @@ export default function AddPost() {
       newUrl = `${newUrl}${groupID}`;
       window.location.href = newUrl;
     } else {
+      /* eslint-disable no-alert */
       alert('Error!');
-      window.location.href = window.location.href;
+      window.location.href = window.location.href; // eslint-disable-line no-self-assign
     }
   }
   const handleImage = (event) => {
@@ -121,7 +122,7 @@ export default function AddPost() {
               fullWidth
               id="addBtn"
               variant="contained"
-              onClick={addPost}
+              onClick={addPost} // eslint-disable-line react/jsx-no-bind
               sx={{ mt: 3, mb: 2 }}
             >
               Submit

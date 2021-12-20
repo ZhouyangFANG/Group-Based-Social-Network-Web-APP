@@ -23,7 +23,7 @@ export default function Posts(props) {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  const handleChangePage = (newPage) => {
+  const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
 
@@ -37,6 +37,7 @@ export default function Posts(props) {
     if (res === 200) {
       window.location.reload();
     } else {
+      /* eslint-disable no-alert */
       alert('unauthorized!');
     }
   }
@@ -73,6 +74,7 @@ export default function Posts(props) {
   }
 
   function sortCommentTime() {
+    /* eslint-disable func-names */
     return function (objectN, objectM) {
       const valueN = objectN.time;
       const valueM = objectM.time;
@@ -104,7 +106,9 @@ export default function Posts(props) {
   }
 
   function MapList() {
-    return certainGroup.posts.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((post) => {
+    /* eslint-disable jsx-a11y/media-has-caption */
+    const groupPosts = certainGroup.posts;
+    return groupPosts.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((post) => {
       switch (post.attachmentType) {
         case 'null':
           console.log('only text post');

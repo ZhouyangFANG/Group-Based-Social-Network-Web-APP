@@ -41,6 +41,7 @@ const Chat = () => {
   const reader = new FileReader();
 
   const handleImage = (event) => {
+    /* eslint-disable jsx-a11y/media-has-caption */
     console.log(event.target.files[0]);
     reader.readAsDataURL(event.target.files[0]);
     reader.addEventListener('load', () => {

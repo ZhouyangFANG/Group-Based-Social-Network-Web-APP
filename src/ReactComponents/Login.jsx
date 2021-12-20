@@ -24,7 +24,7 @@ export default function SignIn() {
     });
   };
 
-  async function confirmLogin() {
+  const confirmLogin = async () => {
     const pwd = document.getElementById('password');
     const email = document.getElementById('email');
 
@@ -33,6 +33,7 @@ export default function SignIn() {
     if (curr !== null) {
       const diff = (timeV - curr.time) / 1000;
       if (curr.count >= 3 && diff < 300) {
+        /* eslint-disable no-alert */
         alert('Your account has been locked out');
         return;
       }
@@ -63,7 +64,7 @@ export default function SignIn() {
         window.localStorage.setItem(email.value, JSON.stringify({ time: timeV, count: v }));
       }
     }
-  }
+  };
 
   return (
     <ThemeProvider theme={theme}>

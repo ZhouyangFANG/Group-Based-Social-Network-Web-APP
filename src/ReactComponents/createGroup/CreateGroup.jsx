@@ -73,7 +73,7 @@ export default function CreateGroup() {
     );
   };
 
-  async function createGroup() {
+  const createGroup = async () => {
     const groupName = document.getElementById('groupName');
     const ans = document.getElementsByName('typeLabel');
     let type;
@@ -95,7 +95,7 @@ export default function CreateGroup() {
       newUrl = `${newUrl}groups`;
       window.location.href = newUrl;
     }
-  }
+  };
 
   return (
     <ThemeProvider theme={theme}>
