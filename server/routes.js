@@ -627,6 +627,7 @@ function deleteAdmin(req, res) {
       } else if (results0.length === 0) {
         res.status(403).json('admin permission needed');
       } else {
+        /* eslint-disable no-param-reassign */
         connection.query(`DELETE admin FROM admin INNER JOIN user ON admin.userId = user.id
         WHERE user.username = '${req.params.username}' AND admin.groupId = '${group.id}';`, (error1) => {
           if (error1) {

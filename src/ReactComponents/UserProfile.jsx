@@ -39,20 +39,20 @@ function UserProfile() {
     }
   }
 
-  async function updateProfile() {
+  const updateProfile = async () => {
     const gender = document.getElementById('gender');
     const link = document.getElementById('link');
     const phone = document.getElementById('phone');
     const email = document.getElementById('email');
 
     await lib.updateProfile(email.value, gender.value, phone.value, link.value);
-  }
+  };
 
-  async function updatePwd() {
+  const updatePwd = async () => {
     const pwd = document.getElementById('pwd');
 
     await lib.updatePwd(pwd.value);
-  }
+  };
 
   const toGroupPage = () => {
     window.location.href = `${window.location.protocol}//${window.location.host}/groups`;
