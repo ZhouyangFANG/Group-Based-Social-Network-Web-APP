@@ -23,6 +23,11 @@ app.use(cors({
 
 app.use(express.static(path.join(__dirname, '../build')));
 
+app.use((req, res, next) => {
+  res.setHeader('Content-Security-Policy', "media-src 'self' data: blob: file:;default-src 'self' data: blob: file:;base-uri 'self';block-all-mixed-content;font-src 'self' https: data:;frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests");
+  next();
+});
+
 app.post('/api/users', routes.createUser);
 app.post('/api/login', routes.loginUser);
 app.get('/api/logout', routes.checkCookie, routes.logout);
@@ -80,7 +85,7 @@ app.get('*', (req, res) => {
 const port = process.env.PORT || 8080;
 
 app.listen(port, () => {
-  console.log(`Example app listening at http://localhost:${port}`);
+  console.log(`Example app listening at http://localhost:${port}`); // eslint-disable-line no-console
 });
 
 module.exports = app;
