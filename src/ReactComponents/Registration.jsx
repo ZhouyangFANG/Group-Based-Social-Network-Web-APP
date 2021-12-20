@@ -28,7 +28,7 @@ export default function SignUp() {
     const pwd = document.getElementById('password');
     const user = document.getElementById('userName');
     const reg = /^[0-9a-zA-Z]+$/;
-    if (!(pwd.value.match(reg)) || pwd.value.length<6) {
+    if (!(pwd.value.match(reg)) || pwd.value.length < 6) {
       alert('Please enter alphanumeric password which has more than 5 characters values only!');
       pwd.value = '';
       return;
@@ -48,7 +48,6 @@ export default function SignUp() {
     } else {
       alert('Failure');
       pwd.value = '';
-
     }
   }
 
@@ -93,7 +92,7 @@ export default function SignUp() {
               </Grid>
             </Grid>
             <Button
-              id = 'registerBtn'
+              id="registerBtn"
               data-testid="submit"
               type="submit"
               fullWidth
