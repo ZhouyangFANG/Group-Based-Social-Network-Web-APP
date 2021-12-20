@@ -57,10 +57,10 @@ export default function SignIn() {
     } else {
       pwd.value = '';
       alert('Error password!');
-      const v = curr.count + 1;
       if (curr === null) {
         window.localStorage.setItem(email.value, JSON.stringify({ time: timeV, count: 1 }));
       } else {
+        const v = curr.count + 1;
         window.localStorage.setItem(email.value, JSON.stringify({ time: timeV, count: v }));
       }
     }
