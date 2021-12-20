@@ -177,7 +177,7 @@ const Chat = () => {
             <Grid item xs={11}>
               <Box component="form" onSubmit={SendText} noValidate sx={{ mt: 1 }}>
                 <TextField name="input" placeholder="Type Something" fullWidth />
-                <Button variant="contained" type="submit">Send</Button>
+                <Button data-testid="send" variant="contained" type="submit">Send</Button>
               </Box>
             </Grid>
             <Button
@@ -203,6 +203,7 @@ const Chat = () => {
               />
             </Button>
             <Button
+              data-testid="video"
               variant="contained"
               component="label"
             >
