@@ -55,11 +55,11 @@ export default function SignIn() {
       window.location.href = newUrl;
     } else {
       pwd.value = '';
-
+      const v = curr.count + 1;
       if (curr === null) {
         window.localStorage.setItem(email.value, JSON.stringify({ time: timeV, count: 1 }));
       } else {
-        window.localStorage.setItem(email.value, JSON.stringify({ time: timeV, count: curr.count + 1 }));
+        window.localStorage.setItem(email.value, JSON.stringify({ time: timeV, count: v }));
       }
     }
   }

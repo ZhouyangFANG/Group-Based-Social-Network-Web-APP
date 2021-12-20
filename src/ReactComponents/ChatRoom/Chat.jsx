@@ -37,7 +37,6 @@ const useStyles = makeStyles({
 const Chat = () => {
   const { friendName } = useParams();
   const classes = useStyles();
-  const [objectURL, setObjectURL] = useState('');
   const [chatHistory, setChathistory] = useState(null);
   const reader = new FileReader();
 
@@ -116,7 +115,7 @@ const Chat = () => {
           return (
             <ListItem key={message.id}>
               <ListItemText primary={`${message.sender}: `} />
-              <img src={message.content} />
+              <img src={message.content} alt="" />
             </ListItem>
           );
         case 'audio':
@@ -140,6 +139,9 @@ const Chat = () => {
               </video>
             </ListItem>
           );
+
+        default:
+          return null;
       }
     })
   );

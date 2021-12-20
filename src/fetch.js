@@ -193,13 +193,13 @@ async function updateProfile(emailV, genderV, phoneV, linkV) {
       link: linkV,
     }),
     credentials: 'include',
-  }).then((response) => response.json())
+  }).then((response) => response.json()
     .then((data) => {
       res = response.status;
       window.console.log(data);
-    }).catch((error) => {
-      window.console.log(error);
-    });
+    })).catch((error) => {
+    window.console.log(error);
+  });
   return res;
 }
 
@@ -214,17 +214,17 @@ async function updatePwd(pwd) {
       newPassword: pwd,
     }),
     credentials: 'include',
-  }).then((response) => response.json())
+  }).then((response) => response.json()
     .then((data) => {
       res = response.status;
       window.console.log(data);
-    }).catch((error) => {
-      window.console.log(error);
-    });
+    })).catch((error) => {
+    window.console.log(error);
+  });
   return res;
 }
 
-async function getAllTag(tags) {
+async function getAllTag() {
   let res;
   await fetch(`${uri}tag/`, {
     method: 'GET',

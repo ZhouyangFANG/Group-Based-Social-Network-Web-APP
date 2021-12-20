@@ -118,6 +118,8 @@ export default function Posts(props) {
         case 'video':
           console.log('text and video post');
           return (<PostCard4 post={post} key={post.id} />);
+        default:
+          return null;
       }
     });
   }
@@ -218,7 +220,7 @@ export default function Posts(props) {
             <Typography variant="body2" color="text.secondary">
               {post.postContent}
             </Typography>
-            <img src={post.attachment} />
+            <img src={post.attachment} alt="" />
           </CardContent>
           <TextField id={`comment${post.id}`} label="add comment" name="add comment" />
           <CardActions disableSpacing>
@@ -251,7 +253,7 @@ export default function Posts(props) {
             <Typography variant="body2" color="text.secondary">
               {post.postContent}
             </Typography>
-            <img src={post.attachment} />
+            <img src={post.attachment} alt="" />
           </CardContent>
           <TextField id={`comment${post.id}`} label="add comment" name="add comment" />
           <CardActions disableSpacing>
@@ -356,7 +358,7 @@ export default function Posts(props) {
   };
 
   const PostCard4 = ({ post }) => {
-    for (let i = 0; i < hiddenPosts.length; i++) {
+    for (let i = 0; i < hiddenPosts.length; i += 1) {
       if (hiddenPosts[i].postId === post.id) {
         return null;
       }

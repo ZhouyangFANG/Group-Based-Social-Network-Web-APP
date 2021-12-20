@@ -47,12 +47,6 @@ export default function GroupPage() {
     return (() => { isMounted = false; });
   }, []);
 
-  function addPost() {
-    let url = window.location.href;
-    url += '/post';
-    window.location.href = url;
-  }
-
   const List1 = () => {
     const { admins } = certainGroup;
     return (

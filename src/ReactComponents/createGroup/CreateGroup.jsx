@@ -63,15 +63,6 @@ export default function CreateGroup() {
     getTag();
   }, []);
 
-  function getStyles(name, personName, theme) {
-    return {
-      fontWeight:
-        personName.indexOf(name) === -1
-          ? theme.typography.fontWeightRegular
-          : theme.typography.fontWeightMedium,
-    };
-  }
-
   const handleChange = (event) => {
     const {
       target: { value },
@@ -80,10 +71,6 @@ export default function CreateGroup() {
       // On autofill we get a the stringified value.
       typeof value === 'string' ? value.split(',') : value,
     );
-  };
-
-  const handleBack = () => {
-    setActiveStep(activeStep - 1);
   };
 
   async function createGroup() {

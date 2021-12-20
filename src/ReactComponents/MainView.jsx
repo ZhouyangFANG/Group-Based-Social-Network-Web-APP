@@ -18,6 +18,13 @@ function MainView() {
   const [recommend, setRecommend] = useState([]);
   const [notification, setNotification] = useState(null);
   const whoami = window.localStorage.getItem('username');
+
+  const handleJoinGroup = async (groupName) => {
+    console.log(groupName);
+    await requestToJoinGroup(groupName);
+    // const path = `/${group.row.name}`;
+  };
+
   const columns = [
     {
       field: 'name',
@@ -41,7 +48,7 @@ function MainView() {
       headerName: 'Request to join',
       width: 150,
       renderCell: (params) => (
-        params.row.type === 1 && params.row.is_member == false
+        params.row.type === 1 && params.row.is_member === false
           ? <Button variant="contained" color="primary" onClick={() => { handleJoinGroup(params.row.name); }}>Join</Button>
           : null
       ),
@@ -66,12 +73,6 @@ function MainView() {
     return (() => { isMounted = false; });
   }, []);
 
-  const handleJoinGroup = async (groupName) => {
-    console.log(groupName);
-    await requestToJoinGroup(groupName);
-    // const path = `/${group.row.name}`;
-  };
-
   const handleGetGroupList = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -85,12 +86,6 @@ function MainView() {
     }
   };
 
-  const sortByPostsNum = () => {
-    const arr = [...groupList];
-    arr.sort(objectSortPostNum());
-    setGroupList(arr);
-  };
-
   function objectSortPostNum() {
     return function (objectN, objectM) {
       const valueN = objectN.num_posts;
@@ -101,9 +96,9 @@ function MainView() {
     };
   }
 
-  const sortByMemberNum = () => {
+  const sortByPostsNum = () => {
     const arr = [...groupList];
-    arr.sort(objectSortMemNum());
+    arr.sort(objectSortPostNum());
     setGroupList(arr);
   };
 
@@ -117,9 +112,9 @@ function MainView() {
     };
   }
 
-  const sortByNewestMsg = () => {
+  const sortByMemberNum = () => {
     const arr = [...groupList];
-    arr.sort(objectSortNewMsg());
+    arr.sort(objectSortMemNum());
     setGroupList(arr);
   };
 
@@ -139,6 +134,12 @@ function MainView() {
       return 0;
     };
   }
+
+  const sortByNewestMsg = () => {
+    const arr = [...groupList];
+    arr.sort(objectSortNewMsg());
+    setGroupList(arr);
+  };
 
   const List1 = () => {
     console.log(notification);
