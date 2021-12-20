@@ -19,8 +19,8 @@ module.exports = {
   ],
   rules: {
     'react/jsx-no-bind': 'off',
-    'no-console': 'off',
     'no-alert': 'off',
     'react/prop-types': 'off',
+    'no-param-reassign': ['error', { 'props': false }],
   },
 };

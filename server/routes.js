@@ -21,9 +21,10 @@ function dbQuery(sql) {
   return new Promise((resolve, reject) => {
     connection.query(sql, (error, results) => {
       if (error) {
-        return reject(error);
+        reject(error);
+      } else {
+        resolve(results);
       }
-      resolve(results);
     });
   });
 }
@@ -72,7 +73,7 @@ async function checkCookie(req, res, next) {
   }
 }
 
-function _getGroup(req, res, callback) { // eslint-disable-line no-underscore-dangle
+function getGroupHelper(req, res, callback) {
   connection.query(`SELECT * FROM groupInfo WHERE name = '${req.params.groupname}';`, (error, results) => {
     if (error) {
       res.status(400).json({ error });
@@ -84,8 +85,8 @@ function _getGroup(req, res, callback) { // eslint-disable-line no-underscore-da
   });
 }
 
-function _checkAdmin(req, res, callback) {
-  _getGroup(req, res, (group) => {
+function checkAdmin(req, res, callback) {
+  getGroupHelper(req, res, (group) => {
     connection.query(`SELECT * FROM admin WHERE userId = '${req.userInfo.id}' AND groupId = '${group.id}';`, (error, results) => {
       if (error) {
         res.status(400).json({ error });
@@ -93,8 +94,17 @@ function _checkAdmin(req, res, callback) {
         callback(group, results.length > 0);
       }
     });
-  })
-};
+  });
+}
+
+function addMentions(text, userId) {
+  const pattern = /\B@[a-z0-9_-]+/gi;
+  const mentions = text.match(pattern) || [];
+  return Promise.all(mentions.map((mention) => {
+    const name = mention.slice(1);
+    return dbQuery(`INSERT INTO mention(mentioner, mentioned) SELECT '${userId}', user.id FROM user WHERE username = '${name}';`).catch();
+  }));
+}
 
 async function createUser(req, res) {
   const { username, password } = req.body;
@@ -413,7 +423,7 @@ async function createPost(req, res) {
 
   const postId = uuid.v4();
 
-  _getGroup(req, res, (group) => {
+  getGroupHelper(req, res, (group) => {
     connection.query(`INSERT INTO post(id, title, author, groupId, postContent, attachment, attachmentType, datetime)
         values ('${postId}', '${title}', '${userId}', '${group.id}', '${postContent}',
         ${attachment}, '${attachmentType}', '${new Date().toISOString().slice(0, 19).replace('T', ' ')}');`, (error) => {
@@ -449,7 +459,6 @@ async function flagPost(req, res) {
 async function deletePost(req, res) {
   const { postId } = req.params;
   const userId = req.userInfo.id;
-  console.log(userId);
   connection.query(`select a.userId as adminId from post join groupInfo gI on gI.id = post.groupId join admin a on gI.id = a.groupId where
   post.id = '${postId}';`, (error, results) => {
     if (error) {
@@ -457,32 +466,32 @@ async function deletePost(req, res) {
       res.json({ error });
     } else {
       let flag = false;
-      for (i=0; i<results.length; i += 1){
-        if (results[i].adminId === userId){
+      for (let i = 0; i < results.length; i += 1) {
+        if (results[i].adminId === userId) {
           flag = true;
         }
       }
-      if (flag === true){
-        connection.query(`UPDATE post SET deleted = true where id = '${postId}'`, (error, results) => {
-          if (error) {
+      if (flag === true) {
+        connection.query(`UPDATE post SET deleted = true where id = '${postId}'`, (error1, results1) => {
+          if (error1) {
             res.status(400);
-            res.json({ error });
+            res.json({ error: error1 });
           } else {
             res.status(200);
-            res.json(results);
+            res.json(results1);
           }
         });
       } else {
-        connection.query(`UPDATE post SET deleted = true where id = '${postId}' and author = '${userId}'`, (error, results) => {
-          if (error) {
+        connection.query(`UPDATE post SET deleted = true where id = '${postId}' and author = '${userId}'`, (error2, results2) => {
+          if (error2) {
             res.status(400);
-            res.json({ error });
-          } else if (results.affectedRows !==0) {
+            res.json({ error: error2 });
+          } else if (results2.affectedRows !== 0) {
             res.status(200);
-            res.json(results);
+            res.json(results2);
           } else {
             res.status(401);
-            res.json(results);
+            res.json(results2);
           }
         });
       }
@@ -531,7 +540,7 @@ async function deleteComment(req, res) {
       if (error) {
         res.status(400);
         res.json({ error });
-      } else if (results.affectedRows !==0) {
+      } else if (results.affectedRows !== 0) {
         res.status(200);
         res.json(results);
       } else {
@@ -574,7 +583,7 @@ async function groupAnalytic(req, res) {
 }
 
 function addAdmin(req, res) {
-  _getGroup(req, res, (group) => {
+  getGroupHelper(req, res, (group) => {
     connection.query(`SELECT * FROM admin WHERE userId = '${req.userInfo.id}' AND groupId = '${group.id}';`, (error1, results1) => {
       if (error1) {
         res.status(400).json({ error: error1 });
@@ -611,7 +620,7 @@ function addAdmin(req, res) {
 }
 
 function deleteAdmin(req, res) {
-  _getGroup(req, res, (group) => {
+  getGroupHelper(req, res, (group) => {
     connection.query(`SELECT * FROM admin WHERE userId = '${req.userInfo.id}' AND groupId = '${group.id}';`, (error0, results0) => {
       if (error0) {
         res.status(400).json({ error: error0 });
@@ -632,31 +641,31 @@ function deleteAdmin(req, res) {
 }
 
 function postRequest(req, res) {
-  _getGroup(req, res, (group) => {
+  getGroupHelper(req, res, (group) => {
     connection.query(`SELECT * FROM member WHERE userId = '${req.userInfo.id}' AND groupId = '${group.id}';`, (error0, results0) => {
       if (error0 || results0.length > 0) {
         res.status(400).json('already a member');
       } else {
         const promise0 = dbQuery(`INSERT INTO request(userId, groupId) VALUES ('${req.userInfo.id}', '${group.id}');`);
         const promise1 = dbQuery(`DELETE FROM invitation WHERE userId = '${req.userInfo.id}' AND groupId = '${group.id}';`);
-        return Promise.all([promise0, promise1]).then(() => {
+        Promise.all([promise0, promise1]).then(() => {
           res.status(201).json('request posted');
         }).catch((error) => {
           res.status(400).json({ error });
-        })
+        });
       }
     });
   });
 }
 
 function resolveRequest(req, res) {
-  _checkAdmin(req, res, (group, isAdmin) => {
+  checkAdmin(req, res, (group, isAdmin) => {
     if (!isAdmin) {
       res.status(403).json('admin permission needed');
     } else {
       const promise0 = req.body.granted ? dbQuery(`INSERT INTO member(userId, groupId) SELECT user.id, '${group.id}' FROM user WHERE username = '${req.params.username}';`) : Promise.resolve();
       const promise1 = dbQuery(`DELETE request FROM request INNER JOIN user ON request.userId = user.id WHERE user.username = '${req.params.username}' AND request.groupId = '${group.id}';`);
-      return Promise.all([promise0, promise1]).then(() => {
+      Promise.all([promise0, promise1]).then(() => {
         res.status(200).json('success');
       }).catch((error) => {
         res.status(400).json({ error });
@@ -666,7 +675,7 @@ function resolveRequest(req, res) {
 }
 
 function postInvitation(req, res) {
-  _getGroup(req, res, (group) => {
+  getGroupHelper(req, res, (group) => {
     const promise0 = dbQuery(`SELECT * FROM member INNER JOIN user ON member.userId = user.id WHERE user.username = '${req.params.username}' AND member.groupId = '${group.id}';`);
     const promise1 = dbQuery(`SELECT * FROM request INNER JOIN user ON request.userId = user.id WHERE user.username = '${req.params.username}' AND request.groupId = '${group.id}';`);
     return Promise.all([promise0, promise1]).then(([results0, results1]) => {
@@ -703,7 +712,7 @@ function resolveInvitation(req, res) {
 }
 
 function leaveGroup(req, res) {
-  _getGroup(req, res, (group) => {
+  getGroupHelper(req, res, (group) => {
     connection.query(`DELETE FROM admin WHERE userId = '${req.userInfo.id}' and groupId = '${group.id}';`, (error0) => {
       if (error0) {
         res.status(400).json({ error: error0 });
@@ -716,12 +725,12 @@ function leaveGroup(req, res) {
           }
         });
       }
-    })
+    });
   });
 }
 
 function getGroup(req, res) {
-  _checkAdmin(req, res, (group, isAdmin) => {
+  checkAdmin(req, res, (group, isAdmin) => {
     const promise0 = dbQuery(`SELECT user.* FROM user INNER JOIN member ON member.userId = user.id WHERE member.groupId = '${group.id}';`);
     const promise1 = dbQuery(`SELECT user.* FROM user INNER JOIN admin ON admin.userId = user.id WHERE admin.groupId = '${group.id}';`);
     const promise2 = dbQuery(`SELECT post.id, post.title, user.username AS author, post.postContent, post.attachment, post.attachmentType, post.flagger, post.datetime, post.deleted
@@ -733,20 +742,18 @@ function getGroup(req, res) {
         }));
       }
       return results;
-    }).catch((error) => {
-      res.status(400).json({ error });
-      return;
     });
     const promise3 = isAdmin ? dbQuery(`SELECT user.* FROM user INNER JOIN request ON request.userId = user.id WHERE request.groupId = '${group.id}';`) : Promise.resolve(undefined);
-    return Promise.all([promise0, promise1, promise2, promise3]).then(([members, admins, posts, requests]) => {
-      group.members = members;
-      group.admins = admins;
-      group.posts = posts;
-      group.requests = requests;
-      res.status(200).json(group);
-    }).catch((error) => {
-      res.status(400).json({ error });
-    });
+    return Promise.all([promise0, promise1, promise2, promise3])
+      .then(([members, admins, posts, requests]) => {
+        group.members = members;
+        group.admins = admins;
+        group.posts = posts;
+        group.requests = requests;
+        res.status(200).json(group);
+      }).catch((error) => {
+        res.status(400).json({ error });
+      });
   });
 }
 
@@ -777,7 +784,7 @@ function getMessages(req, res) {
     } else if (results0.length === 0) {
       res.status(404).json('user not found');
     } else {
-      const username = req.userInfo.username;
+      const { username } = req.userInfo;
       const othername = results0[0].username;
       connection.query(`SELECT * FROM message
       WHERE (sender = '${username}' and receiver = '${othername}') or (sender = '${othername}' and receiver = '${username}')
@@ -803,14 +810,14 @@ function postMessage(req, res) {
       } else if (results0.length === 0) {
         res.status(404).json('user not found');
       } else {
-        const username = req.userInfo.username;
+        const { username } = req.userInfo;
         const othername = results0[0].username;
         if (username === othername) {
           res.status(400).json('cannot send message to self');
         } else {
           const id = uuid.v4();
           const time = new Date().toISOString().slice(0, 19).replace('T', ' ');
-          connection.query(`INSERT INTO message(id, sender, receiver, time, content, type) VALUES (?, ?, ?, ?, ?, ?);`, [id, username, othername, time, content, type], (error1) => {
+          connection.query('INSERT INTO message(id, sender, receiver, time, content, type) VALUES (?, ?, ?, ?, ?, ?);', [id, username, othername, time, content, type], (error1) => {
             if (error1) {
               res.status(400).json({ error: error1 });
             } else {
@@ -823,17 +830,6 @@ function postMessage(req, res) {
       }
     });
   }
-}
-
-function addMentions(text, userId) {
-  const pattern = /\B@[a-z0-9_-]+/gi;
-  const mentions = text.match(pattern) || [];
-  return Promise.all(mentions.map(async (mention) => {
-    const name = mention.slice(1);
-    try {
-      await dbQuery(`INSERT INTO mention(mentioner, mentioned) SELECT '${userId}', user.id FROM user WHERE username = '${name}';`)
-    } catch (error) {};
-  }));
 }
 
 function getNotifications(req, res) {
