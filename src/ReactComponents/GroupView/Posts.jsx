@@ -250,7 +250,7 @@ export default function Posts(props) {
     } else if (!post.flagger && !post.deleted) {
       return (
         <Card key={post.id} sx={{ maxWidth: 500 }}>
-          <CardHeader title={post.title} />
+          <CardHeader title={post.title} subheader={'Author: '+post.author} />
           <CardContent id="container">
             <Typography variant="body2" color="text.secondary">
               {post.postContent}

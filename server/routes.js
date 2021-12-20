@@ -726,7 +726,8 @@ function getGroup(req, res) {
     FROM post INNER JOIN user ON post.author = user.id WHERE groupId = '${group.id}';`).then(async (results) => {
       if (results.length > 0) {
         await Promise.all(results.map(async (post) => {
-          post.comments = await dbQuery(`SELECT * FROM comment WHERE postId = '${post.id}' ORDER BY datetime DESC;`);
+          post.comments = await dbQuery(`SELECT comment.id, comment.content, user.username as author,  comment.datetime
+          FROM comment INNER JOIN user ON comment.author = user.id WHERE postId = '${post.id}' ORDER BY datetime DESC;`);
         }));
       }
       return results;
