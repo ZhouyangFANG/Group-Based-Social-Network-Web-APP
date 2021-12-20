@@ -102,7 +102,7 @@ async function getHiddenList() {
   return record;
 }
 
-async function addPost(groupName, titleV, contentV) {
+async function addPost(groupName, titleV, contentV, attachment, attachmentType) {
   let statusCode;
   await fetch(`${uri}groups/${groupName}/posts`, {
     method: 'POST',
@@ -113,6 +113,8 @@ async function addPost(groupName, titleV, contentV) {
     body: JSON.stringify({
       title: titleV,
       postContent: contentV,
+      attachment: attachment,
+      attachmentType: attachmentType,
     }),
   }).then((res) => {
     statusCode = res.status;

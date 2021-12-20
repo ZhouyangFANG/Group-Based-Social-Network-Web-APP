@@ -127,7 +127,7 @@ export async function leaveGroup(groupName) {
 }
 
 export async function filterGroupsByTags(tag, setGroupList) {
-  const res = await axios.get(`${url}/groups/tags/${tag}`, { withCredentials: true });
+  const res = await axios.get(`${url}/tag/${tag}`, { withCredentials: true });
   setGroupList(res.data);
   // setGroupList(groupList);
 }

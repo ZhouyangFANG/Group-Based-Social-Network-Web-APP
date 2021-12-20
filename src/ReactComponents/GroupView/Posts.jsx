@@ -53,14 +53,14 @@ export default function Posts(props) {
     }
   }
 
-  async function hidePost(postId){
+  async function hidePost(postId) {
     const res = await lib.hidePost(postId);
     if (res === 200) {
       window.location.reload();
     }
   }
 
-  async function addComment(postId){
+  async function addComment(postId) {
     const content = document.getElementById(`comment${postId}`).value;
     const res = await lib.addComment(postId, content);
     if (res === 200) {
@@ -68,7 +68,7 @@ export default function Posts(props) {
     }
   }
 
-  async function deleteComment(commentId){
+  async function deleteComment(commentId) {
     const res = await lib.deleteComment(commentId);
     if (res === 200) {
       window.location.reload();
@@ -87,7 +87,7 @@ export default function Posts(props) {
     }
   }
 
-  const Comments = ({comment}) => {
+  const Comments = ({ comment }) => {
     if (comment.deleted) {
       return null;
     }
@@ -96,18 +96,35 @@ export default function Posts(props) {
         <Typography variant="body2" color="text.secondary">
           {comment.username}: {comment.content}
         </Typography>
-        <Button variant='contained' type="submit" onClick={() => {deleteComment(comment.id)}}>Delete</Button>
+        <Button variant='contained' type="submit" onClick={() => { deleteComment(comment.id) }}>Delete</Button>
       </CardContent>
     );
   }
 
   function MapCommentList(commentL) {
     commentL.sort(sortCommentTime());
-    return commentL.map((comment) => <Comments comment={comment} key={comment.id}/>);
+    return commentL.map((comment) => <Comments comment={comment} key={comment.id} />);
   }
 
   function MapList() {
-    return certainGroup.posts.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((post) => <PostCard post={post} key={post.id} />);
+    return certainGroup.posts.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((post) => {
+      switch (post.attachmentType) {
+        case "null":
+          console.log("only text post");
+          return (<PostCard1 post={post} key={post.id} />);
+        case "image":
+          console.log("text and image post");
+          return (<PostCard2 post={post} key={post.id} />);
+        case "audio":
+          console.log("text and audio post");
+          return (<PostCard3 post={post} key={post.id} />);
+        case "video":
+          console.log("text and video post");
+          return (<PostCard4 post={post} key={post.id} />);
+
+
+      }
+    });
   }
 
   useEffect(async () => {
@@ -119,9 +136,9 @@ export default function Posts(props) {
     sethiddenPosts(hide);
   }, []);
 
-  const PostCard = ({post}) => {
+  const PostCard1 = ({ post }) => {
     for (var i = 0; i < hiddenPosts.length; i++) {
-      if (hiddenPosts[i].postId === post.id){
+      if (hiddenPosts[i].postId === post.id) {
         return null;
       }
     };
@@ -129,42 +146,26 @@ export default function Posts(props) {
     if (post.flagger && !post.deleted) {
       return (
         <Card key={post.id} sx={{ maxWidth: 500 }}>
-          <CardHeader
-            avatar={(
-              <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
-                R
-              </Avatar>
-            )}
-            action={(
-              <IconButton aria-label="settings">
-                <MoreVertIcon />
-              </IconButton>
-            )}/>
-          <CardMedia
-            component="img"
-            height="194"
-            image="/images/CIS557.png"
-            alt="pic"/>
           <CardContent id="container">
             <Typography variant="body2" color="text.secondary">
               {post.postContent}
             </Typography>
           </CardContent>
-          <TextField id={`comment${post.id}`} label="add comment" name="add comment"/>
+          <TextField id={`comment${post.id}`} label="add comment" name="add comment" />
           <CardActions disableSpacing>
-            <IconButton aria-label="addComment" onClick={() => {addComment(post.id)}}>
+            <IconButton aria-label="addComment" onClick={() => { addComment(post.id) }}>
               <FavoriteIcon />
             </IconButton>
-            <IconButton aria-label="flag" id="flag" onClick={() => {flagPost(post.id)}}>
+            <IconButton aria-label="flag" id="flag" onClick={() => { flagPost(post.id) }}>
               <AssistantPhotoIcon />
             </IconButton>
-            <IconButton aria-label="delete" id="delete" onClick={() => {deletePost(post.id)}}>
+            <IconButton aria-label="delete" id="delete" onClick={() => { deletePost(post.id) }}>
               <DeleteIcon />
             </IconButton>
-            <IconButton aria-label="flagdelete" onClick={() => {deletePost(post.id)}}>
+            <IconButton aria-label="flagdelete" onClick={() => { deletePost(post.id) }}>
               <DeleteForeverOutlinedIcon />
             </IconButton>
-            <IconButton aria-label="hide" onClick={() => {hidePost(post.id)}}>
+            <IconButton aria-label="hide" onClick={() => { hidePost(post.id) }}>
               <ThreeSixtyIcon />
             </IconButton>
           </CardActions>
@@ -173,43 +174,27 @@ export default function Posts(props) {
           </div>
         </Card>
       )
-    } else if (!post.flagger && !post.deleted){
+    } else if (!post.flagger && !post.deleted) {
       return (
         <Card key={post.id} sx={{ maxWidth: 500 }}>
-          <CardHeader
-            avatar={(
-              <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
-                R
-              </Avatar>
-            )}
-            action={(
-              <IconButton aria-label="settings">
-                <MoreVertIcon />
-              </IconButton>
-            )}
-            title={post.title}/>
-          <CardMedia
-            component="img"
-            height="194"
-            image="/images/CIS557.png"
-            alt="pic"/>
+          <CardHeader title={post.title} />
           <CardContent id="container">
             <Typography variant="body2" color="text.secondary">
               {post.postContent}
             </Typography>
           </CardContent>
-          <TextField id={`comment${post.id}`} label="add comment" name="add comment"/>
+          <TextField id={`comment${post.id}`} label="add comment" name="add comment" />
           <CardActions disableSpacing>
-            <IconButton aria-label="addComment" onClick={() => {addComment(post.id)}}>
+            <IconButton aria-label="addComment" onClick={() => { addComment(post.id) }}>
               <FavoriteIcon />
             </IconButton>
-            <IconButton aria-label="flag" id="flag" onClick={() => {flagPost(post.id)}}>
+            <IconButton aria-label="flag" id="flag" onClick={() => { flagPost(post.id) }}>
               <AssistantPhotoIcon />
             </IconButton>
-            <IconButton aria-label="delete" id="delete" onClick={() => {deletePost(post.id)}}>
+            <IconButton aria-label="delete" id="delete" onClick={() => { deletePost(post.id) }}>
               <DeleteIcon />
             </IconButton>
-            <IconButton aria-label="hide" id="hide" onClick={() => {hidePost(post.id)}}>
+            <IconButton aria-label="hide" id="hide" onClick={() => { hidePost(post.id) }}>
               <ThreeSixtyIcon />
             </IconButton>
           </CardActions>
@@ -223,6 +208,237 @@ export default function Posts(props) {
     }
   }
 
+  const PostCard2 = ({ post }) => {
+    for (var i = 0; i < hiddenPosts.length; i++) {
+      if (hiddenPosts[i].postId === post.id) {
+        return null;
+      }
+    };
+
+    if (post.flagger && !post.deleted) {
+      return (
+        <Card key={post.id} sx={{ maxWidth: 500 }}>
+          <CardContent id="container">
+            <Typography variant="body2" color="text.secondary">
+              {post.postContent}
+            </Typography>
+            <img src={post.attachment} />
+          </CardContent>
+          <TextField id={`comment${post.id}`} label="add comment" name="add comment" />
+          <CardActions disableSpacing>
+            <IconButton aria-label="addComment" onClick={() => { addComment(post.id) }}>
+              <FavoriteIcon />
+            </IconButton>
+            <IconButton aria-label="flag" id="flag" onClick={() => { flagPost(post.id) }}>
+              <AssistantPhotoIcon />
+            </IconButton>
+            <IconButton aria-label="delete" id="delete" onClick={() => { deletePost(post.id) }}>
+              <DeleteIcon />
+            </IconButton>
+            <IconButton aria-label="flagdelete" onClick={() => { deletePost(post.id) }}>
+              <DeleteForeverOutlinedIcon />
+            </IconButton>
+            <IconButton aria-label="hide" onClick={() => { hidePost(post.id) }}>
+              <ThreeSixtyIcon />
+            </IconButton>
+          </CardActions>
+          <div>
+            {MapCommentList(post.comments)}
+          </div>
+        </Card>
+      )
+    } else if (!post.flagger && !post.deleted) {
+      return (
+        <Card key={post.id} sx={{ maxWidth: 500 }}>
+          <CardHeader title={post.title} />
+          <CardContent id="container">
+            <Typography variant="body2" color="text.secondary">
+              {post.postContent}
+            </Typography>
+            <img src={post.attachment} />
+          </CardContent>
+          <TextField id={`comment${post.id}`} label="add comment" name="add comment" />
+          <CardActions disableSpacing>
+            <IconButton aria-label="addComment" onClick={() => { addComment(post.id) }}>
+              <FavoriteIcon />
+            </IconButton>
+            <IconButton aria-label="flag" id="flag" onClick={() => { flagPost(post.id) }}>
+              <AssistantPhotoIcon />
+            </IconButton>
+            <IconButton aria-label="delete" id="delete" onClick={() => { deletePost(post.id) }}>
+              <DeleteIcon />
+            </IconButton>
+            <IconButton aria-label="hide" id="hide" onClick={() => { hidePost(post.id) }}>
+              <ThreeSixtyIcon />
+            </IconButton>
+          </CardActions>
+          <div>
+            {MapCommentList(post.comments)}
+          </div>
+        </Card>
+      )
+    } else {
+      return null;
+    }
+  }
+
+  const PostCard3 = ({ post }) => {
+    for (var i = 0; i < hiddenPosts.length; i++) {
+      if (hiddenPosts[i].postId === post.id) {
+        return null;
+      }
+    };
+
+    if (post.flagger && !post.deleted) {
+      return (
+        <Card key={post.id} sx={{ maxWidth: 500 }}>
+          <CardContent id="container">
+            <Typography variant="body2" color="text.secondary">
+              {post.postContent}
+            </Typography>
+            <audio controls autoPlay>
+              <source src={post.attachment} />
+            </audio>
+          </CardContent>
+          <TextField id={`comment${post.id}`} label="add comment" name="add comment" />
+          <CardActions disableSpacing>
+            <IconButton aria-label="addComment" onClick={() => { addComment(post.id) }}>
+              <FavoriteIcon />
+            </IconButton>
+            <IconButton aria-label="flag" id="flag" onClick={() => { flagPost(post.id) }}>
+              <AssistantPhotoIcon />
+            </IconButton>
+            <IconButton aria-label="delete" id="delete" onClick={() => { deletePost(post.id) }}>
+              <DeleteIcon />
+            </IconButton>
+            <IconButton aria-label="flagdelete" onClick={() => { deletePost(post.id) }}>
+              <DeleteForeverOutlinedIcon />
+            </IconButton>
+            <IconButton aria-label="hide" onClick={() => { hidePost(post.id) }}>
+              <ThreeSixtyIcon />
+            </IconButton>
+          </CardActions>
+          <div>
+            {MapCommentList(post.comments)}
+          </div>
+        </Card>
+      )
+    } else if (!post.flagger && !post.deleted) {
+      return (
+        <Card key={post.id} sx={{ maxWidth: 500 }}>
+          <CardHeader title={post.title} />
+          <CardContent id="container">
+            <Typography variant="body2" color="text.secondary">
+              {post.postContent}
+            </Typography>
+            <audio controls autoPlay>
+              <source src={post.attachment} />
+            </audio>
+          </CardContent>
+          <TextField id={`comment${post.id}`} label="add comment" name="add comment" />
+          <CardActions disableSpacing>
+            <IconButton aria-label="addComment" onClick={() => { addComment(post.id) }}>
+              <FavoriteIcon />
+            </IconButton>
+            <IconButton aria-label="flag" id="flag" onClick={() => { flagPost(post.id) }}>
+              <AssistantPhotoIcon />
+            </IconButton>
+            <IconButton aria-label="delete" id="delete" onClick={() => { deletePost(post.id) }}>
+              <DeleteIcon />
+            </IconButton>
+            <IconButton aria-label="hide" id="hide" onClick={() => { hidePost(post.id) }}>
+              <ThreeSixtyIcon />
+            </IconButton>
+          </CardActions>
+          <div>
+            {MapCommentList(post.comments)}
+          </div>
+        </Card>
+      )
+    } else {
+      return null;
+    }
+  }
+
+  const PostCard4 = ({ post }) => {
+    for (var i = 0; i < hiddenPosts.length; i++) {
+      if (hiddenPosts[i].postId === post.id) {
+        return null;
+      }
+    };
+
+    if (post.flagger && !post.deleted) {
+      return (
+        <Card key={post.id} sx={{ maxWidth: 500 }}>
+          <CardContent id="container">
+            <Typography variant="body2" color="text.secondary">
+              {post.postContent}
+            </Typography>
+            <video controls autoplay>
+              <source src={post.attachment} />
+            </video>
+          </CardContent>
+          <TextField id={`comment${post.id}`} label="add comment" name="add comment" />
+          <CardActions disableSpacing>
+            <IconButton aria-label="addComment" onClick={() => { addComment(post.id) }}>
+              <FavoriteIcon />
+            </IconButton>
+            <IconButton aria-label="flag" id="flag" onClick={() => { flagPost(post.id) }}>
+              <AssistantPhotoIcon />
+            </IconButton>
+            <IconButton aria-label="delete" id="delete" onClick={() => { deletePost(post.id) }}>
+              <DeleteIcon />
+            </IconButton>
+            <IconButton aria-label="flagdelete" onClick={() => { deletePost(post.id) }}>
+              <DeleteForeverOutlinedIcon />
+            </IconButton>
+            <IconButton aria-label="hide" onClick={() => { hidePost(post.id) }}>
+              <ThreeSixtyIcon />
+            </IconButton>
+          </CardActions>
+          <div>
+            {MapCommentList(post.comments)}
+          </div>
+        </Card>
+      )
+    } else if (!post.flagger && !post.deleted) {
+      return (
+        <Card key={post.id} sx={{ maxWidth: 500 }}>
+          <CardHeader title={post.title} />
+          <CardContent id="container">
+            <Typography variant="body2" color="text.secondary">
+              {post.postContent}
+            </Typography>
+            <video controls autoplay>
+              <source src={post.attachment} />
+            </video>
+          </CardContent>
+          <TextField id={`comment${post.id}`} label="add comment" name="add comment" />
+          <CardActions disableSpacing>
+            <IconButton aria-label="addComment" onClick={() => { addComment(post.id) }}>
+              <FavoriteIcon />
+            </IconButton>
+            <IconButton aria-label="flag" id="flag" onClick={() => { flagPost(post.id) }}>
+              <AssistantPhotoIcon />
+            </IconButton>
+            <IconButton aria-label="delete" id="delete" onClick={() => { deletePost(post.id) }}>
+              <DeleteIcon />
+            </IconButton>
+            <IconButton aria-label="hide" id="hide" onClick={() => { hidePost(post.id) }}>
+              <ThreeSixtyIcon />
+            </IconButton>
+          </CardActions>
+          <div>
+            {MapCommentList(post.comments)}
+          </div>
+        </Card>
+      )
+    } else {
+      return null;
+    }
+  }
+
+
   return (
     <>
       {
@@ -233,15 +449,15 @@ export default function Posts(props) {
               {MapList()}
             </div>
             <div>
-            <TablePagination
-              rowsPerPageOptions={[2, 5, 10]}
-              component="div"
-              count={certainGroup.posts.length}
-              page={page}
-              onPageChange={handleChangePage}
-              rowsPerPage={rowsPerPage}
-              onRowsPerPageChange={handleChangeRowsPerPage}
-            />
+              <TablePagination
+                rowsPerPageOptions={[2, 5, 10]}
+                component="div"
+                count={certainGroup.posts.length}
+                page={page}
+                onPageChange={handleChangePage}
+                rowsPerPage={rowsPerPage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+              />
             </div>
           </div>
         )
