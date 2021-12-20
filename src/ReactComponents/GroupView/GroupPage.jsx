@@ -105,7 +105,7 @@ export default function GroupPage() {
 
   return (
     <>
-      <Header title={`Group Name: ${groupName}`} userName={`User: ${window.localStorage.getItem("username")}`} />
+      <Header title={`Group Name: ${groupName}`} userName={window.localStorage.getItem("username")} />
       <Grid container spacing={2}>
       <Grid item xs={3} md={3}>
           <Paper>
