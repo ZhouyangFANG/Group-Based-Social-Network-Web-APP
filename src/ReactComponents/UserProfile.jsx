@@ -55,6 +55,10 @@ function UserProfile() {
     const res = await lib.updatePwd(pwd.value);
   }
 
+  const toGroupPage = () => {
+    window.location.href = window.location.protocol + "//" + window.location.host + `/groups`;
+  }
+
   React.useEffect(async () => {
     getProfile();
   }, []);
@@ -76,7 +80,7 @@ function UserProfile() {
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
               User Profile
             </Typography>
-            <Button color="inherit">Back</Button>
+            <Button color="inherit" onClick={() => {toGroupPage()}}>Back</Button>
           </Toolbar>
         </AppBar>
       </Box>

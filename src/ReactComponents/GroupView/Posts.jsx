@@ -94,7 +94,7 @@ export default function Posts(props) {
     return (
       <CardContent>
         <Typography variant="body2" color="text.secondary">
-          {comment.username}: {comment.content}
+          {comment.author}: {comment.content}
         </Typography>
         <Button variant='contained' type="submit" onClick={() => { deleteComment(comment.id) }}>Delete</Button>
       </CardContent>

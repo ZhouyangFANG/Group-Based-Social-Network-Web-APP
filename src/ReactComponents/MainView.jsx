@@ -76,13 +76,20 @@ function MainView() {
         <Link component={RouterLink} to={'groups/'+params.value} variant="body2">{params.value}</Link>
       ),
     },
-    { field: 'tags', headerName: 'Tags', width: 200 },
+    { field: 'type', headerName: 'Group Type', width: 150, 
+      renderCell: (params) => (
+        params.row.type===1?
+        'Public'
+        :'Private')
+    },
     {
       field: 'join',
       headerName: 'Request to join',
       width: 150,
       renderCell: (params) => (
-        <Button variant="contained" color="primary" onClick={() => { handleJoinGroup(params.row.name) }}>Join</Button>
+          params.row.type===1&&params.row.is_member==false?
+          <Button variant="contained" color="primary" onClick={() => { handleJoinGroup(params.row.name) }}>Join</Button>
+          :null
       ),
     },
   ];

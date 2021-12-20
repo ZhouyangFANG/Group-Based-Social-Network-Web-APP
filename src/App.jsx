@@ -1,6 +1,6 @@
 import './App.css';
 import React from 'react';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
 import UserProfile from './ReactComponents/UserProfile';
 import Registration from './ReactComponents/Registration';
 import MainView from './ReactComponents/MainView';
@@ -15,6 +15,10 @@ function App() {
     <Router>
       <div>
         <Switch>
+          <Route exact path="/">
+            <Redirect to="/login" />
+          </Route>
+
           <Route path="/login" component={Login} />
           <Route path="/registration" component={Registration} />
           <Route exact path="/groups/:groupName" component={GroupPage} />

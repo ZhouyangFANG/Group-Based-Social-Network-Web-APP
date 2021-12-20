@@ -310,7 +310,7 @@ async function getPublicGroups(req, res) {
   max(p.datetime) as latest, count(p.id) as num_posts, count(m.userId) as num_members, true as is_member
 from groupInfo left join post p on groupInfo.id = p.groupId
 left join member m on groupInfo.id = m.groupId
-where groupInfo.type = true and
+where
       '${userId}' in (select userId from member where groupId = groupInfo.id)
 group by groupInfo.id
 union
@@ -343,7 +343,7 @@ function getGroupsByTag(req, res) {
     from groupInfo left join post p on groupInfo.id = p.groupId
     left join member m on groupInfo.id = m.groupId
     inner join tagRelation on tagRelation.groupId = groupInfo.id
-    where groupInfo.type = true and
+    where
           '${userId}' in (select userId from member where groupId = groupInfo.id)
           and tagRelation.tagId = '${tagId}'
     group by groupInfo.id
@@ -726,7 +726,7 @@ function getGroup(req, res) {
     FROM post INNER JOIN user ON post.author = user.id WHERE groupId = '${group.id}';`).then(async (results) => {
       if (results.length > 0) {
         await Promise.all(results.map(async (post) => {
-          post.comments = await dbQuery(`SELECT comment.id, comment.content, user.username as author,  comment.datetime
+          post.comments = await dbQuery(`SELECT comment.id, comment.content, user.username as author,  comment.datetime, comment.deleted
           FROM comment INNER JOIN user ON comment.author = user.id WHERE postId = '${post.id}' ORDER BY datetime DESC;`);
         }));
       }
