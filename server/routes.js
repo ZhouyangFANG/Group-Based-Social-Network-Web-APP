@@ -336,6 +336,8 @@ function getGroupsByTag(req, res) {
   connection.query(`SELECT tag.* FROM tag WHERE tag.name = '${req.params.tagname}';`, (error, results) => {
     if (error) {
       res.status(400).json({ error });
+    } else if (results.length === 0) {
+      res.status(200).json(results);
     } else {
       const tagId = results[0].id;
       connection.query(`SELECT groupInfo.id, groupInfo.name, groupInfo.type,
