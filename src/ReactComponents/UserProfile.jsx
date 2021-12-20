@@ -24,7 +24,6 @@ function UserProfile() {
     const gender = document.getElementById('gender');
     const link = document.getElementById('link');
     const phone = document.getElementById('phone');
-    const email = document.getElementById('email');
     const registerD = document.getElementById('register');
 
     const url = window.location.href;
@@ -46,13 +45,13 @@ function UserProfile() {
     const phone = document.getElementById('phone');
     const email = document.getElementById('email');
 
-    const res = await lib.updateProfile(email.value, gender.value, phone.value, link.value);
+    await lib.updateProfile(email.value, gender.value, phone.value, link.value);
   }
 
   async function updatePwd() {
     const pwd = document.getElementById('pwd');
 
-    const res = await lib.updatePwd(pwd.value);
+    await lib.updatePwd(pwd.value);
   }
 
   const toGroupPage = () => {

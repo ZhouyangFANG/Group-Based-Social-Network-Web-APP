@@ -1,5 +1,5 @@
 import { React, useState, useEffect } from 'react';
-import { Link as RouterLink} from 'react-router-dom';
+import { Link as RouterLink } from 'react-router-dom';
 import Link from '@material-ui/core/Link';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -12,9 +12,6 @@ import {
 import Header from './Header';
 
 const lib = require('../fetch');
-
-
-
 
 function MainView() {
   const [groupList, setGroupList] = useState([]);

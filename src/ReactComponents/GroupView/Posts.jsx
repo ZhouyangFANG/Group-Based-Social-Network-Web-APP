@@ -22,9 +22,8 @@ export default function Posts(props) {
   const [hiddenPosts, sethiddenPosts] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [data, setData] = useState([]);
 
-  const handleChangePage = (event, newPage) => {
+  const handleChangePage = (newPage) => {
     setPage(newPage);
   };
 
@@ -133,7 +132,7 @@ export default function Posts(props) {
   }, []);
 
   const PostCard1 = ({ post }) => {
-    for (let i = 0; i < hiddenPosts.length; i++) {
+    for (let i = 0; i < hiddenPosts.length; i += 1) {
       if (hiddenPosts[i].postId === post.id) {
         return null;
       }
@@ -205,7 +204,7 @@ export default function Posts(props) {
   };
 
   const PostCard2 = ({ post }) => {
-    for (let i = 0; i < hiddenPosts.length; i++) {
+    for (let i = 0; i < hiddenPosts.length; i += 1) {
       if (hiddenPosts[i].postId === post.id) {
         return null;
       }
@@ -279,7 +278,7 @@ export default function Posts(props) {
   };
 
   const PostCard3 = ({ post }) => {
-    for (let i = 0; i < hiddenPosts.length; i++) {
+    for (let i = 0; i < hiddenPosts.length; i += 1) {
       if (hiddenPosts[i].postId === post.id) {
         return null;
       }

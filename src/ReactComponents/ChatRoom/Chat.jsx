@@ -11,7 +11,7 @@ import { makeStyles } from '@mui/styles';
 import { React, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import {
-  getMessages, SendMessage
+  getMessages, SendMessage,
 } from '../../api';
 import Header from '../Header';
 

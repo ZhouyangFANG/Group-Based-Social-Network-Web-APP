@@ -6,83 +6,83 @@ const url = !process.env.NODE_ENV || process.env.NODE_ENV === 'development'
   ? 'http://localhost:8080/api'
   : '/api';
 
-const delay = (ms) => new Promise((res) => setTimeout(res, ms));
+// const delay = (ms) => new Promise((res) => setTimeout(res, ms));
 
-const groupList = [
-  {
-    id: '35134',
-    name: 'cis557-1',
-    tags: 'cis',
-    members: [1],
-    posts: [1, 2, 3],
-  },
-  {
-    id: '134',
-    name: 'cis547-2',
-    tags: 'cis',
-    members: [6, 1, 3],
-    posts: [1, 2],
-  },
-  {
-    id: '35132',
-    name: 'cis537-3',
-    tags: 'cis',
-    members: [1, 5, 6, 6, 6],
-    posts: [1],
-  },
-  {
-    id: '3514',
-    name: 'dat757-4',
-    tags: 'dat',
-    members: [1, 4],
-    posts: [1, 2, 3, 4],
-  },
-];
+// const groupList = [
+//   {
+//     id: '35134',
+//     name: 'cis557-1',
+//     tags: 'cis',
+//     members: [1],
+//     posts: [1, 2, 3],
+//   },
+//   {
+//     id: '134',
+//     name: 'cis547-2',
+//     tags: 'cis',
+//     members: [6, 1, 3],
+//     posts: [1, 2],
+//   },
+//   {
+//     id: '35132',
+//     name: 'cis537-3',
+//     tags: 'cis',
+//     members: [1, 5, 6, 6, 6],
+//     posts: [1],
+//   },
+//   {
+//     id: '3514',
+//     name: 'dat757-4',
+//     tags: 'dat',
+//     members: [1, 4],
+//     posts: [1, 2, 3, 4],
+//   },
+// ];
 
-const testGroupPage = {
-  id: '35143',
-  name: 'cis557',
-  admins: ['Bob', 'Alice'],
-  members: ['John', 'Kite'],
-  tags: 'cis',
-  type: true,
-  posts: [{
-    id: '873815',
-    title: 'title_1',
-    author: 'Kite',
-    flag: true,
-    postContent: 'This impressive paella is a perfect party dish and a fun meal to cook together with your guests. Add 1 cup of frozen peas along with the mussels,if you like.',
-  },
-  {
-    id: '873816',
-    title: 'title_2',
-    author: 'John',
-    flag: false,
-    postContent: 'your guests. Add 1 cup of frozen peas along with the mussels,if you like.',
-  },
-  {
-    id: '873817',
-    title: 'title_3',
-    author: 'John',
-    flag: true,
-    postContent: 'This impressiish and a fun meal to cook together with your guests. Add 1 cup of frozen peas along with the mussels,if you like.',
-  },
-  {
-    id: '873818',
-    title: 'title_4',
-    author: 'John',
-    flag: false,
-    postContent: 'This impressive pafun meal to cook together with your guests. Add 1 cup of frozen peas along with the mussels,if you like.',
-  },
-  {
-    id: '873819',
-    title: 'title_5',
-    author: 'Kite',
-    flag: true,
-    postContent: 'This impressi you like.',
-  },
-  ],
-};
+// const testGroupPage = {
+//   id: '35143',
+//   name: 'cis557',
+//   admins: ['Bob', 'Alice'],
+//   members: ['John', 'Kite'],
+//   tags: 'cis',
+//   type: true,
+//   posts: [{
+//     id: '873815',
+//     title: 'title_1',
+//     author: 'Kite',
+//     flag: true,
+//     postContent: 'This d 1 cup of frozen peas along with the mussels,if you like.',
+//   },
+//   {
+//     id: '873816',
+//     title: 'title_2',
+//     author: 'John',
+//     flag: false,
+//     postContent: 'your guests. Add 1 cup of frozen peas along with the mussels,if you like.',
+//   },
+//   {
+//     id: '873817',
+//     title: 'title_3',
+//     author: 'John',
+//     flag: true,
+//     postContent: 'ssels,if you like.',
+//   },
+//   {
+//     id: '873818',
+//     title: 'title_4',
+//     author: 'John',
+//     flag: false,
+//     postContent: 'This impressive pafun meal to cook togetheg with the mussels,if you like.',
+//   },
+//   {
+//     id: '873819',
+//     title: 'title_5',
+//     author: 'Kite',
+//     flag: true,
+//     postContent: 'This impressi you like.',
+//   },
+//   ],
+// };
 
 export async function getGroupList(setGroupList) {
   const res = await axios.get(`${url}/groups`, { withCredentials: true });
@@ -117,7 +117,7 @@ export async function requestToJoinGroup(groupName) {
 
 // 8 Invite a user into a group (public and private) (0)
 export async function inviteUser(groupName, userName) {
-  const res = await axios.post(`${url}/groups/${groupName}/invites/${userName}`, {}, { withCredentials: true });
+  await axios.post(`${url}/groups/${groupName}/invites/${userName}`, {}, { withCredentials: true });
 }
 
 export async function leaveGroup(groupName) {
@@ -132,7 +132,7 @@ export async function filterGroupsByTags(tag, setGroupList) {
 }
 
 export async function JoinRequestDecision(groupName, userName, decision) {
-  const res = await axios.put(`${url}/groups/${groupName}/requests/${userName}`, { granted: decision }, { withCredentials: true });
+  await axios.put(`${url}/groups/${groupName}/requests/${userName}`, { granted: decision }, { withCredentials: true });
 }
 
 export async function getNotification() {
@@ -142,7 +142,7 @@ export async function getNotification() {
 
 export async function respondInvitation(groupName, decision) {
   console.log(decision);
-  const res = await axios.put(`${url}/invites/${groupName}`, { granted: decision }, { withCredentials: true });
+  await axios.put(`${url}/invites/${groupName}`, { granted: decision }, { withCredentials: true });
 }
 
 export async function getMessages(userName) {
@@ -151,5 +151,5 @@ export async function getMessages(userName) {
 }
 
 export async function SendMessage(userName, content, type) {
-  const res = await axios.post(`${url}/users/${userName}/messages`, { content, type }, { withCredentials: true });
+  await axios.post(`${url}/users/${userName}/messages`, { content, type }, { withCredentials: true });
 }

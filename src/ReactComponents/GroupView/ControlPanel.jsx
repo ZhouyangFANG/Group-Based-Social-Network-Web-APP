@@ -4,7 +4,7 @@ import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import { React } from 'react';
 import {
-  addAdmin, inviteUser, leaveGroup, removeAdmin
+  addAdmin, inviteUser, leaveGroup, removeAdmin,
 } from '../../api';
 
 export default function ControlPanel(props) {
