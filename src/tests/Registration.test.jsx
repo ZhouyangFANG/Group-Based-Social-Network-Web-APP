@@ -7,6 +7,8 @@ import {
 import Registration from '../ReactComponents/Registration.jsx';
 import { BrowserRouter } from "react-router-dom";
 
+jest.mock('../fetch.js');
+const lib2 = require('../fetch.js');
 
 beforeEach(async () => {
   await waitFor(() => {
@@ -29,19 +31,27 @@ describe('show start page correctly', () => {
 
     expect(screen.getByText('Already have an account? Login')).toBeInTheDocument();
 
+    lib2.register.mockResolvedValue(201);
+    const pwd = document.getElementById('password');
+    const user = document.getElementById('userName');
+    pwd.value = '11111111';
+    user.value = '1111111';
+    const btn = document.getElementById('registerBtn');
+    btn.click();
+
     
     // expect(screen.getByText('player1:5')).toBeInTheDocument();
   });
   test('button click', async () => {
-  //   fireEvent.change(screen.getByRole('textbox'), {
-  //     target: { value: '^' },
-  //   });
-    fireEvent.submit(screen.getByRole('button'));
-    // expect(handleSubmit).toHaveBeenCalled();
-  //   expect(screen.getByText('Invalid User Name!!')).toBeInTheDocument();
-  //   // const display = screen.getByText('Display Leaders');
-  //   // console.log(display);
-  //   // xpect(screen.getByText('Stop display leaders')).toBeInTheDocument();
-  //   // // expect(screen.getByText('cicici')).toBeInTheDocument();
+    const pwd = document.getElementById('password');
+    const user = document.getElementById('userName');
+    pwd.value = '11111111';
+    user.value = '1111111';
+    const btn = document.getElementById('registerBtn');
+    btn.click();
+  })
+  test('registeration failed', async () => {
+    const btn = document.getElementById('registerBtn');
+    btn.click();
   })
 })

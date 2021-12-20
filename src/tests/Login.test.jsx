@@ -7,6 +7,9 @@ import {
 import Login from '../ReactComponents/Login';
 import { BrowserRouter } from "react-router-dom";
 
+jest.mock('../fetch.js');
+const lib2 = require('../fetch.js');
+
 
 beforeEach(async () => {
   await waitFor(() => {
@@ -36,12 +39,26 @@ describe('show start page correctly', () => {
   //     target: { value: '^' },
   //   });
     // fireEvent.submit(screen.getByRole('button'));
-    fireEvent.submit(screen.getByTestId('submit'));
+    lib2.login.mockResolvedValue(200);
+    const username = document.getElementById('email');
+    expect(username).not.toBeNull();
+    username.value = 'testUser102';
+    const pwd = document.getElementById('password');
+    expect(pwd).not.toBeNull();
+    pwd.value = '123456';
+    const btn = document.getElementById('loginBtn');
+    btn.click();
+
     // expect(handleSubmit).toHaveBeenCalled();
   //   expect(screen.getByText('Invalid User Name!!')).toBeInTheDocument();
   //   // const display = screen.getByText('Display Leaders');
   //   // console.log(display);
   //   // xpect(screen.getByText('Stop display leaders')).toBeInTheDocument();
   //   // // expect(screen.getByText('cicici')).toBeInTheDocument();
+  })
+
+  test('login failed', async () => {
+    const btn = document.getElementById('loginBtn');
+    btn.click();
   })
 })
