@@ -6,7 +6,7 @@ const url = !process.env.NODE_ENV || process.env.NODE_ENV === 'development'
   ? 'http://localhost:8080/api'
   : '/api';
 
-const delay = ms => new Promise(res => setTimeout(res, ms));
+const delay = (ms) => new Promise((res) => setTimeout(res, ms));
 
 const groupList = [
   {
@@ -14,30 +14,30 @@ const groupList = [
     name: 'cis557-1',
     tags: 'cis',
     members: [1],
-    posts: [1,2,3],
+    posts: [1, 2, 3],
   },
   {
     id: '134',
     name: 'cis547-2',
     tags: 'cis',
-    members: [6,1,3],
-    posts: [1,2],
+    members: [6, 1, 3],
+    posts: [1, 2],
   },
   {
     id: '35132',
     name: 'cis537-3',
     tags: 'cis',
-    members: [1,5,6,6,6],
+    members: [1, 5, 6, 6, 6],
     posts: [1],
   },
   {
     id: '3514',
     name: 'dat757-4',
     tags: 'dat',
-    members: [1,4],
-    posts: [1,2,3,4],
+    members: [1, 4],
+    posts: [1, 2, 3, 4],
   },
-]
+];
 
 const testGroupPage = {
   id: '35143',
@@ -82,8 +82,7 @@ const testGroupPage = {
     postContent: 'This impressi you like.',
   },
   ],
-}
-
+};
 
 export async function getGroupList(setGroupList) {
   const res = await axios.get(`${url}/groups`, { withCredentials: true });
@@ -101,7 +100,7 @@ export async function getGroupPage(groupName) {
 }
 
 export async function addAdmin(groupName, userName) {
-  const res = await axios.post(`${url}/groups/${groupName}/admins/${userName}`,{}, { withCredentials: true });
+  const res = await axios.post(`${url}/groups/${groupName}/admins/${userName}`, {}, { withCredentials: true });
   console.log(res.data);
   return res.data;
 }
@@ -122,7 +121,7 @@ export async function inviteUser(groupName, userName) {
 }
 
 export async function leaveGroup(groupName) {
-  console.log("leave the group");
+  console.log('leave the group');
   await axios.delete(`${url}/groups/${groupName}/members`, { withCredentials: true });
 }
 
@@ -133,7 +132,7 @@ export async function filterGroupsByTags(tag, setGroupList) {
 }
 
 export async function JoinRequestDecision(groupName, userName, decision) {
-  const res = await axios.put(`${url}/groups/${groupName}/requests/${userName}`, {granted: decision}, { withCredentials: true });
+  const res = await axios.put(`${url}/groups/${groupName}/requests/${userName}`, { granted: decision }, { withCredentials: true });
 }
 
 export async function getNotification() {
@@ -143,7 +142,7 @@ export async function getNotification() {
 
 export async function respondInvitation(groupName, decision) {
   console.log(decision);
-  const res = await axios.put(`${url}/invites/${groupName}`, {granted: decision}, { withCredentials: true });
+  const res = await axios.put(`${url}/invites/${groupName}`, { granted: decision }, { withCredentials: true });
 }
 
 export async function getMessages(userName) {
@@ -152,7 +151,5 @@ export async function getMessages(userName) {
 }
 
 export async function SendMessage(userName, content, type) {
-  const res = await axios.post(`${url}/users/${userName}/messages`, {content: content, type: type}, { withCredentials: true });
+  const res = await axios.post(`${url}/users/${userName}/messages`, { content, type }, { withCredentials: true });
 }
-
-

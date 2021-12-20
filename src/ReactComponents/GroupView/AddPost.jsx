@@ -17,7 +17,7 @@ const theme = createTheme();
 
 export default function AddPost() {
   const [media, setMedia] = useState(null);
-  const [mediaType, setMediaType] = useState("null");
+  const [mediaType, setMediaType] = useState('null');
   const reader = new FileReader();
   async function addPost() {
     const content = document.getElementById('content');
@@ -43,11 +43,11 @@ export default function AddPost() {
   const handleImage = (event) => {
     console.log(event.target.files[0]);
     reader.readAsDataURL(event.target.files[0]);
-    reader.addEventListener("load", function () {
-        // convert image file to base64 string
-        console.log(reader.result);
-        setMedia(reader.result);
-        setMediaType("image");
+    reader.addEventListener('load', () => {
+      // convert image file to base64 string
+      console.log(reader.result);
+      setMedia(reader.result);
+      setMediaType('image');
     }, false);
 
     // setObjectURL(URL.createObjectURL(event.target.files[0]));
@@ -62,27 +62,27 @@ export default function AddPost() {
     // const sound = () => <audio src={event.target.files[0]} autoPlay />;
     // const audioElement = new Audio(event.target.files[0]);
     // audioElement.play();
-}
-const handleAudio = (event) => {
+  };
+  const handleAudio = (event) => {
     console.log(event.target.files[0]);
     reader.readAsDataURL(event.target.files[0]);
-    reader.addEventListener("load", function () {
-        // convert image file to base64 string
-        console.log(reader.result);
-        setMedia(reader.result);
-        setMediaType("audio");
+    reader.addEventListener('load', () => {
+      // convert image file to base64 string
+      console.log(reader.result);
+      setMedia(reader.result);
+      setMediaType('audio');
     }, false);
-}
-const handleVideo = (event) => {
+  };
+  const handleVideo = (event) => {
     console.log(event.target.files[0]);
     reader.readAsDataURL(event.target.files[0]);
-    reader.addEventListener("load", function () {
-        // convert image file to base64 string
-        console.log(reader.result);
-        setMedia(reader.result);
-        setMediaType("video");
+    reader.addEventListener('load', () => {
+      // convert image file to base64 string
+      console.log(reader.result);
+      setMedia(reader.result);
+      setMediaType('video');
     }, false);
-}
+  };
 
   return (
     <ThemeProvider theme={theme}>
@@ -107,7 +107,8 @@ const handleVideo = (event) => {
               id="title"
               label="Title"
               name="title"
-              autoFocus />
+              autoFocus
+            />
             <TextField
               margin="normal"
               required
@@ -115,7 +116,8 @@ const handleVideo = (event) => {
               name="content"
               label="Content"
               type="content"
-              id="content" />
+              id="content"
+            />
             <Button
               data-testid="submit"
               fullWidth

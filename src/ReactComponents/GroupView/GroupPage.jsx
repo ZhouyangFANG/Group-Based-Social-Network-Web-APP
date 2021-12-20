@@ -18,7 +18,7 @@ import {
   getGroupList,
   addAdmin,
   removeAdmin,
-  requestToJoinGroup, inviteUser, leaveGroup, filterGroupsByTags, getGroupPage, JoinRequestDecision
+  requestToJoinGroup, inviteUser, leaveGroup, filterGroupsByTags, getGroupPage, JoinRequestDecision,
 } from '../../api';
 import Header from '../Header';
 import Posts from './Posts';
@@ -28,10 +28,11 @@ import LeftPanel from '../LeftPanel';
 const lib = require('../../fetch');
 
 export default function GroupPage() {
-
   const { groupName } = useParams();
   const [certainGroup, setCertainGroup] = useState(null);
-  const [groupAnal, setGroupAnal] = useState({ num_member: -1, num_post: -1, num_deleted: -1, num_flagged: -1, num_hidden: -1 });
+  const [groupAnal, setGroupAnal] = useState({
+    num_member: -1, num_post: -1, num_deleted: -1, num_flagged: -1, num_hidden: -1,
+  });
   // const [certainGroup, setCertainGroup] = useState({
   //   id: '',
   //   name: '',
@@ -59,15 +60,14 @@ export default function GroupPage() {
     return (() => { isMounted = false; });
   }, []);
 
-
   function addPost() {
     let url = window.location.href;
-    url += "/post";
+    url += '/post';
     window.location.href = url;
   }
 
   const List1 = () => {
-    const admins = certainGroup.admins;
+    const { admins } = certainGroup;
     return (
       admins.map((person) => (
         <li key={person.id}>
@@ -76,10 +76,10 @@ export default function GroupPage() {
           </Link>
         </li>
       ))
-    )
+    );
   };
   const List2 = () => {
-    const members = certainGroup.members;
+    const { members } = certainGroup;
     return (
       members.map((person) => (
         <li key={person.id}>
@@ -88,30 +88,30 @@ export default function GroupPage() {
           </Link>
         </li>
       ))
-    )
+    );
   };
   const List3 = () => {
-    const requests = certainGroup.requests;
+    const { requests } = certainGroup;
     return (
       requests.map((person) => (
         <li key={person.id}>
           {person.username}
-          <Button variant='contained' type="submit" onClick={JoinRequestDecision(groupName, person.username, false)}>Deny</Button>
-          <Button variant='contained' type="submit" onClick={JoinRequestDecision(groupName, person.username, true)}>Accept</Button>
+          <Button variant="contained" type="submit" onClick={JoinRequestDecision(groupName, person.username, false)}>Deny</Button>
+          <Button variant="contained" type="submit" onClick={JoinRequestDecision(groupName, person.username, true)}>Accept</Button>
         </li>
       ))
-    )
+    );
   };
 
   return (
     <>
-      <Header title={`Group Name: ${groupName}`} userName={window.localStorage.getItem("username")} />
+      <Header title={`Group Name: ${groupName}`} userName={window.localStorage.getItem('username')} />
       <Grid container spacing={2}>
-      <Grid item xs={3} md={3}>
+        <Grid item xs={3} md={3}>
           <Paper>
             {
-              certainGroup &&
-              (
+              certainGroup
+              && (
                 <>
                   Admins:
                   <ul>
@@ -122,8 +122,9 @@ export default function GroupPage() {
                     <List2 />
                   </ul>
                   {
-                    certainGroup.requests &&
-                    (<>
+                    certainGroup.requests
+                    && (
+                    <>
                       Request to Join:
                       <ul>
                         <List3 />
@@ -149,19 +150,29 @@ export default function GroupPage() {
                 Group Analytics
               </Typography>
               <Typography variant="body2">
-                Member Number: {groupAnal.num_member}
+                Member Number:
+                {' '}
+                {groupAnal.num_member}
               </Typography>
               <Typography variant="body2">
-                Post Number: {groupAnal.num_post}
+                Post Number:
+                {' '}
+                {groupAnal.num_post}
               </Typography>
               <Typography variant="body2">
-                Deleted Number: {groupAnal.num_deleted}
+                Deleted Number:
+                {' '}
+                {groupAnal.num_deleted}
               </Typography>
               <Typography variant="body2">
-                Flagged Number: {groupAnal.num_flagged}
+                Flagged Number:
+                {' '}
+                {groupAnal.num_flagged}
               </Typography>
               <Typography variant="body2">
-                Hidden Number: {groupAnal.num_hidden}
+                Hidden Number:
+                {' '}
+                {groupAnal.num_hidden}
               </Typography>
             </CardContent>
           </Card>

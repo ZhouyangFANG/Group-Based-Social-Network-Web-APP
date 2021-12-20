@@ -22,8 +22,10 @@ import OutlinedInput from '@mui/material/OutlinedInput';
 import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
-import { getGroupList, addAdmin, removeAdmin, requestToJoinGroup, inviteUser, leaveGroup, filterGroupsByTags, respondInvitation, getNotification } from '../api';
 import { TextField } from '@mui/material';
+import {
+  getGroupList, addAdmin, removeAdmin, requestToJoinGroup, inviteUser, leaveGroup, filterGroupsByTags, respondInvitation, getNotification,
+} from '../api';
 import Header from './Header';
 
 const lib = require('../fetch');
@@ -66,30 +68,33 @@ function MainView() {
   const [recommend, setRecommend] = useState([]);
   const [notification, setNotification] = useState(null);
   const history = useHistory();
-  const whoami = window.localStorage.getItem("username");
+  const whoami = window.localStorage.getItem('username');
   const columns = [
     {
       field: 'name',
       headerName: 'Group Name',
       width: 150,
       renderCell: (params) => (
-        <Link component={RouterLink} to={'groups/'+params.value} variant="body2">{params.value}</Link>
+        <Link component={RouterLink} to={`groups/${params.value}`} variant="body2">{params.value}</Link>
       ),
     },
-    { field: 'type', headerName: 'Group Type', width: 150, 
+    {
+      field: 'type',
+      headerName: 'Group Type',
+      width: 150,
       renderCell: (params) => (
-        params.row.type===1?
-        'Public'
-        :'Private')
+        params.row.type === 1
+          ? 'Public'
+          : 'Private'),
     },
     {
       field: 'join',
       headerName: 'Request to join',
       width: 150,
       renderCell: (params) => (
-          params.row.type===1&&params.row.is_member==false?
-          <Button variant="contained" color="primary" onClick={() => { handleJoinGroup(params.row.name) }}>Join</Button>
-          :null
+        params.row.type === 1 && params.row.is_member == false
+          ? <Button variant="contained" color="primary" onClick={() => { handleJoinGroup(params.row.name); }}>Join</Button>
+          : null
       ),
     },
   ];
@@ -116,12 +121,12 @@ function MainView() {
     console.log(groupName);
     await requestToJoinGroup(groupName);
     // const path = `/${group.row.name}`;
-  }
+  };
 
   const handleGetGroupList = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    const tags = data.get("tags");
+    const tags = data.get('tags');
     console.log(tags);
     if (!tags) {
       await getGroupList(setGroupList);
@@ -129,48 +134,45 @@ function MainView() {
     } else {
       filterGroupsByTags(tags, setGroupList);
     }
-  }
+  };
 
   const sortByPostsNum = () => {
-    let arr = [...groupList];
+    const arr = [...groupList];
     arr.sort(objectSortPostNum());
     setGroupList(arr);
-
-  }
+  };
 
   function objectSortPostNum() {
     return function (objectN, objectM) {
       const valueN = objectN.num_posts;
       const valueM = objectM.num_posts;
       if (valueN < valueM) return 1;
-      else if (valueN > valueM) return -1;
-      else return 0;
-    }
+      if (valueN > valueM) return -1;
+      return 0;
+    };
   }
 
   const sortByMemberNum = () => {
-    let arr = [...groupList];
+    const arr = [...groupList];
     arr.sort(objectSortMemNum());
     setGroupList(arr);
-
-  }
+  };
 
   function objectSortMemNum() {
     return function (objectN, objectM) {
       const valueN = objectN.num_members;
       const valueM = objectM.num_members;
       if (valueN < valueM) return 1;
-      else if (valueN > valueM) return -1;
-      else return 0;
-    }
+      if (valueN > valueM) return -1;
+      return 0;
+    };
   }
 
   const sortByNewestMsg = () => {
-    let arr = [...groupList];
+    const arr = [...groupList];
     arr.sort(objectSortNewMsg());
     setGroupList(arr);
-
-  }
+  };
 
   function objectSortNewMsg() {
     return function (objectN, objectM) {
@@ -178,30 +180,30 @@ function MainView() {
       const valueM = objectM.latest;
       if (valueN === null && valueM === null) {
         return 0;
-      } else if (valueN === null) {
+      } if (valueN === null) {
         return 1;
-      } else if (valueM === null) {
+      } if (valueM === null) {
         return -1;
       }
       if (valueN < valueM) return 1;
-      else if (valueN > valueM) return -1;
-      else return 0;
-    }
+      if (valueN > valueM) return -1;
+      return 0;
+    };
   }
 
   const List1 = () => {
     console.log(notification);
-    const mentions = notification.mentions;
+    const { mentions } = notification;
     return (
       mentions.map((person) => (
         <li key={person.id}>
           {`You are memtioned by ${person.username}`}
         </li>
       ))
-    )
+    );
   };
   const List2 = () => {
-    const messages = notification.messages;
+    const { messages } = notification;
     return (
       messages.map((person) => (
         <li key={person.id}>
@@ -210,19 +212,19 @@ function MainView() {
           </Link>
         </li>
       ))
-    )
+    );
   };
   const List3 = () => {
-    const invitations = notification.invitations;
+    const { invitations } = notification;
     return (
       invitations.map((group) => (
         <li key={group.id}>
-            {`You are invited to join ${group.name} group`}
-            <Button variant='contained' type="submit" onClick={() => {respondInvitation(group.name, false)}}>Deny</Button>
-            <Button variant='contained' type="submit" onClick={() => {respondInvitation(group.name, true)}}>Accept</Button>
+          {`You are invited to join ${group.name} group`}
+          <Button variant="contained" type="submit" onClick={() => { respondInvitation(group.name, false); }}>Deny</Button>
+          <Button variant="contained" type="submit" onClick={() => { respondInvitation(group.name, true); }}>Accept</Button>
         </li>
       ))
-    )
+    );
   };
 
   return (
@@ -230,10 +232,10 @@ function MainView() {
       <Header title="Public Group List" userName={whoami} />
 
       <Grid container spacing={1}>
-      <Grid item xs={2} md={2}>
-            {
-              notification &&
-              (
+        <Grid item xs={2} md={2}>
+          {
+              notification
+              && (
                 <>
                   You are mentioned by:
                   <ul>
@@ -265,11 +267,11 @@ function MainView() {
         <Grid item xs={2} md={1}>
           <Box component="form" id="groupList" onSubmit={handleGetGroupList} noValidate sx={{ mt: 1 }}>
             <TextField name="tags" placeholder="tags" />
-            <Button variant='contained' type="submit">Get Group List</Button>
+            <Button variant="contained" type="submit">Get Group List</Button>
           </Box>
-          <Button id="btn1" variant='contained' type="submit" onClick={sortByPostsNum}>Sort groups by number of posts</Button>
-          <Button id="btn2" variant='contained' type="submit" onClick={sortByMemberNum}>Sort groups by number of members</Button>
-          <Button id="btn3" variant='contained' type="submit" onClick={sortByNewestMsg}>Sort groups by newest messages</Button>
+          <Button id="btn1" variant="contained" type="submit" onClick={sortByPostsNum}>Sort groups by number of posts</Button>
+          <Button id="btn2" variant="contained" type="submit" onClick={sortByMemberNum}>Sort groups by number of members</Button>
+          <Button id="btn3" variant="contained" type="submit" onClick={sortByNewestMsg}>Sort groups by newest messages</Button>
         </Grid>
         <Grid item xs={3} md={3}>
           <div style={{ height: 800, width: '100%' }}>

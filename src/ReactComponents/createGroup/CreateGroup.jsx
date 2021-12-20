@@ -11,11 +11,10 @@ import StepLabel from '@mui/material/StepLabel';
 import Button from '@mui/material/Button';
 import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { createTheme, ThemeProvider, useTheme } from '@mui/material/styles';
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
 import Checkbox from '@mui/material/Checkbox';
-import { useTheme } from '@mui/material/styles';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
@@ -139,68 +138,68 @@ export default function CreateGroup() {
             Create Group
           </Typography>
           <>
-              <>
-                <Grid container spacing={3}>
-                  <Grid item xs={12}>
-                    <TextField
-                      required
-                      id="groupName"
-                      name="groupName"
-                      label="Group name"
-                      fullWidth
-                      variant="standard"
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <FormControl component="fieldset">
-                      <FormLabel component="legend">Group Type</FormLabel>
-                      <RadioGroup
-                        aria-label="group-type"
-                        defaultValue="public"
-                        name="group-type-radio"
-                      >
-                        <FormControlLabel name="typeLabel" value="public" control={<Radio />} label="Public" />
-                        <FormControlLabel name="typeLabel" value="private" control={<Radio />} label="Private" />
-                      </RadioGroup>
-                    </FormControl>
-                  </Grid>
-                  <Grid item xs={12}>
-                    <div>
-                      <FormControl sx={{ m: 1, width: 300 }}>
-                        <InputLabel id="demo-multiple-name-label">Name</InputLabel>
-                        <Select
-                          labelId="demo-multiple-name-label"
-                          id="demo-multiple-name"
-                          multiple
-                          value={personName}
-                          onChange={handleChange}
-                          input={<OutlinedInput label="Name" />}
-                          MenuProps={MenuProps}
-                        >
-                          {names.map((name) => (
-                            <MenuItem
-                              key={name.id}
-                              value={name.id}
-                            >
-                              {name.name}
-                            </MenuItem>
-                          ))}
-                        </Select>
-                      </FormControl>
-                    </div>
-                  </Grid>
+            <>
+              <Grid container spacing={3}>
+                <Grid item xs={12}>
+                  <TextField
+                    required
+                    id="groupName"
+                    name="groupName"
+                    label="Group name"
+                    fullWidth
+                    variant="standard"
+                  />
                 </Grid>
-                <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                  <Button
+                <Grid item xs={12}>
+                  <FormControl component="fieldset">
+                    <FormLabel component="legend">Group Type</FormLabel>
+                    <RadioGroup
+                      aria-label="group-type"
+                      defaultValue="public"
+                      name="group-type-radio"
+                    >
+                      <FormControlLabel name="typeLabel" value="public" control={<Radio />} label="Public" />
+                      <FormControlLabel name="typeLabel" value="private" control={<Radio />} label="Private" />
+                    </RadioGroup>
+                  </FormControl>
+                </Grid>
+                <Grid item xs={12}>
+                  <div>
+                    <FormControl sx={{ m: 1, width: 300 }}>
+                      <InputLabel id="demo-multiple-name-label">Name</InputLabel>
+                      <Select
+                        labelId="demo-multiple-name-label"
+                        id="demo-multiple-name"
+                        multiple
+                        value={personName}
+                        onChange={handleChange}
+                        input={<OutlinedInput label="Name" />}
+                        MenuProps={MenuProps}
+                      >
+                        {names.map((name) => (
+                          <MenuItem
+                            key={name.id}
+                            value={name.id}
+                          >
+                            {name.name}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  </div>
+                </Grid>
+              </Grid>
+              <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                <Button
                   id="btn1"
-                    variant="contained"
-                    onClick={createGroup}
-                    sx={{ mt: 3, ml: 1 }}
-                  >
-                    Create Group
-                  </Button>
-                </Box>
-              </>
+                  variant="contained"
+                  onClick={createGroup}
+                  sx={{ mt: 3, ml: 1 }}
+                >
+                  Create Group
+                </Button>
+              </Box>
+            </>
           </>
         </Paper>
         <Copyright />

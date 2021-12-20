@@ -1,5 +1,5 @@
 import React, { Component, useState, useEffect } from 'react';
-import TablePagination from "@material-ui/core/TablePagination";
+import TablePagination from '@material-ui/core/TablePagination';
 // import { styled } from '@mui/material/styles';
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
@@ -42,7 +42,7 @@ export default function Posts(props) {
     if (res === 200) {
       window.location.reload();
     } else {
-      alert("unauthorized!");
+      alert('unauthorized!');
     }
   }
 
@@ -73,7 +73,7 @@ export default function Posts(props) {
     if (res === 200) {
       window.location.reload();
     } else {
-      alert("You cannot delete this comment");
+      alert('You cannot delete this comment');
     }
   }
 
@@ -82,9 +82,9 @@ export default function Posts(props) {
       const valueN = objectN.time;
       const valueM = objectM.time;
       if (valueN < valueM) return 1;
-      else if (valueN > valueM) return -1;
-      else return 0;
-    }
+      if (valueN > valueM) return -1;
+      return 0;
+    };
   }
 
   const Comments = ({ comment }) => {
@@ -94,12 +94,14 @@ export default function Posts(props) {
     return (
       <CardContent>
         <Typography variant="body2" color="text.secondary">
-          {comment.author}: {comment.content}
+          {comment.author}
+          :
+          {comment.content}
         </Typography>
-        <Button variant='contained' type="submit" onClick={() => { deleteComment(comment.id) }}>Delete</Button>
+        <Button variant="contained" type="submit" onClick={() => { deleteComment(comment.id); }}>Delete</Button>
       </CardContent>
     );
-  }
+  };
 
   function MapCommentList(commentL) {
     commentL.sort(sortCommentTime());
@@ -109,17 +111,17 @@ export default function Posts(props) {
   function MapList() {
     return certainGroup.posts.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((post) => {
       switch (post.attachmentType) {
-        case "null":
-          console.log("only text post");
+        case 'null':
+          console.log('only text post');
           return (<PostCard1 post={post} key={post.id} />);
-        case "image":
-          console.log("text and image post");
+        case 'image':
+          console.log('text and image post');
           return (<PostCard2 post={post} key={post.id} />);
-        case "audio":
-          console.log("text and audio post");
+        case 'audio':
+          console.log('text and audio post');
           return (<PostCard3 post={post} key={post.id} />);
-        case "video":
-          console.log("text and video post");
+        case 'video':
+          console.log('text and video post');
           return (<PostCard4 post={post} key={post.id} />);
       }
     });
@@ -127,7 +129,7 @@ export default function Posts(props) {
 
   useEffect(async () => {
     const url = window.location.href;
-    let urlList = url.split('/');
+    const urlList = url.split('/');
     const groupName = urlList.pop();
 
     const hide = await lib.getHiddenList(groupName);
@@ -135,16 +137,16 @@ export default function Posts(props) {
   }, []);
 
   const PostCard1 = ({ post }) => {
-    for (var i = 0; i < hiddenPosts.length; i++) {
+    for (let i = 0; i < hiddenPosts.length; i++) {
       if (hiddenPosts[i].postId === post.id) {
         return null;
       }
-    };
+    }
 
     if (post.flagger && !post.deleted) {
       return (
         <Card key={post.id} sx={{ maxWidth: 500 }}>
-          <CardHeader title={post.title} subheader={'Author: '+post.author} />
+          <CardHeader title={post.title} subheader={`Author: ${post.author}`} />
           <CardContent id="container">
             <Typography variant="body2" color="text.secondary">
               {post.postContent}
@@ -152,19 +154,19 @@ export default function Posts(props) {
           </CardContent>
           <TextField id={`comment${post.id}`} label="add comment" name="add comment" />
           <CardActions disableSpacing>
-            <IconButton aria-label="addComment" onClick={() => { addComment(post.id) }}>
+            <IconButton aria-label="addComment" onClick={() => { addComment(post.id); }}>
               <FavoriteIcon />
             </IconButton>
-            <IconButton aria-label="flag" id="flag" onClick={() => { flagPost(post.id) }}>
+            <IconButton aria-label="flag" id="flag" onClick={() => { flagPost(post.id); }}>
               <AssistantPhotoIcon />
             </IconButton>
-            <IconButton aria-label="delete" id="delete" onClick={() => { deletePost(post.id) }}>
+            <IconButton aria-label="delete" id="delete" onClick={() => { deletePost(post.id); }}>
               <DeleteIcon />
             </IconButton>
-            <IconButton aria-label="flagdelete" onClick={() => { deletePost(post.id) }}>
+            <IconButton aria-label="flagdelete" onClick={() => { deletePost(post.id); }}>
               <DeleteForeverOutlinedIcon />
             </IconButton>
-            <IconButton aria-label="hide" onClick={() => { hidePost(post.id) }}>
+            <IconButton aria-label="hide" onClick={() => { hidePost(post.id); }}>
               <ThreeSixtyIcon />
             </IconButton>
           </CardActions>
@@ -172,11 +174,11 @@ export default function Posts(props) {
             {MapCommentList(post.comments)}
           </div>
         </Card>
-      )
-    } else if (!post.flagger && !post.deleted) {
+      );
+    } if (!post.flagger && !post.deleted) {
       return (
         <Card key={post.id} sx={{ maxWidth: 500 }}>
-          <CardHeader title={post.title} subheader={'Author: '+post.author} />
+          <CardHeader title={post.title} subheader={`Author: ${post.author}`} />
           <CardContent id="container">
             <Typography variant="body2" color="text.secondary">
               {post.postContent}
@@ -184,16 +186,16 @@ export default function Posts(props) {
           </CardContent>
           <TextField id={`comment${post.id}`} label="add comment" name="add comment" />
           <CardActions disableSpacing>
-            <IconButton aria-label="addComment" onClick={() => { addComment(post.id) }}>
+            <IconButton aria-label="addComment" onClick={() => { addComment(post.id); }}>
               <FavoriteIcon />
             </IconButton>
-            <IconButton aria-label="flag" id="flag" onClick={() => { flagPost(post.id) }}>
+            <IconButton aria-label="flag" id="flag" onClick={() => { flagPost(post.id); }}>
               <AssistantPhotoIcon />
             </IconButton>
-            <IconButton aria-label="delete" id="delete" onClick={() => { deletePost(post.id) }}>
+            <IconButton aria-label="delete" id="delete" onClick={() => { deletePost(post.id); }}>
               <DeleteIcon />
             </IconButton>
-            <IconButton aria-label="hide" id="hide" onClick={() => { hidePost(post.id) }}>
+            <IconButton aria-label="hide" id="hide" onClick={() => { hidePost(post.id); }}>
               <ThreeSixtyIcon />
             </IconButton>
           </CardActions>
@@ -201,23 +203,22 @@ export default function Posts(props) {
             {MapCommentList(post.comments)}
           </div>
         </Card>
-      )
-    } else {
-      return null;
+      );
     }
-  }
+    return null;
+  };
 
   const PostCard2 = ({ post }) => {
-    for (var i = 0; i < hiddenPosts.length; i++) {
+    for (let i = 0; i < hiddenPosts.length; i++) {
       if (hiddenPosts[i].postId === post.id) {
         return null;
       }
-    };
+    }
 
     if (post.flagger && !post.deleted) {
       return (
         <Card key={post.id} sx={{ maxWidth: 500 }}>
-          <CardHeader title={post.title} subheader={'Author: '+post.author} />
+          <CardHeader title={post.title} subheader={`Author: ${post.author}`} />
           <CardContent id="container">
             <Typography variant="body2" color="text.secondary">
               {post.postContent}
@@ -226,19 +227,19 @@ export default function Posts(props) {
           </CardContent>
           <TextField id={`comment${post.id}`} label="add comment" name="add comment" />
           <CardActions disableSpacing>
-            <IconButton aria-label="addComment" onClick={() => { addComment(post.id) }}>
+            <IconButton aria-label="addComment" onClick={() => { addComment(post.id); }}>
               <FavoriteIcon />
             </IconButton>
-            <IconButton aria-label="flag" id="flag" onClick={() => { flagPost(post.id) }}>
+            <IconButton aria-label="flag" id="flag" onClick={() => { flagPost(post.id); }}>
               <AssistantPhotoIcon />
             </IconButton>
-            <IconButton aria-label="delete" id="delete" onClick={() => { deletePost(post.id) }}>
+            <IconButton aria-label="delete" id="delete" onClick={() => { deletePost(post.id); }}>
               <DeleteIcon />
             </IconButton>
-            <IconButton aria-label="flagdelete" onClick={() => { deletePost(post.id) }}>
+            <IconButton aria-label="flagdelete" onClick={() => { deletePost(post.id); }}>
               <DeleteForeverOutlinedIcon />
             </IconButton>
-            <IconButton aria-label="hide" onClick={() => { hidePost(post.id) }}>
+            <IconButton aria-label="hide" onClick={() => { hidePost(post.id); }}>
               <ThreeSixtyIcon />
             </IconButton>
           </CardActions>
@@ -246,11 +247,11 @@ export default function Posts(props) {
             {MapCommentList(post.comments)}
           </div>
         </Card>
-      )
-    } else if (!post.flagger && !post.deleted) {
+      );
+    } if (!post.flagger && !post.deleted) {
       return (
         <Card key={post.id} sx={{ maxWidth: 500 }}>
-          <CardHeader title={post.title} subheader={'Author: '+post.author} />
+          <CardHeader title={post.title} subheader={`Author: ${post.author}`} />
           <CardContent id="container">
             <Typography variant="body2" color="text.secondary">
               {post.postContent}
@@ -259,16 +260,16 @@ export default function Posts(props) {
           </CardContent>
           <TextField id={`comment${post.id}`} label="add comment" name="add comment" />
           <CardActions disableSpacing>
-            <IconButton aria-label="addComment" onClick={() => { addComment(post.id) }}>
+            <IconButton aria-label="addComment" onClick={() => { addComment(post.id); }}>
               <FavoriteIcon />
             </IconButton>
-            <IconButton aria-label="flag" id="flag" onClick={() => { flagPost(post.id) }}>
+            <IconButton aria-label="flag" id="flag" onClick={() => { flagPost(post.id); }}>
               <AssistantPhotoIcon />
             </IconButton>
-            <IconButton aria-label="delete" id="delete" onClick={() => { deletePost(post.id) }}>
+            <IconButton aria-label="delete" id="delete" onClick={() => { deletePost(post.id); }}>
               <DeleteIcon />
             </IconButton>
-            <IconButton aria-label="hide" id="hide" onClick={() => { hidePost(post.id) }}>
+            <IconButton aria-label="hide" id="hide" onClick={() => { hidePost(post.id); }}>
               <ThreeSixtyIcon />
             </IconButton>
           </CardActions>
@@ -276,23 +277,22 @@ export default function Posts(props) {
             {MapCommentList(post.comments)}
           </div>
         </Card>
-      )
-    } else {
-      return null;
+      );
     }
-  }
+    return null;
+  };
 
   const PostCard3 = ({ post }) => {
-    for (var i = 0; i < hiddenPosts.length; i++) {
+    for (let i = 0; i < hiddenPosts.length; i++) {
       if (hiddenPosts[i].postId === post.id) {
         return null;
       }
-    };
+    }
 
     if (post.flagger && !post.deleted) {
       return (
         <Card key={post.id} sx={{ maxWidth: 500 }}>
-          <CardHeader title={post.title} subheader={'Author: '+post.author} />
+          <CardHeader title={post.title} subheader={`Author: ${post.author}`} />
           <CardContent id="container">
             <Typography variant="body2" color="text.secondary">
               {post.postContent}
@@ -303,19 +303,19 @@ export default function Posts(props) {
           </CardContent>
           <TextField id={`comment${post.id}`} label="add comment" name="add comment" />
           <CardActions disableSpacing>
-            <IconButton aria-label="addComment" onClick={() => { addComment(post.id) }}>
+            <IconButton aria-label="addComment" onClick={() => { addComment(post.id); }}>
               <FavoriteIcon />
             </IconButton>
-            <IconButton aria-label="flag" id="flag" onClick={() => { flagPost(post.id) }}>
+            <IconButton aria-label="flag" id="flag" onClick={() => { flagPost(post.id); }}>
               <AssistantPhotoIcon />
             </IconButton>
-            <IconButton aria-label="delete" id="delete" onClick={() => { deletePost(post.id) }}>
+            <IconButton aria-label="delete" id="delete" onClick={() => { deletePost(post.id); }}>
               <DeleteIcon />
             </IconButton>
-            <IconButton aria-label="flagdelete" onClick={() => { deletePost(post.id) }}>
+            <IconButton aria-label="flagdelete" onClick={() => { deletePost(post.id); }}>
               <DeleteForeverOutlinedIcon />
             </IconButton>
-            <IconButton aria-label="hide" onClick={() => { hidePost(post.id) }}>
+            <IconButton aria-label="hide" onClick={() => { hidePost(post.id); }}>
               <ThreeSixtyIcon />
             </IconButton>
           </CardActions>
@@ -323,11 +323,11 @@ export default function Posts(props) {
             {MapCommentList(post.comments)}
           </div>
         </Card>
-      )
-    } else if (!post.flagger && !post.deleted) {
+      );
+    } if (!post.flagger && !post.deleted) {
       return (
         <Card key={post.id} sx={{ maxWidth: 500 }}>
-          <CardHeader title={post.title} subheader={'Author: '+post.author} />
+          <CardHeader title={post.title} subheader={`Author: ${post.author}`} />
           <CardContent id="container">
             <Typography variant="body2" color="text.secondary">
               {post.postContent}
@@ -338,16 +338,16 @@ export default function Posts(props) {
           </CardContent>
           <TextField id={`comment${post.id}`} label="add comment" name="add comment" />
           <CardActions disableSpacing>
-            <IconButton aria-label="addComment" onClick={() => { addComment(post.id) }}>
+            <IconButton aria-label="addComment" onClick={() => { addComment(post.id); }}>
               <FavoriteIcon />
             </IconButton>
-            <IconButton aria-label="flag" id="flag" onClick={() => { flagPost(post.id) }}>
+            <IconButton aria-label="flag" id="flag" onClick={() => { flagPost(post.id); }}>
               <AssistantPhotoIcon />
             </IconButton>
-            <IconButton aria-label="delete" id="delete" onClick={() => { deletePost(post.id) }}>
+            <IconButton aria-label="delete" id="delete" onClick={() => { deletePost(post.id); }}>
               <DeleteIcon />
             </IconButton>
-            <IconButton aria-label="hide" id="hide" onClick={() => { hidePost(post.id) }}>
+            <IconButton aria-label="hide" id="hide" onClick={() => { hidePost(post.id); }}>
               <ThreeSixtyIcon />
             </IconButton>
           </CardActions>
@@ -355,23 +355,22 @@ export default function Posts(props) {
             {MapCommentList(post.comments)}
           </div>
         </Card>
-      )
-    } else {
-      return null;
+      );
     }
-  }
+    return null;
+  };
 
   const PostCard4 = ({ post }) => {
-    for (var i = 0; i < hiddenPosts.length; i++) {
+    for (let i = 0; i < hiddenPosts.length; i++) {
       if (hiddenPosts[i].postId === post.id) {
         return null;
       }
-    };
+    }
 
     if (post.flagger && !post.deleted) {
       return (
         <Card key={post.id} sx={{ maxWidth: 500 }}>
-          <CardHeader title={post.title} subheader={'Author: '+post.author} />
+          <CardHeader title={post.title} subheader={`Author: ${post.author}`} />
           <CardContent id="container">
             <Typography variant="body2" color="text.secondary">
               {post.postContent}
@@ -382,19 +381,19 @@ export default function Posts(props) {
           </CardContent>
           <TextField id={`comment${post.id}`} label="add comment" name="add comment" />
           <CardActions disableSpacing>
-            <IconButton aria-label="addComment" onClick={() => { addComment(post.id) }}>
+            <IconButton aria-label="addComment" onClick={() => { addComment(post.id); }}>
               <FavoriteIcon />
             </IconButton>
-            <IconButton aria-label="flag" id="flag" onClick={() => { flagPost(post.id) }}>
+            <IconButton aria-label="flag" id="flag" onClick={() => { flagPost(post.id); }}>
               <AssistantPhotoIcon />
             </IconButton>
-            <IconButton aria-label="delete" id="delete" onClick={() => { deletePost(post.id) }}>
+            <IconButton aria-label="delete" id="delete" onClick={() => { deletePost(post.id); }}>
               <DeleteIcon />
             </IconButton>
-            <IconButton aria-label="flagdelete" onClick={() => { deletePost(post.id) }}>
+            <IconButton aria-label="flagdelete" onClick={() => { deletePost(post.id); }}>
               <DeleteForeverOutlinedIcon />
             </IconButton>
-            <IconButton aria-label="hide" onClick={() => { hidePost(post.id) }}>
+            <IconButton aria-label="hide" onClick={() => { hidePost(post.id); }}>
               <ThreeSixtyIcon />
             </IconButton>
           </CardActions>
@@ -402,11 +401,11 @@ export default function Posts(props) {
             {MapCommentList(post.comments)}
           </div>
         </Card>
-      )
-    } else if (!post.flagger && !post.deleted) {
+      );
+    } if (!post.flagger && !post.deleted) {
       return (
         <Card key={post.id} sx={{ maxWidth: 500 }}>
-          <CardHeader title={post.title} subheader={'Author: '+post.author} />
+          <CardHeader title={post.title} subheader={`Author: ${post.author}`} />
           <CardContent id="container">
             <Typography variant="body2" color="text.secondary">
               {post.postContent}
@@ -417,16 +416,16 @@ export default function Posts(props) {
           </CardContent>
           <TextField id={`comment${post.id}`} label="add comment" name="add comment" />
           <CardActions disableSpacing>
-            <IconButton aria-label="addComment" onClick={() => { addComment(post.id) }}>
+            <IconButton aria-label="addComment" onClick={() => { addComment(post.id); }}>
               <FavoriteIcon />
             </IconButton>
-            <IconButton aria-label="flag" id="flag" onClick={() => { flagPost(post.id) }}>
+            <IconButton aria-label="flag" id="flag" onClick={() => { flagPost(post.id); }}>
               <AssistantPhotoIcon />
             </IconButton>
-            <IconButton aria-label="delete" id="delete" onClick={() => { deletePost(post.id) }}>
+            <IconButton aria-label="delete" id="delete" onClick={() => { deletePost(post.id); }}>
               <DeleteIcon />
             </IconButton>
-            <IconButton aria-label="hide" id="hide" onClick={() => { hidePost(post.id) }}>
+            <IconButton aria-label="hide" id="hide" onClick={() => { hidePost(post.id); }}>
               <ThreeSixtyIcon />
             </IconButton>
           </CardActions>
@@ -434,18 +433,16 @@ export default function Posts(props) {
             {MapCommentList(post.comments)}
           </div>
         </Card>
-      )
-    } else {
-      return null;
+      );
     }
-  }
-
+    return null;
+  };
 
   return (
     <>
       {
-        certainGroup &&
-        (
+        certainGroup
+        && (
           <div>
             <div>
               {MapList()}

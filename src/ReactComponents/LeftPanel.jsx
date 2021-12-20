@@ -15,15 +15,17 @@ import CardContent from '@mui/material/CardContent';
 import { TextField } from '@mui/material';
 
 export default function LeftPanel() {
-  return (<Grid item xs={2} md={3}>
-    <Paper style={{ position: 'fixed' }}>
-      <MenuList>
-        <MenuItem component={RouterLink} to="/user">Personal Information</MenuItem>
-        <MenuItem>Settings</MenuItem>
-        <MenuItem>My Groups</MenuItem>
-        <MenuItem>Friends</MenuItem>
-        <MenuItem>Logout</MenuItem>
-      </MenuList>
-    </Paper>
-  </Grid>);
+  return (
+    <Grid item xs={2} md={3}>
+      <Paper style={{ position: 'fixed' }}>
+        <MenuList>
+          <MenuItem component={RouterLink} to="/user">Personal Information</MenuItem>
+          <MenuItem>Settings</MenuItem>
+          <MenuItem>My Groups</MenuItem>
+          <MenuItem>Friends</MenuItem>
+          <MenuItem>Logout</MenuItem>
+        </MenuList>
+      </Paper>
+    </Grid>
+  );
 }

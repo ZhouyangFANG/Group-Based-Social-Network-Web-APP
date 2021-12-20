@@ -2,8 +2,8 @@ const express = require('express');
 const cookieParser = require('cookie-parser');
 const helmet = require('helmet');
 const cors = require('cors');
-const routes = require('./routes');
 const path = require('path');
+const routes = require('./routes');
 
 const app = express();
 
@@ -76,8 +76,6 @@ app.get('/api/tag/:tagname', routes.checkCookie, routes.getGroupsByTag);
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../build/index.html'));
 });
-
-
 
 const port = process.env.PORT || 8080;
 

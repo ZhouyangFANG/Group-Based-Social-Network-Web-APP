@@ -56,8 +56,8 @@ function UserProfile() {
   }
 
   const toGroupPage = () => {
-    window.location.href = window.location.protocol + "//" + window.location.host + `/groups`;
-  }
+    window.location.href = `${window.location.protocol}//${window.location.host}/groups`;
+  };
 
   React.useEffect(async () => {
     getProfile();
@@ -80,7 +80,7 @@ function UserProfile() {
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
               User Profile
             </Typography>
-            <Button color="inherit" onClick={() => {toGroupPage()}}>Back</Button>
+            <Button color="inherit" onClick={() => { toGroupPage(); }}>Back</Button>
           </Toolbar>
         </AppBar>
       </Box>
@@ -99,14 +99,14 @@ function UserProfile() {
         <Grid item xs={7} md={6}>
           <Stack spacing={2}>
             Personal Information
-            <TextField  id="email" label="Email" autoFocus />
-            <TextField  id="username" label="User Name" defaultValue=" " />
+            <TextField id="email" label="Email" autoFocus />
+            <TextField id="username" label="User Name" defaultValue=" " />
             <TextField variant="outlined" margin="normal" id="phone" label="Phone Number" defaultValue=" " />
-            <TextField variant="outlined" margin="normal" id="link" label="Links" autoFocus defaultValue=" "/>
-            <TextField margin="normal" id="gender" label="Gender" autoFocus defaultValue=" "/>
+            <TextField variant="outlined" margin="normal" id="link" label="Links" autoFocus defaultValue=" " />
+            <TextField margin="normal" id="gender" label="Gender" autoFocus defaultValue=" " />
             <div id="register">Registration date: </div>
             <Button variant="contained" onClick={updateProfile}>Save</Button>
-            <TextField margin="normal" id="pwd" label="password" autoFocus defaultValue=" "/>
+            <TextField margin="normal" id="pwd" label="password" autoFocus defaultValue=" " />
             <Button variant="contained" onClick={updatePwd}>Save</Button>
           </Stack>
         </Grid>

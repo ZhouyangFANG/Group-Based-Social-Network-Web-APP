@@ -93,8 +93,8 @@ function _checkAdmin(req, res, callback) {
         callback(group, results.length > 0);
       }
     });
-  })
-};
+  });
+}
 
 async function createUser(req, res) {
   const { username, password } = req.body;
@@ -457,12 +457,12 @@ async function deletePost(req, res) {
       res.json({ error });
     } else {
       let flag = false;
-      for (i=0; i<results.length; i += 1){
-        if (results[i].adminId === userId){
+      for (i = 0; i < results.length; i += 1) {
+        if (results[i].adminId === userId) {
           flag = true;
         }
       }
-      if (flag === true){
+      if (flag === true) {
         connection.query(`UPDATE post SET deleted = true where id = '${postId}'`, (error, results) => {
           if (error) {
             res.status(400);
@@ -477,7 +477,7 @@ async function deletePost(req, res) {
           if (error) {
             res.status(400);
             res.json({ error });
-          } else if (results.affectedRows !==0) {
+          } else if (results.affectedRows !== 0) {
             res.status(200);
             res.json(results);
           } else {
@@ -531,7 +531,7 @@ async function deleteComment(req, res) {
       if (error) {
         res.status(400);
         res.json({ error });
-      } else if (results.affectedRows !==0) {
+      } else if (results.affectedRows !== 0) {
         res.status(200);
         res.json(results);
       } else {
@@ -643,7 +643,7 @@ function postRequest(req, res) {
           res.status(201).json('request posted');
         }).catch((error) => {
           res.status(400).json({ error });
-        })
+        });
       }
     });
   });
@@ -716,7 +716,7 @@ function leaveGroup(req, res) {
           }
         });
       }
-    })
+    });
   });
 }
 
@@ -735,7 +735,6 @@ function getGroup(req, res) {
       return results;
     }).catch((error) => {
       res.status(400).json({ error });
-      return;
     });
     const promise3 = isAdmin ? dbQuery(`SELECT user.* FROM user INNER JOIN request ON request.userId = user.id WHERE request.groupId = '${group.id}';`) : Promise.resolve(undefined);
     return Promise.all([promise0, promise1, promise2, promise3]).then(([members, admins, posts, requests]) => {
@@ -777,7 +776,7 @@ function getMessages(req, res) {
     } else if (results0.length === 0) {
       res.status(404).json('user not found');
     } else {
-      const username = req.userInfo.username;
+      const { username } = req.userInfo;
       const othername = results0[0].username;
       connection.query(`SELECT * FROM message
       WHERE (sender = '${username}' and receiver = '${othername}') or (sender = '${othername}' and receiver = '${username}')
@@ -803,14 +802,14 @@ function postMessage(req, res) {
       } else if (results0.length === 0) {
         res.status(404).json('user not found');
       } else {
-        const username = req.userInfo.username;
+        const { username } = req.userInfo;
         const othername = results0[0].username;
         if (username === othername) {
           res.status(400).json('cannot send message to self');
         } else {
           const id = uuid.v4();
           const time = new Date().toISOString().slice(0, 19).replace('T', ' ');
-          connection.query(`INSERT INTO message(id, sender, receiver, time, content, type) VALUES (?, ?, ?, ?, ?, ?);`, [id, username, othername, time, content, type], (error1) => {
+          connection.query('INSERT INTO message(id, sender, receiver, time, content, type) VALUES (?, ?, ?, ?, ?, ?);', [id, username, othername, time, content, type], (error1) => {
             if (error1) {
               res.status(400).json({ error: error1 });
             } else {
@@ -831,8 +830,8 @@ function addMentions(text, userId) {
   return Promise.all(mentions.map(async (mention) => {
     const name = mention.slice(1);
     try {
-      await dbQuery(`INSERT INTO mention(mentioner, mentioned) SELECT '${userId}', user.id FROM user WHERE username = '${name}';`)
-    } catch (error) {};
+      await dbQuery(`INSERT INTO mention(mentioner, mentioned) SELECT '${userId}', user.id FROM user WHERE username = '${name}';`);
+    } catch (error) {}
   }));
 }
 
