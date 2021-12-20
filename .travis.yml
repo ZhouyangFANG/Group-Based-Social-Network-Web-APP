@@ -6,19 +6,24 @@ cache:
     - node_modules
 jobs:
   include:
-    - stage: Lint, Test, Build
+    - stage: Lint, FrontendTest, BackendTest, Build
       name: Lint
       script:
         - npm install
         - npm run lint
-    - name: Test
+    - name: FrontendTest
       script:
         - npm install
-        - npm test -- --coverage
+        - npm run test
+    - name: BackendTest
+      script:
+        - cd server
+        - npm install
+        - npm run test
     - name: Build
       script:
-        - npm install
         - npm run build
 branches:
   only:
     - master
+    - tests
