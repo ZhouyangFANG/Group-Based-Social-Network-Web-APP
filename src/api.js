@@ -84,11 +84,11 @@ const url = !process.env.NODE_ENV || process.env.NODE_ENV === 'development'
 //   ],
 // };
 
-export async function getGroupList(setGroupList) {
+export async function getGroupList() {
   const res = await axios.get(`${url}/groups`, { withCredentials: true });
   console.log(res.data);
-  setGroupList(res.data);
-  // setGroupList(groupList);
+  // setGroupList(res.data);
+  return res.data;
 }
 
 export async function getGroupPage(groupName) {

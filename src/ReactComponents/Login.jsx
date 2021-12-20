@@ -55,6 +55,7 @@ export default function SignIn() {
       window.location.href = newUrl;
     } else {
       pwd.value = '';
+      alert('Error password!');
       const v = curr.count + 1;
       if (curr === null) {
         window.localStorage.setItem(email.value, JSON.stringify({ time: timeV, count: 1 }));

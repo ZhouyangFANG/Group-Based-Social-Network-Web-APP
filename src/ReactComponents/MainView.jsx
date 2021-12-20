@@ -79,7 +79,8 @@ function MainView() {
     const tags = data.get('tags');
     console.log(tags);
     if (!tags) {
-      await getGroupList(setGroupList);
+      const res = await getGroupList();
+      setGroupList(res);
       console.log('get whole list');
     } else {
       filterGroupsByTags(tags, setGroupList);

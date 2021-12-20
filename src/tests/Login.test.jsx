@@ -13,9 +13,8 @@ const lib2 = require('../fetch.js');
 
 beforeEach(async () => {
   await waitFor(() => {
-    render(<BrowserRouter>
-      <Login />
-    </BrowserRouter>);
+    render(
+      <Login />);
   });
 });
 
