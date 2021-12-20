@@ -131,7 +131,9 @@ const Chat = () => {
                         return (
                             <ListItem key={message.id}>
                                 <ListItemText primary={`${message.sender}: `}></ListItemText>
-                                <audio src={message.content} />
+                                <audio controls autoPlay>
+                                    <source src={message.content}/>
+                                </audio>
                             </ListItem>
                         )
 
@@ -140,7 +142,9 @@ const Chat = () => {
                         return (
                             <ListItem key={message.id}>
                                 <ListItemText primary={`${message.sender}: `}></ListItemText>
-                                <video src={message.content} />
+                                <video controls autoplay>
+                                    <source src={message.content}/>
+                                </video>
                             </ListItem>
                         )
 
