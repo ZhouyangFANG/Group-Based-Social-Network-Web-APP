@@ -71,13 +71,21 @@ const Chat = () => {
     }
     const handleAudio = (event) => {
         console.log(event.target.files[0]);
-        reader.readAsDataURL(event.target.files[0])
-        SendMessage(friendName, reader.result, "audio");
+        reader.readAsDataURL(event.target.files[0]);
+        reader.addEventListener("load", function () {
+            // convert image file to base64 string
+            console.log(reader.result);
+            SendMessage(friendName, reader.result, "audio");
+        }, false);
     }
     const handleVideo = (event) => {
         console.log(event.target.files[0]);
-        reader.readAsDataURL(event.target.files[0])
-        SendMessage(friendName, reader.result, "video");
+        reader.readAsDataURL(event.target.files[0]);
+        reader.addEventListener("load", function () {
+            // convert image file to base64 string
+            console.log(reader.result);
+            SendMessage(friendName, reader.result, "video");
+        }, false);
     }
 
     useEffect(async () => {
