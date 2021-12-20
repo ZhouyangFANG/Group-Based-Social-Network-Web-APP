@@ -121,8 +121,6 @@ export default function Posts(props) {
         case "video":
           console.log("text and video post");
           return (<PostCard4 post={post} key={post.id} />);
-
-
       }
     });
   }
@@ -378,7 +376,7 @@ export default function Posts(props) {
             <Typography variant="body2" color="text.secondary">
               {post.postContent}
             </Typography>
-            <video controls autoplay>
+            <video controls autoPlay>
               <source src={post.attachment} />
             </video>
           </CardContent>
@@ -413,7 +411,7 @@ export default function Posts(props) {
             <Typography variant="body2" color="text.secondary">
               {post.postContent}
             </Typography>
-            <video controls autoplay>
+            <video controls autoPlay>
               <source src={post.attachment} />
             </video>
           </CardContent>
