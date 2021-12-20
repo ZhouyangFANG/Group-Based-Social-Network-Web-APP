@@ -3,6 +3,7 @@ const cookieParser = require('cookie-parser');
 const helmet = require('helmet');
 const cors = require('cors');
 const routes = require('./routes');
+const path = require('path');
 
 const app = express();
 
@@ -19,6 +20,8 @@ app.use(cors({
   origin: 'http://localhost:3000',
   credentials: true,
 }));
+
+app.use(express.static(path.join(__dirname, '../build')));
 
 app.post('/api/users', routes.createUser);
 app.post('/api/login', routes.loginUser);
@@ -70,9 +73,11 @@ app.get('/api/notification', routes.checkCookie, routes.getNotifications);
 
 app.get('/api/tag/:tagname', routes.checkCookie, routes.getGroupsByTag);
 
-app.get('/', (req, res) => {
-  res.send('Hello World!');
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../build/index.html'));
 });
+
+
 
 const port = process.env.PORT || 8080;
 
