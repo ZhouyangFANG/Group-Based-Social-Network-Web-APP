@@ -839,7 +839,7 @@ function addMentions(text, userId) {
 function getNotifications(req, res) {
   const promise0 = dbQuery(`SELECT groupInfo.* FROM groupInfo INNER JOIN invitation ON invitation.groupId = groupInfo.id WHERE invitation.userId = '${req.userInfo.id}';`);
   const promise1 = dbQuery(`SELECT user.* FROM user INNER JOIN mention ON mention.mentioner = user.id WHERE mention.mentioned = '${req.userInfo.id}';`);
-  const promise2 = dbQuery(`SELECT user.* FROM user INNER JOIN message ON message.sender = user.username WHERE message.receiver = '${req.userInfo.username}';`);
+  const promise2 = dbQuery(`SELECT DISTINCT user.* FROM user INNER JOIN message ON message.sender = user.username WHERE message.receiver = '${req.userInfo.username}';`);
   return Promise.all([promise0, promise1, promise2]).then(([invitations, mentions, messages]) => {
     res.status(200).json({ invitations, mentions, messages });
   }).catch((error) => {
