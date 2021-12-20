@@ -20,7 +20,8 @@ async function register(user, pwd) {
 }
 
 async function login(name, pwd) {
-  let statusCode, id, username;
+  let statusCode; let id; let
+    username;
   await fetch(`${uri}login`, {
     method: 'POST',
     headers: {
@@ -37,11 +38,11 @@ async function login(name, pwd) {
       username = data.username;
       statusCode = res.status;
       window.console.log(data);
-  })).catch((err) => {
+    })).catch((err) => {
     window.console.log(err);
   });
-  window.localStorage.setItem("username", username);
-  window.localStorage.setItem("userId", id);
+  window.localStorage.setItem('username', username);
+  window.localStorage.setItem('userId', id);
   return statusCode;
 }
 
@@ -56,14 +57,14 @@ async function createGroup(nameV, topic, type) {
     body: JSON.stringify({
       name: nameV,
       tag: topic,
-      type: type,
+      type,
     }),
   }).then((res) => {
-      record = res.status;
-    }).catch((err) => {
-      // Print the error if there is one.
-      window.console.log(err);
-    });
+    record = res.status;
+  }).catch((err) => {
+    // Print the error if there is one.
+    window.console.log(err);
+  });
   return record;
 }
 
@@ -76,11 +77,11 @@ async function hidePost(postId) {
     },
     credentials: 'include',
   }).then((res) => {
-      record = res.status;
-    }).catch((err) => {
-      // Print the error if there is one.
-      window.console.log(err);
-    });
+    record = res.status;
+  }).catch((err) => {
+    // Print the error if there is one.
+    window.console.log(err);
+  });
   return record;
 }
 
@@ -113,8 +114,8 @@ async function addPost(groupName, titleV, contentV, attachment, attachmentType) 
     body: JSON.stringify({
       title: titleV,
       postContent: contentV,
-      attachment: attachment,
-      attachmentType: attachmentType,
+      attachment,
+      attachmentType,
     }),
   }).then((res) => {
     statusCode = res.status;
@@ -178,7 +179,6 @@ async function getProfile(username) {
   return res;
 }
 
-
 async function updateProfile(emailV, genderV, phoneV, linkV) {
   let res;
   await fetch(`${uri}users`, {
@@ -193,13 +193,13 @@ async function updateProfile(emailV, genderV, phoneV, linkV) {
       link: linkV,
     }),
     credentials: 'include',
-  }).then((response) => response.json())
+  }).then((response) => response.json()
     .then((data) => {
       res = response.status;
       window.console.log(data);
-    }).catch((error) => {
-      window.console.log(error);
-    });
+    })).catch((error) => {
+    window.console.log(error);
+  });
   return res;
 }
 
@@ -214,17 +214,17 @@ async function updatePwd(pwd) {
       newPassword: pwd,
     }),
     credentials: 'include',
-  }).then((response) => response.json())
+  }).then((response) => response.json()
     .then((data) => {
       res = response.status;
       window.console.log(data);
-    }).catch((error) => {
-      window.console.log(error);
-    });
+    })).catch((error) => {
+    window.console.log(error);
+  });
   return res;
 }
 
-async function getAllTag(tags) {
+async function getAllTag() {
   let res;
   await fetch(`${uri}tag/`, {
     method: 'GET',
@@ -291,12 +291,11 @@ async function addComment(postId, contentV) {
     credentials: 'include',
   }).then((response) => {
     res = response.status;
-    }).catch((error) => {
-      window.console.log(error);
-    });
+  }).catch((error) => {
+    window.console.log(error);
+  });
   return res;
 }
-
 
 async function deleteComment(commentId) {
   let res;
@@ -307,10 +306,10 @@ async function deleteComment(commentId) {
     },
     credentials: 'include',
   }).then((response) => {
-      res = response.status;
-    }).catch((error) => {
-      window.console.log(error);
-    });
+    res = response.status;
+  }).catch((error) => {
+    window.console.log(error);
+  });
   return res;
 }
 

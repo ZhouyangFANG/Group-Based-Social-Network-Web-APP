@@ -1,14 +1,13 @@
-import * as React from 'react';
-import { Link as RouterLink } from 'react-router-dom';
-import Button from '@mui/material/Button';
-import CssBaseline from '@mui/material/CssBaseline';
-import TextField from '@mui/material/TextField';
-import Link from '@mui/material/Link';
-import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
+import CssBaseline from '@mui/material/CssBaseline';
+import Grid from '@mui/material/Grid';
+import Link from '@mui/material/Link';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
+import * as React from 'react';
 
 const lib = require('../fetch');
 
@@ -29,12 +28,12 @@ export default function SignIn() {
     const pwd = document.getElementById('password');
     const email = document.getElementById('email');
 
-    let curr = JSON.parse(window.localStorage.getItem(email.value));
+    const curr = JSON.parse(window.localStorage.getItem(email.value));
     const timeV = new Date().getTime();
     if (curr !== null) {
-      const diff = (timeV - curr.time)/1000;
-      if (curr.count >= 3 && diff < 300 ) {
-        alert("Your account has been locked out");
+      const diff = (timeV - curr.time) / 1000;
+      if (curr.count >= 3 && diff < 300) {
+        alert('Your account has been locked out');
         return;
       }
     }
@@ -42,7 +41,7 @@ export default function SignIn() {
     const res = await lib.login(email.value, pwd.value);
     if (res === 200) {
       if (curr !== null) {
-        window.localStorage.setItem(email.value, JSON.stringify({count: 0, time: timeV}));
+        window.localStorage.setItem(email.value, JSON.stringify({ count: 0, time: timeV }));
       }
 
       const url = window.location.href;
@@ -56,11 +55,11 @@ export default function SignIn() {
       window.location.href = newUrl;
     } else {
       pwd.value = '';
-      
+      const v = curr.count + 1;
       if (curr === null) {
-        window.localStorage.setItem(email.value, JSON.stringify({time: timeV, count: 1}));
+        window.localStorage.setItem(email.value, JSON.stringify({ time: timeV, count: 1 }));
       } else {
-        window.localStorage.setItem(email.value, JSON.stringify({time: timeV, count: curr.count+1}));
+        window.localStorage.setItem(email.value, JSON.stringify({ time: timeV, count: v }));
       }
     }
   }
@@ -103,7 +102,7 @@ export default function SignIn() {
             />
             <Button
               data-testid="submit"
-              id = 'loginBtn'
+              id="loginBtn"
               type="submit"
               fullWidth
               variant="contained"
