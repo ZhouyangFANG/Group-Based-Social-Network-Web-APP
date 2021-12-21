@@ -150,6 +150,9 @@ async function loginUser(req, res) {
     } else if (results.length !== 1) {
       res.status(400);
       res.json('No such user');
+    } else if(results[0].deleted === 1){
+      res.status(401);
+      res.json({ message: 'User deleted' });
     } else if (results[0].username === username && results[0].password === sha256(password)) {
       const cipher = crypto.createCipheriv(algorithm, secretKey, iv);
       const tokenJson = {
@@ -231,7 +234,7 @@ async function changePassword(req, res) {
 
 async function deleteUser(req, res) {
   const { userInfo } = req;
-  connection.query(`DELETE FROM user where id = '${userInfo.id}'`,
+  connection.query(`UPDATE user SET deleted = true where id = '${userInfo.id}'`,
     (error, results) => {
       if (error) {
         res.status(400);
