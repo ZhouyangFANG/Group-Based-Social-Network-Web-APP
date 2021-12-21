@@ -105,7 +105,7 @@ function UserProfile() {
             <TextField margin="normal" id="gender" label="Gender" autoFocus defaultValue=" " />
             <div id="register">Registration date: </div>
             <Button variant="contained" onClick={updateProfile}>Save</Button>
-            <TextField margin="normal" id="pwd" label="password" autoFocus defaultValue=" " />
+            <TextField margin="normal" id="pwd" label="password" autoFocus defaultValue="" />
             <Button variant="contained" onClick={updatePwd}>Save</Button>
           </Stack>
         </Grid>

@@ -17,6 +17,7 @@ jobs:
         - npm run test
     - name: BackendTest
       script:
+        - npm install
         - cd server
         - npm install
         - npm run test

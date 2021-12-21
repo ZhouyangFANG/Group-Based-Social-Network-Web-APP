@@ -32,8 +32,8 @@ afterAll(async () => {
 
 describe('Create player endpoint API & integration tests', () => {
     const agent = request.agent(app);
-  
-    test('test register', () => 
+
+    test('test register', () =>
     agent.post('/api/users').send({username: 'test', password: 'password'})
     .expect(201) // testing the response status code
     .then((response) => {
@@ -45,18 +45,18 @@ describe('Create player endpoint API & integration tests', () => {
       //console.log(userId);
     }));
 
-    test('test register duplicate', () => 
+    test('test register duplicate', () =>
     agent.post('/api/users').send({username: 'test', password: 'password'})
     .expect(409) // testing the response status code
     );
 
-    test('test login', () => 
+    test('test login', () =>
     agent.post('/api/login').send({username: 'test', password: 'password'})
     .expect(200) // testing the response status code
     );
-    
 
-    test('test updateUser', () => 
+
+    test('test updateUser', () =>
       agent.put('/api/users').send({email: 'email@fake'})
       .expect(200)
       .then((response) => {
@@ -65,20 +65,20 @@ describe('Create player endpoint API & integration tests', () => {
         });
       }));
 
-    test('test check cookie and get user info', () => 
+    test('test check cookie and get user info', () =>
     agent.get('/api/users/test')
-    .expect(200) 
+    .expect(200)
     .then((response) => {
         expect(JSON.parse(response.text).username).toBe('test');
         expect(JSON.parse(response.text).email).toBe('email@fake');
       }));
 
-    test('test change password', () => 
+    test('test change password', () =>
       agent.put('/api/users/password').send({newPassword: 'newpassword'})
       .expect(200));
 
-    
-    test('test create tag', () => 
+
+    test('test create tag', () =>
       agent.post('/api/tag').send({name: 'testTag'})
       .expect(200)
       .then((response) => {
@@ -90,7 +90,7 @@ describe('Create player endpoint API & integration tests', () => {
       }) // testing the response status code
     );
 
-    test('test create group', () => 
+    test('test create group', () =>
       agent.post('/api/groups').send({name: 'testGroup', type: 'public', tag: [tagId]})
       .expect(200) // testing the response status code
       .then((response) => {
@@ -106,7 +106,14 @@ describe('Create player endpoint API & integration tests', () => {
       })
     );
 
-    test('test get public group', () => 
+    test('test get created group', () => {
+      agent.get('/api/groups/testGroup').expect(200).then((response) => {
+        const group = JSON.parse(response.text);
+        expect(group.name).toBe('testGroup');
+      });
+    });
+
+    test('test get public group', () =>
       agent.get('/api/groups')
       .expect(200).then((response) => {
         const results = JSON.parse(response.text)
@@ -117,7 +124,18 @@ describe('Create player endpoint API & integration tests', () => {
         );
       }));
 
-    test('test create post', () => 
+    test('test get groups by tag', () => {
+      agent.get('/api/tag/testTag').expect(200).then((response) => {
+        const groups = JSON.parse(response.text);
+        expect(groups).toEqual(
+          expect.arrayContaining([
+            expect.objectContaining({ id: groupId, name: groupName, is_member: 1 }),
+          ])
+        )
+      });
+    });
+
+    test('test create post', () =>
       agent.post(`/api/groups/${groupName}/posts`)
       .send({
           title: 'postTitle',
@@ -132,7 +150,7 @@ describe('Create player endpoint API & integration tests', () => {
       })
     );
 
-    test('test flag post', () => 
+    test('test flag post', () =>
       agent.post(`/api/posts/${postId}/flag`)
       .expect(200)
       .then((response) => {
@@ -140,7 +158,7 @@ describe('Create player endpoint API & integration tests', () => {
       })
     );
 
-    test('test hide post', () => 
+    test('test hide post', () =>
       agent.post(`/api/posts/${postId}/hide`)
       .expect(200).then((response) => {
         connection.query(`select * from hide where postId = '${postId}'`, (error, results) =>{
@@ -148,7 +166,7 @@ describe('Create player endpoint API & integration tests', () => {
         })
       }));
 
-    test('test mark post delete', () => 
+    test('test mark post delete', () =>
       agent.delete(`/api/posts/${postId}`)
       .expect(200)
       .then((response) => {
@@ -158,11 +176,11 @@ describe('Create player endpoint API & integration tests', () => {
         })
       }));
 
-    test('test group recommendation', () => 
+    test('test group recommendation', () =>
       agent.get(`/api/groupRecommendation`)
       .expect(200));
 
-    test('test get group analytics', () => 
+    test('test get group analytics', () =>
       agent.get(`/api/groupAnalytic/${groupName}`)
       .expect(200)
       .then((response) => {
@@ -170,5 +188,14 @@ describe('Create player endpoint API & integration tests', () => {
         expect(JSON.parse(response.text).num_member).toBe(1);
         expect(JSON.parse(response.text).num_hidden).toBe(1);
       }));
+
+    test('test invitation', () => {
+      agent.post('/api/groups/testGroup/invites/nosuchuser').expect(200).then((response) => {
+        expect(JSON.parse(response.text)).toBe('success');
+      });
+    });
+
+    // test('test request to join', () => {
+    //   agent.post('api/groups/testGroup/requests').expect(400);
+    // });
 });
-  
