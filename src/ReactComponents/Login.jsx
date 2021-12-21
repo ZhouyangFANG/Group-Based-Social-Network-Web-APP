@@ -40,10 +40,10 @@ export default function SignIn() {
     }
 
     const res = await lib.login(email.value, pwd.value);
-    if (res === 401){
+    if (res === 401) {
       pwd.value = '';
       alert('Account Deleted');
-    }else if (res === 200) {
+    } else if (res === 200) {
       if (curr !== null) {
         window.localStorage.setItem(email.value, JSON.stringify({ count: 0, time: timeV }));
       }

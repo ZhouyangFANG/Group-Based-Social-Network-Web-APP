@@ -334,5 +334,5 @@ export {
   register, login, createGroup, addPost, deletePost, flagPost, getProfile,
   deleteComment, updateProfile, updatePwd, getAllTag,
   hidePost, getHiddenList, getRecommend, getGroupAnaly, addComment,
-  deleteUser
+  deleteUser,
 };

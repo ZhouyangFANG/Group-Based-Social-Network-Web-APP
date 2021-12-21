@@ -150,7 +150,7 @@ async function loginUser(req, res) {
     } else if (results.length !== 1) {
       res.status(400);
       res.json('No such user');
-    } else if(results[0].deleted === 1){
+    } else if (results[0].deleted === 1) {
       res.status(401);
       res.json({ message: 'User deleted' });
     } else if (results[0].username === username && results[0].password === sha256(password)) {

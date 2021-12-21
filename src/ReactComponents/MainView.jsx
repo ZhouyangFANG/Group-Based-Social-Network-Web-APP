@@ -179,17 +179,17 @@ function MainView() {
     );
   };
 
-  const List4 = () => {
-    return (
-      groupList.map((group) => (
-        group.is_member === 1 ?
-        <li key={group.id}>
-          {`You are accepted by ${group.name} group`}
-        </li> 
+  const List4 = () => (
+    groupList.map((group) => (
+      group.is_member === 1
+        ? (
+          <li key={group.id}>
+            {`You are accepted by ${group.name} group`}
+          </li>
+        )
         : null
-      ))
-    );
-  };
+    ))
+  );
 
   return (
     <div id="wrapper">
