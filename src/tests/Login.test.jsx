@@ -38,6 +38,7 @@ describe('show start page correctly', () => {
   //     target: { value: '^' },
   //   });
     // fireEvent.submit(screen.getByRole('button'));
+    window.alert = () => { };  // provide an empty implementation for window.alert
     lib2.login.mockResolvedValue(200);
     const username = document.getElementById('email');
     expect(username).not.toBeNull();
@@ -57,6 +58,7 @@ describe('show start page correctly', () => {
   })
 
   test('login failed', async () => {
+    window.alert = () => { };  // provide an empty implementation for window.alert
     const btn = document.getElementById('loginBtn');
     btn.click();
   })

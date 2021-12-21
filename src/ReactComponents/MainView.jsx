@@ -227,7 +227,7 @@ function MainView() {
               rows={groupList}
               columns={columns}
               pageSize={8}
-              rowsPerPageOptions={[5]}
+              rowsPerPageOptions={[5, 8]}
               disableSelectionOnClick
             />
           </div>
@@ -246,7 +246,7 @@ function MainView() {
             <DataGrid
               rows={recommend}
               columns={columnsRec}
-              rowsPerPageOptions={[5]}
+              rowsPerPageOptions={[5, 100]}
               disableSelectionOnClick
             />
           </div>

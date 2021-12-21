@@ -13,9 +13,9 @@ const lib2 = require('../fetch.js');
 beforeEach(async () => {
   await waitFor(() => {
     render(
-    <BrowserRouter>
-      <Registration />
-    </BrowserRouter>);
+      <BrowserRouter>
+        <Registration />
+      </BrowserRouter>);
   });
 });
 
@@ -24,10 +24,11 @@ afterEach(() => {
 });
 
 describe('show start page correctly', () => {
-  
+
   test('component rendered', async () => {
     // const listNode = await screen.getByTestId('2');
     // expect(screen.getByText('player2:10')).toBeInTheDocument();
+    window.alert = () => { };  // provide an empty implementation for window.alert
 
     expect(screen.getByText('Already have an account? Login')).toBeInTheDocument();
 
@@ -39,10 +40,11 @@ describe('show start page correctly', () => {
     const btn = document.getElementById('registerBtn');
     btn.click();
 
-    
+
     // expect(screen.getByText('player1:5')).toBeInTheDocument();
   });
   test('button click', async () => {
+    window.alert = () => { };  // provide an empty implementation for window.alert
     const pwd = document.getElementById('password');
     const user = document.getElementById('userName');
     pwd.value = '11111111';
@@ -51,6 +53,7 @@ describe('show start page correctly', () => {
     btn.click();
   })
   test('registeration failed', async () => {
+    window.alert = () => { };  // provide an empty implementation for window.alert
     const btn = document.getElementById('registerBtn');
     btn.click();
   })
