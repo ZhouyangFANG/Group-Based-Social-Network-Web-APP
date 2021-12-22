@@ -21,8 +21,7 @@ function MainView() {
 
   const handleJoinGroup = async (groupName) => {
     console.log(groupName);
-    await requestToJoinGroup(groupName);
-    // const path = `/${group.row.name}`;
+    requestToJoinGroup(groupName);
   };
 
   const columns = [
@@ -63,27 +62,35 @@ function MainView() {
   ];
 
   useEffect(async () => {
-    let isMounted = true;
-    const recommendL = await lib.getRecommend();
-    const notif = await getNotification();
-    if (isMounted) {
-      setRecommend(recommendL);
-      setNotification(notif);
+    try {
+      let isMounted = true;
+      const recommendL = await lib.getRecommend();
+      const notif = await getNotification();
+      if (isMounted) {
+        setRecommend(recommendL);
+        setNotification(notif);
+      }
+    } catch (error) {
+      console.log(error);
     }
     return (() => { isMounted = false; });
   }, []);
 
   const handleGetGroupList = async (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    const tags = data.get('tags');
-    console.log(tags);
-    if (!tags) {
-      const res = await getGroupList();
-      setGroupList(res);
-      console.log('get whole list');
-    } else {
-      filterGroupsByTags(tags, setGroupList);
+    try {
+      event.preventDefault();
+      const data = new FormData(event.currentTarget);
+      const tags = data.get('tags');
+      console.log(tags);
+      if (!tags) {
+        const res = await getGroupList();
+        setGroupList(res);
+        console.log('get whole list');
+      } else {
+        filterGroupsByTags(tags, setGroupList);
+      }
+    } catch (err) {
+      console.log(err);
     }
   };
 
@@ -179,17 +186,17 @@ function MainView() {
     );
   };
 
-  const List4 = () => {
-    return (
-      groupList.map((group) => (
-        group.is_member === 1 ?
-        <li key={group.id}>
-          {`You are accepted by ${group.name} group`}
-        </li> 
+  const List4 = () => (
+    groupList.map((group) => (
+      group.is_member === 1
+        ? (
+          <li key={group.id}>
+            {`You are accepted by ${group.name} group`}
+          </li>
+        )
         : null
-      ))
-    );
-  };
+    ))
+  );
 
   return (
     <div id="wrapper">

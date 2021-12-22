@@ -130,6 +130,7 @@ export default function AddPost() {
             <Button
               variant="contained"
               component="label"
+              id="btn0"
             >
               Image
               <input
@@ -139,6 +140,7 @@ export default function AddPost() {
               />
             </Button>
             <Button
+              id="btn1"
               variant="contained"
               component="label"
             >

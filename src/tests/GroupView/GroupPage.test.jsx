@@ -32,16 +32,4 @@ describe('show start page correctly', () => {
     
     // expect(screen.getByText('player1:5')).toBeInTheDocument();
   });
-  test('button click', async () => {
-  //   fireEvent.change(screen.getByRole('textbox'), {
-  //     target: { value: '^' },
-  //   });
-  // fireEvent.submit(screen.getByTestId('leave'));
-  //   // expect(handleLogin).toHaveBeenCalled();
-  //   expect(screen.getByText('Invalid User Name!!')).toBeInTheDocument();
-  //   // const display = screen.getByText('Display Leaders');
-  //   // console.log(display);
-  //   // xpect(screen.getByText('Stop display leaders')).toBeInTheDocument();
-  //   // // expect(screen.getByText('cicici')).toBeInTheDocument();
-  })
 })
