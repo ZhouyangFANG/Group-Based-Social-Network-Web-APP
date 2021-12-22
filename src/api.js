@@ -8,8 +8,6 @@ const url = !process.env.NODE_ENV || process.env.NODE_ENV === 'development'
 
 // const delay = (ms) => new Promise((res) => setTimeout(res, ms));
 
-
-
 // const testGroupPage = {
 //   id: '35143',
 //   name: 'cis557',
