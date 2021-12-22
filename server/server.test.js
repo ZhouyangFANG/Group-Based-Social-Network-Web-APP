@@ -17,17 +17,25 @@ let userId;
 let tagId;
 let groupId;
 let postId;
+let commentId;
 let groupName;
 
 afterAll(async () => {
-    connection.query(`delete from member where userId = '${userId}'`);
-    connection.query(`delete from admin where userId = '${userId}'`);
-    connection.query(`delete from tagRelation where tagId = '${tagId}'`);
-    connection.query(`delete from tag where id = '${tagId}'`);
-    connection.query(`delete from hide where postId = '${postId}'`);
-    connection.query(`delete from post where id = '${postId}'`);
-    connection.query(`delete from user where id = '${userId}'`);
-    connection.query(`delete from groupInfo where id = '${groupId}'`);
+  const p0 = connection.query(`delete invitation from invitation inner join user on invitation.userId = user.id where user.username = 'test'`);
+  const p1 = connection.query(`delete request from request inner join groupInfo on request.groupId = groupInfo.id where groupInfo.name = 'testGroup'`);
+  const p11 = connection.query(`delete request from request inner join user on request.userId = user.id where user.username = 'test'`);
+  const p2 = connection.query(`delete comment from comment inner join user on comment.author = user.id where user.username = 'test'`);
+  const p3 = connection.query(`delete member from member inner join groupInfo on member.groupId = groupInfo.id where groupInfo.name = 'testGroup'`);
+  const p4 = connection.query(`delete admin from admin inner join groupInfo on admin.groupId = groupInfo.id where groupInfo.name = 'testGroup'`);
+  const p5 = connection.query(`delete tagRelation from tagRelation inner join groupInfo on tagRelation.groupId = groupInfo.id where groupInfo.name = 'testGroup'`);
+  const p6 = connection.query(`delete from hide where postId != 'null'`);
+  const p7 = connection.query(`delete from tag where name = 'testTag'`);
+  const p8 = connection.query(`delete post from post inner join user on post.author = user.id where user.username = 'test'`);
+  const p9 = connection.query(`delete from user where username = 'test'`);
+  const p10 = connection.query(`delete from groupInfo where name = 'testGroup'`);
+  await Promise.all([p0, p1, p2, p3, p4, p5, p6]);
+  await Promise.all([p7, p8]);
+  await Promise.all([p9, p10]);
 })
 
 describe('Create player endpoint API & integration tests', () => {
@@ -106,12 +114,12 @@ describe('Create player endpoint API & integration tests', () => {
       })
     );
 
-    test('test get created group', () => {
+    test('test get created group', () => 
       agent.get('/api/groups/testGroup').expect(200).then((response) => {
         const group = JSON.parse(response.text);
         expect(group.name).toBe('testGroup');
-      });
-    });
+      })
+    );
 
     test('test get public group', () =>
       agent.get('/api/groups')
@@ -124,7 +132,7 @@ describe('Create player endpoint API & integration tests', () => {
         );
       }));
 
-    test('test get groups by tag', () => {
+    test('test get groups by tag', () => 
       agent.get('/api/tag/testTag').expect(200).then((response) => {
         const groups = JSON.parse(response.text);
         expect(groups).toEqual(
@@ -132,8 +140,8 @@ describe('Create player endpoint API & integration tests', () => {
             expect.objectContaining({ id: groupId, name: groupName, is_member: 1 }),
           ])
         )
-      });
-    });
+      })
+    );
 
     test('test create post', () =>
       agent.post(`/api/groups/${groupName}/posts`)
@@ -147,6 +155,24 @@ describe('Create player endpoint API & integration tests', () => {
         connection.query(`select * from post where id = '${postId}'`, (error, results) =>{
           expect(results[0].postContent).toBe('blah blah blah');
         })
+      })
+    );
+
+    test('test create comment', () => 
+      agent.post(`/api/posts/${postId}/comments`).send({
+        content: 'test comment',
+      }).expect(201).then((response) => {
+        commentId = JSON.parse(response.text).id;
+        connection.query(`SELECT * FROM comment WHERE id = '${commentId}';`, (error, results) => {
+          expect(results[0].content).toBe('test comment');
+        })
+      })
+    );
+
+    test('test delete comment', () => 
+      agent.delete(`/api/comments/${commentId}`).expect(200).then((response) => {
+        const results = JSON.parse(response.text);
+        expect(results.affectedRows).toBe(1);
       })
     );
 
@@ -189,13 +215,40 @@ describe('Create player endpoint API & integration tests', () => {
         expect(JSON.parse(response.text).num_hidden).toBe(1);
       }));
 
-    test('test invitation', () => {
+    test('test invitation', () => 
       agent.post('/api/groups/testGroup/invites/nosuchuser').expect(200).then((response) => {
         expect(JSON.parse(response.text)).toBe('success');
-      });
-    });
+      })
+    );
 
-    // test('test request to join', () => {
-    //   agent.post('api/groups/testGroup/requests').expect(400);
-    // });
+    test('test handling invitation', () => new Promise((resolve) => {
+      connection.query(`INSERT INTO invitation(userId, groupId) 
+      SELECT '${userId}', groupInfo.id FROM groupInfo WHERE name = 'jiyutestgroup2';`, () => {
+        agent.put('/api/invites/jiyutestgroup2').send({ granted: true }).expect(201).then((response) => {
+          expect(JSON.parse(response.text)).toBe('request posted');
+          connection.query(`DELETE FROM request WHERE userId = '${userId}';`, () => {
+            resolve();
+          });
+        });
+      });
+    }));
+
+    test('test handling request', () => new Promise((resolve) => {
+      connection.query(`INSERT INTO request(userId, groupId) 
+      SELECT user.id, '${groupId}' FROM user WHERE username = 'jiyutest1';`, () => {
+        agent.put('/api/groups/testGroup/requests/jiyutest1').send({ granted: true }).expect(200).then((response) => {
+          expect(JSON.parse(response.text)).toBe('success');
+          resolve();
+        });
+      });
+    }));
+
+    test('test add and delete admin', () => 
+      agent.post('/api/groups/testGroup/admins/jiyutest1').expect(201).then((response) => {
+        expect(JSON.parse(response.text)).toBe('success');
+        agent.delete('/api/groups/testGroup/admins/jiyutest1').expect(200).then((response) => {
+          expect(JSON.parse(response.text)).toBe('success');
+        });
+      })
+    );
 });
