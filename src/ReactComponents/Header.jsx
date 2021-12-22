@@ -10,6 +10,7 @@ export default function Header(props) {
     try {
       window.location.href = `${window.location.protocol}//${window.location.host}/user/${whoami}`;
     } catch (e) {
+      console.log(e);
     }
   };
 
@@ -17,6 +18,7 @@ export default function Header(props) {
     try {
       window.location.href = `${window.location.protocol}//${window.location.host}/groups`;
     } catch (e) {
+      console.log(e);
     }
   };
 
@@ -24,6 +26,7 @@ export default function Header(props) {
     try {
       window.location.href = `${window.location.protocol}//${window.location.host}/createGroup`;
     } catch (e) {
+      console.log(e);
     }
   };
 

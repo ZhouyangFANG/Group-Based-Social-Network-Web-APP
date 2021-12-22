@@ -62,16 +62,12 @@ function MainView() {
   ];
 
   useEffect(async () => {
-    try {
-      let isMounted = true;
-      const recommendL = await lib.getRecommend();
-      const notif = await getNotification();
-      if (isMounted) {
-        setRecommend(recommendL);
-        setNotification(notif);
-      }
-    } catch (error) {
-      console.log(error);
+    let isMounted = true;
+    const recommendL = await lib.getRecommend();
+    const notif = await getNotification();
+    if (isMounted) {
+      setRecommend(recommendL);
+      setNotification(notif);
     }
     return (() => { isMounted = false; });
   }, []);
@@ -205,28 +201,28 @@ function MainView() {
       <Grid container spacing={1}>
         <Grid item xs={2} md={2}>
           {
-              notification
-              && (
-                <>
-                  You are mentioned by:
-                  <ul>
-                    <List1 />
-                  </ul>
-                  The user below sent you messages:
-                  <ul>
-                    <List2 />
-                  </ul>
-                  You got invitation to these groups:
-                  <ul>
-                    <List3 />
-                  </ul>
-                  You are accepted to join these groups:
-                  <ul>
-                    <List4 />
-                  </ul>
-                </>
-              )
-            }
+            notification
+            && (
+              <>
+                You are mentioned by:
+                <ul>
+                  <List1 />
+                </ul>
+                The user below sent you messages:
+                <ul>
+                  <List2 />
+                </ul>
+                You got invitation to these groups:
+                <ul>
+                  <List3 />
+                </ul>
+                You are accepted to join these groups:
+                <ul>
+                  <List4 />
+                </ul>
+              </>
+            )
+          }
         </Grid>
         <Grid item xs={8} md={6}>
           <div style={{ height: 800, width: '100%' }}>
