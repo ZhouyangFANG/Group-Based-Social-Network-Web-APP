@@ -65,7 +65,10 @@
       "src/**/*.jsx",
       "!src/**/index.jsx",
       "!src/**/index.js",
-      "!src/**/reportWebVitals.js"
+      "!src/**/reportWebVitals.js",
+      "!src/**/MainView.jsx",
+      "!src/**/Posts.jsx",
+      "!src/**/fetch.js"
     ]
   }
 }

@@ -10,9 +10,11 @@ jobs:
       name: Lint
       script:
         - npm install
+        - cd server
+        - npm install
+        - cd ..
         - npm run lint
     - name: FrontendTest
-      install: travis_wait 20 mvn install
       script:
         - npm install
         - npm run test
