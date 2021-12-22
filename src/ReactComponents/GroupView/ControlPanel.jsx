@@ -49,19 +49,19 @@ export default function ControlPanel(props) {
   return (
     <Grid item xs={4} md={6} container spacing={1}>
       <Box component="form" onSubmit={handleAddAdmin} noValidate sx={{ mt: 2 }}>
-        <TextField name="input" placeholder="addAdmin" />
-        <Button variant="contained" type="submit">Add Admin</Button>
+        <TextField name="input" placeholder="addAdmin" id="inpt" />
+        <Button variant="contained" type="submit" id="btn1">Add Admin</Button>
       </Box>
       <Box component="form" onSubmit={handleDeleteAdmin} noValidate sx={{ mt: 1 }}>
-        <TextField name="input" placeholder="deleteAdmin" />
-        <Button variant="contained" type="submit">Delete Admin</Button>
+        <TextField name="input" placeholder="deleteAdmin" id="inpt2" />
+        <Button variant="contained" type="submit" id="btn2">Delete Admin</Button>
       </Box>
       <Box component="form" onSubmit={handleInviteUser} noValidate sx={{ mt: 1 }}>
-        <TextField name="input" placeholder="userName" />
-        <Button variant="contained" type="submit">Invite</Button>
+        <TextField name="input" placeholder="userName" id="inpt3" />
+        <Button variant="contained" type="submit" id="btn3">Invite</Button>
       </Box>
-      <Button variant="contained" type="submit" onClick={addPost}>Add Post</Button>
-      <Button variant="contained" onClick={handleLeave}>Leave</Button>
+      <Button variant="contained" type="submit" id="btn4" onClick={addPost}>Add Post</Button>
+      <Button variant="contained" id="btn5" onClick={handleLeave}>Leave</Button>
 
     </Grid>
   );
