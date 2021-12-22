@@ -7,15 +7,24 @@ import React from 'react';
 export default function Header(props) {
   const { title, userName } = props;
   const toUserPage = (whoami) => {
-    window.location.href = `${window.location.protocol}//${window.location.host}/user/${whoami}`;
+    try {
+      window.location.href = `${window.location.protocol}//${window.location.host}/user/${whoami}`;
+    } catch (e) {
+    }
   };
 
   const toMain = () => {
-    window.location.href = `${window.location.protocol}//${window.location.host}/groups`;
+    try {
+      window.location.href = `${window.location.protocol}//${window.location.host}/groups`;
+    } catch (e) {
+    }
   };
 
   const toCreateGroup = () => {
-    window.location.href = `${window.location.protocol}//${window.location.host}/createGroup`;
+    try {
+      window.location.href = `${window.location.protocol}//${window.location.host}/createGroup`;
+    } catch (e) {
+    }
   };
 
   return (

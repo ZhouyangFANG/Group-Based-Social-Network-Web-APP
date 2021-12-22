@@ -8,36 +8,7 @@ const url = !process.env.NODE_ENV || process.env.NODE_ENV === 'development'
 
 // const delay = (ms) => new Promise((res) => setTimeout(res, ms));
 
-// const groupList = [
-//   {
-//     id: '35134',
-//     name: 'cis557-1',
-//     tags: 'cis',
-//     members: [1],
-//     posts: [1, 2, 3],
-//   },
-//   {
-//     id: '134',
-//     name: 'cis547-2',
-//     tags: 'cis',
-//     members: [6, 1, 3],
-//     posts: [1, 2],
-//   },
-//   {
-//     id: '35132',
-//     name: 'cis537-3',
-//     tags: 'cis',
-//     members: [1, 5, 6, 6, 6],
-//     posts: [1],
-//   },
-//   {
-//     id: '3514',
-//     name: 'dat757-4',
-//     tags: 'dat',
-//     members: [1, 4],
-//     posts: [1, 2, 3, 4],
-//   },
-// ];
+
 
 // const testGroupPage = {
 //   id: '35143',
@@ -86,14 +57,14 @@ const url = !process.env.NODE_ENV || process.env.NODE_ENV === 'development'
 
 export async function getGroupList() {
   const res = await axios.get(`${url}/groups`, { withCredentials: true });
-  console.log(res.data);
+  // console.log(res.data);
   // setGroupList(res.data);
   return res.data;
 }
 
 export async function getGroupPage(groupName) {
   const res = await axios.get(`${url}/groups/${groupName}`, { withCredentials: true });
-  console.log(res.data);
+  // console.log(res.data);
   // await delay(1000);
   // return testGroupPage;
   return res.data;
@@ -117,7 +88,7 @@ export function inviteUser(groupName, userName) {
 }
 
 export function leaveGroup(groupName) {
-  console.log('leave the group');
+  // console.log('leave the group');
   axios.delete(`${url}/groups/${groupName}/members`, { withCredentials: true });
 }
 
