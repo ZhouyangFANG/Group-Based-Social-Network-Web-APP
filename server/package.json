@@ -4,7 +4,7 @@
   "description": "backend express server",
   "main": "server.js",
   "scripts": {
-    "test": "jest --coverage --runInBand",
+    "test": "jest --coverage --runInBand --forceExit",
     "start": "nodemon server.js"
   },
   "author": "",
